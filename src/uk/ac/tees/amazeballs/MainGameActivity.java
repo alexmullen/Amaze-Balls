@@ -13,7 +13,9 @@ import android.app.Activity;
  *
  */
 public class MainGameActivity extends Activity {
-
+	
+	public int testing;
+	
 	private Maze currentMaze;
 	private MazeGameView gameView;
 	

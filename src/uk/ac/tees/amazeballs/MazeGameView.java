@@ -22,15 +22,17 @@ import android.view.View;
  */
 public class MazeGameView extends View {
 
-	private static int TILESIZE = 40;
+	protected static int TILESIZE = 40;
 	private static final int X_TILECOUNT = 10;
 	private static final int Y_TILECOUNT = 15;
 	private static final Paint LINE_PAINT = new Paint();
 	
-	private int xGridOffset;
-	private int yGridOffset;
+	protected int xGridOffset;
+	protected int yGridOffset;
 	
-	private Maze currentMaze;
+	private boolean gridLinesShown = true;
+	
+	protected Maze currentMaze;
 	
 	public MazeGameView(Context context) {
 		super(context);
@@ -47,6 +49,14 @@ public class MazeGameView extends View {
 		currentMaze = maze;
 	}
 	
+	public void setShowGridLines(boolean show) {
+		gridLinesShown = show;
+		invalidate();
+	}
+	
+	public boolean getShowGridLines() {
+		return gridLinesShown;
+	}
 	
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -76,13 +86,7 @@ public class MazeGameView extends View {
 				int xTileOffset = (x * TILESIZE) + xGridOffset;
 				int yTileOffset = (y * TILESIZE) + yGridOffset;
 				
-				canvas.drawRect(
-						xTileOffset, // left			
-						yTileOffset, // top
-						xTileOffset + TILESIZE, // right
-						yTileOffset + TILESIZE, // bottom
-						LINE_PAINT);
-				
+				// Draw the current tile.
 				Tile tile = currentMaze.getTileAt(x, y);
 		        if (tile != null) {
 		        	Drawable tileImage = tile.getImage();
@@ -94,8 +98,19 @@ public class MazeGameView extends View {
 			        
 			        tileImage.draw(canvas);
 		        }
+		        
+				// Draw the grid lines separating each tile if turned on.
+				if (gridLinesShown) {
+					canvas.drawRect(
+							xTileOffset, // left			
+							yTileOffset, // top
+							xTileOffset + TILESIZE, // right
+							yTileOffset + TILESIZE, // bottom
+							LINE_PAINT);
+				}
 			}
 		}
 	}
+	
 	
 }

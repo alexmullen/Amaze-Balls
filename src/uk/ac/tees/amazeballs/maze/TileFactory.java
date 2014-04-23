@@ -7,7 +7,7 @@ import android.graphics.drawable.Drawable;
 /**
  * A factory class for creating tiles for a maze.
  * 
- * Alex Mullen (J9858839)
+ * @author Alex Mullen (J9858839)
  *
  */
 public class TileFactory {
@@ -25,8 +25,12 @@ public class TileFactory {
 		}
 		
 		switch (type) {
+			case Wall:
+				return new WallTile(tileImage);
 			case Floor:
 				return new FloorTile(tileImage);
+			case Ball:
+				return new BallTile(tileImage);
 			default:
 				return null;
 		}

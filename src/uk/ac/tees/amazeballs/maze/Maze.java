@@ -90,4 +90,44 @@ public class Maze {
 	public void setTileAt(int x, int y, Tile tile) {
 		grid[x][y] = tile;
 	}
+	
+	/**
+	 * Checks if the specified tile position is valid for this maze 
+	 * (a boundary check).Index
+	 * 
+	 * @param x the x position (across)
+	 * @param y the y position (down)
+	 * @return true if the specified position is valid for this maze,
+	 * otherwise false is returned if it is out of range
+	 */
+	public boolean isTileAt(int x, int y) {
+		if (x < 0 || y < 0 || x >= width || y >= height) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	/**
+	 * Checks if the specified tile position is located at the border of 
+	 * this maze.
+	 * 
+	 * @param x the x position (across)
+	 * @param y the y position (down)
+	 * @return true if the specified position is located at the border of
+	 * this maze, otherwise false is returned
+	 */
+	public boolean isTileAtAnEdge(int x, int y) {
+		// Make sure the position is within range
+		if (!isTileAt(x, y)) {
+			// Specified position is not valid!
+			// TODO: Throw exception
+		}
+		// Check if it is at an edge
+		if ((x == 0 || x == (width - 1)) || (y == 0 || y == (height - 1))) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

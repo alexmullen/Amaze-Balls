@@ -1,4 +1,4 @@
-package uk.ac.tees.amazeballs;
+package uk.ac.tees.amazeballs.views;
 
 import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.Tile;
@@ -20,7 +20,7 @@ import android.view.View;
  * @author Alex Mullen (J9858839)
  *
  */
-public class MazeGameView extends View {
+public class MazeGridView extends View {
 
 	protected static int TILESIZE = 40;
 	private static final int X_TILECOUNT = 10;
@@ -34,12 +34,12 @@ public class MazeGameView extends View {
 	
 	protected Maze currentMaze;
 	
-	public MazeGameView(Context context) {
+	public MazeGridView(Context context) {
 		super(context);
 		LINE_PAINT.setStyle(Style.STROKE);
 	}
 	
-	public MazeGameView(Context context, AttributeSet attrs) {
+	public MazeGridView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.setMaze(new Maze(X_TILECOUNT, Y_TILECOUNT));
 		LINE_PAINT.setStyle(Style.STROKE);
@@ -86,31 +86,33 @@ public class MazeGameView extends View {
 				int xTileOffset = (x * TILESIZE) + xGridOffset;
 				int yTileOffset = (y * TILESIZE) + yGridOffset;
 				
-				// Draw the current tile.
-				Tile tile = currentMaze.getTileAt(x, y);
-		        if (tile != null) {
-		        	Drawable tileImage = tile.getImage();
-			        tileImage.setBounds(
-			        		xTileOffset, // left
-			        		yTileOffset, // top
-			        		xTileOffset + TILESIZE,  // right
-			        		yTileOffset + TILESIZE); // bottom
+				
+				if (currentMaze.isTileAt(x, y)) {
+					// Draw the current tile.
+					Tile tile = currentMaze.getTileAt(x, y);
+			        if (tile != null) {
+			        	Drawable tileImage = tile.getImage();
+				        tileImage.setBounds(
+				        		xTileOffset, // left
+				        		yTileOffset, // top
+				        		xTileOffset + TILESIZE,  // right
+				        		yTileOffset + TILESIZE); // bottom
+				        
+				        tileImage.draw(canvas);
+			        }
 			        
-			        tileImage.draw(canvas);
-		        }
-		        
-				// Draw the grid lines separating each tile if turned on.
-				if (gridLinesShown) {
-					canvas.drawRect(
-							xTileOffset, // left			
-							yTileOffset, // top
-							xTileOffset + TILESIZE, // right
-							yTileOffset + TILESIZE, // bottom
-							LINE_PAINT);
+					// Draw the grid lines separating each tile if turned on.
+					if (gridLinesShown) {
+						canvas.drawRect(
+								xTileOffset, // left			
+								yTileOffset, // top
+								xTileOffset + TILESIZE, // right
+								yTileOffset + TILESIZE, // bottom
+								LINE_PAINT);
+					}
 				}
 			}
 		}
 	}
-	
 	
 }

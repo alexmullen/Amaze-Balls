@@ -6,7 +6,7 @@ package uk.ac.tees.amazeballs.maze;
  * The grid coordinates for a maze start at (0,0) in the top left corner
  * with the X axis going across and the Y axis down like this.
  * 
- *       0  1  2  3  4 -------> X
+ *       0  1  2  3  4 -------> X 	(width)
  * 		+--------------+
  * 	  0 |  |  |  |  |  |
  * 		+--+--+--+--+--+
@@ -24,6 +24,8 @@ package uk.ac.tees.amazeballs.maze;
  *    |
  *    Y
  *    
+ * (height)
+ *    
  * The above example represent a maze of width 5 and height 5 (5x5)
  * with each axis beginning at 0.
  * 
@@ -40,7 +42,7 @@ public class Maze {
 	/**
 	 * Instantiates a new empty maze of the specified dimensions.
 	 * 
-	 * @param width  the width of the maze
+	 * @param width  the width of the m15aze
 	 * @param height the height of the maze
 	 */
 	public Maze(int width, int height) {
@@ -118,11 +120,6 @@ public class Maze {
 	 * this maze, otherwise false is returned
 	 */
 	public boolean isTileAtAnEdge(int x, int y) {
-		// Make sure the position is within range
-		if (!isTileAt(x, y)) {
-			// Specified position is not valid!
-			// TODO: Throw exception
-		}
 		// Check if it is at an edge
 		if ((x == 0 || x == (width - 1)) || (y == 0 || y == (height - 1))) {
 			return true;

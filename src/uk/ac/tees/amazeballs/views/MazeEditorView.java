@@ -1,4 +1,4 @@
-package uk.ac.tees.amazeballs;
+package uk.ac.tees.amazeballs.views;
 
 import uk.ac.tees.amazeballs.maze.FloorTile;
 import uk.ac.tees.amazeballs.maze.TileFactory;
@@ -9,9 +9,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class MazeEditor extends MazeGameView {
+public class MazeEditorView extends MazeGridView {
 
-	public MazeEditor(Context context) {
+	public MazeEditorView(Context context) {
 		super(context);
 		this.setOnTouchListener(new OnTouchListener() {
 			@Override
@@ -21,7 +21,7 @@ public class MazeEditor extends MazeGameView {
 		});
 	}
 	
-	public MazeEditor(Context context, AttributeSet attrs) {
+	public MazeEditorView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.setOnTouchListener(new OnTouchListener() {
 			@Override
@@ -32,8 +32,7 @@ public class MazeEditor extends MazeGameView {
 	}
 
 	private boolean handleViewTouched(MotionEvent event) {
-		
-		// We only want to know when there square was touched.
+		// We only want to know when a square was touched.
 		if (event.getActionMasked() != MotionEvent.ACTION_DOWN) {
 			return true;
 		}
@@ -50,19 +49,28 @@ public class MazeEditor extends MazeGameView {
 			return true;
 		}
 		
+		handleTileTouched(gridPositionTouchedX, gridPositionTouchedY);
+
+		return true;
+	}
+	
+	private void handleTileTouched(int x, int y) {
+		// Prevent the edges of the maze being modified
+		if (currentMaze.isTileAtAnEdge(x, y)) {
+			return;
+		}
+		
 		// Toggle the tile.
-		if (currentMaze.getTileAt(gridPositionTouchedX, gridPositionTouchedY) instanceof FloorTile) {
-			currentMaze.setTileAt(gridPositionTouchedX, gridPositionTouchedY, TileFactory.createTile(TileType.Wall));
+		if (currentMaze.getTileAt(x, y) instanceof FloorTile) {
+			currentMaze.setTileAt(x, y, TileFactory.createTile(TileType.Wall));
 		} else {
-			currentMaze.setTileAt(gridPositionTouchedX, gridPositionTouchedY, TileFactory.createTile(TileType.Floor));
+			currentMaze.setTileAt(x, y, TileFactory.createTile(TileType.Floor));
 		}
 		
 		// Repaint the view
 		invalidate();
 		
-		Log.d(getClass().getName(), "(" + gridPositionTouchedX + "," + gridPositionTouchedY + ")");
-		
-		return true;
+		Log.d(getClass().getName(), "(" + x + "," + y + ")");
 	}
 	
 }

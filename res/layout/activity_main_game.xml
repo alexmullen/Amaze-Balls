@@ -17,7 +17,7 @@
 	</LinearLayout>
 	    
 	    
-    <uk.ac.tees.amazeballs.MazeGameView
+    <uk.ac.tees.amazeballs.views.MazeGridView
         android:id="@+id/main_game_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

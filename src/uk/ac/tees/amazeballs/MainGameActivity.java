@@ -4,6 +4,7 @@ import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.MazeFactory;
 import uk.ac.tees.amazeballs.maze.TileFactory;
 import uk.ac.tees.amazeballs.maze.TileType;
+import uk.ac.tees.amazeballs.views.MazeGridView;
 import android.os.Bundle;
 import android.app.Activity;
 
@@ -16,21 +17,26 @@ import android.app.Activity;
 public class MainGameActivity extends Activity {
 
 	private Maze currentMaze;
-	private MazeGameView gameView;
+	private MazeGridView gameView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_game);
 		
-		gameView = (MazeGameView) findViewById(R.id.main_game_view);
+		loadTiles();
 		
-		TileFactory.registerTile(TileType.Floor, this.getResources().getDrawable(R.drawable.floor));
-		TileFactory.registerTile(TileType.Wall, this.getResources().getDrawable(R.drawable.wall));
-		
+		gameView = (MazeGridView) findViewById(R.id.main_game_view);
+
 		currentMaze = MazeFactory.createBorderedMaze(10, 15);
 		
 		gameView.setMaze(currentMaze);
+	}
+	
+	private void loadTiles() {
+		TileFactory.registerTile(TileType.Floor, this.getResources().getDrawable(R.drawable.floor));
+		TileFactory.registerTile(TileType.Wall, this.getResources().getDrawable(R.drawable.wall));
+		TileFactory.registerTile(TileType.Ball, this.getResources().getDrawable(R.drawable.ball));
 	}
 
 }

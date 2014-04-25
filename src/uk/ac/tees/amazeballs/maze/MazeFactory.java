@@ -39,7 +39,7 @@ public class MazeFactory {
 		for (int x = 0; x < borderedMaze.getWidth(); x++) {
 			for (int y = 0; y < borderedMaze.getHeight(); y++) {
 				// Check if the current position is at an edge
-				if ((x == 0 || x == (width - 1)) || (y == 0 || y == (height - 1))) {
+				if (borderedMaze.isTileAtAnEdge(x, y)) {
 					// Position is at an edge so set it to be a wall tile
 					borderedMaze.setTileAt(x, y, TileFactory.createTile(TileType.Wall));
 				} else {

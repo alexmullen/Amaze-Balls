@@ -51,14 +51,14 @@ public class MazeSelection extends Maze {
 
 	@Override
 	public boolean isTileAt(int x, int y) {
-		if (x < offset_x || 
-			y < offset_y || 
-			(x + offset_x) >= selectionWidth || 
-			(y + offset_y) >= selectionHeight) {
-			return false;
-		} else {
-			return true;
-		}
+		return true;
+//		if ( 
+//			(x + offset_x) >= selectionWidth || 
+//			(y + offset_y) >= selectionHeight) {
+//			return false;
+//		} else {
+//			return true;
+//		}
 	}
 
 	@Override
@@ -72,8 +72,10 @@ public class MazeSelection extends Maze {
 	 * @param amount the number of spaces to shift up
 	 */
 	public void shiftUp(int amount) {
-		if (offset_y > 0) {
-			offset_y--;
+		if (amount >= offset_y) {
+			offset_y = 0;
+		} else {
+			offset_y -= amount;
 		}
 	}
 	
@@ -83,9 +85,13 @@ public class MazeSelection extends Maze {
 	 * @param amount the number of spaces to shift down
 	 */
 	public void shiftDown(int amount) {
-		if ((offset_y + selectionHeight) < (selectionHeight - 2)) {
-			offset_y++;
-		}
+		
+		int distanceFromEdge = super.getHeight() - (offset_y + selectionHeight + amount);
+		offset_y += Math.min(distanceFromEdge, amount);
+		
+//		if ((offset_y + selectionHeight + amount) <= super.getHeight()) {
+//			offset_y += amount;
+//		}
 	}
 	
 	/**
@@ -94,8 +100,10 @@ public class MazeSelection extends Maze {
 	 * @param amount the number of spaces to shift left
 	 */
 	public void shiftLeft(int amount) {
-		if (offset_x > 0) {
-			offset_x--;
+		if (amount >= offset_x) {
+			offset_x = 0;
+		} else {
+			offset_x -= amount;
 		}
 	}
 	
@@ -105,8 +113,8 @@ public class MazeSelection extends Maze {
 	 * @param amount the number of spaces to shift right
 	 */
 	public void shiftRight(int amount) {
-		if ((offset_x + selectionWidth) < (selectionWidth - 2)) {
-			offset_x++;
+		if ((offset_x + selectionWidth + amount) <= super.getWidth()) {
+			offset_x += amount;
 		}
 	}
 

@@ -9,10 +9,12 @@ import uk.ac.tees.amazeballs.views.MazeEditorView;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
+import android.view.View;
 
 public class MazeEditorActivity extends Activity {
 
 	private Maze currentMaze;
+	private MazeSelection currentMazeSelection;
 	private MazeEditorView mazeEditorView;
 	
 	@Override
@@ -24,8 +26,8 @@ public class MazeEditorActivity extends Activity {
 		
 		mazeEditorView = (MazeEditorView) findViewById(R.id.maze_grid_view);
 		
-		currentMaze = MazeFactory.createBorderedMaze(10, 15);
-		MazeSelection currentMazeSelection = new MazeSelection(currentMaze, 4, 4, 10, 15);
+		currentMaze = MazeFactory.createBorderedMaze(25, 30);
+		currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
 		mazeEditorView.setMaze(currentMazeSelection);
 	}
 	
@@ -33,6 +35,26 @@ public class MazeEditorActivity extends Activity {
 		TileFactory.registerTile(TileType.Floor, this.getResources().getDrawable(R.drawable.floor));
 		TileFactory.registerTile(TileType.Wall, this.getResources().getDrawable(R.drawable.wall));
 		TileFactory.registerTile(TileType.Ball, this.getResources().getDrawable(R.drawable.ball));
+	}
+	
+	public void OnUpButtonClicked(View v) {
+		currentMazeSelection.shiftUp(2);
+		mazeEditorView.invalidate();
+	}
+	
+	public void OnRightButtonClicked(View v) {
+		currentMazeSelection.shiftRight(2);
+		mazeEditorView.invalidate();
+	}
+	
+	public void OnDownButtonClicked(View v) {
+		currentMazeSelection.shiftDown(2);
+		mazeEditorView.invalidate();
+	}
+	
+	public void OnLeftButtonClicked(View v) {
+		currentMazeSelection.shiftLeft(2);
+		mazeEditorView.invalidate();
 	}
 
 }

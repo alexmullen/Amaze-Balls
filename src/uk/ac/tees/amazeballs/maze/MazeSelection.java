@@ -14,16 +14,16 @@ public class MazeSelection extends Maze {
 	private int selectionHeight;
 	private Maze baseMaze;
 	
-	public MazeSelection(Maze baseMaze, int offset_x, int offset_y,
-			int selectionWidth, int selectionHeight) {
-		
+	public MazeSelection(Maze baseMaze, int offset_x, int offset_y, int selectionWidth, int selectionHeight) {
 		super(baseMaze.getWidth(), baseMaze.getHeight());
 		
 		this.baseMaze = baseMaze;
 		this.offset_x = offset_x;
 		this.offset_y = offset_y;
-		this.selectionWidth = selectionWidth;
-		this.selectionHeight = selectionHeight;
+		
+		// Set the selection size, clamping the size to the maximum size of the maze
+		this.selectionWidth = Math.min(selectionWidth, baseMaze.getWidth());
+		this.selectionHeight = Math.min(selectionHeight, baseMaze.getHeight());
 	}
 	
 	
@@ -51,14 +51,7 @@ public class MazeSelection extends Maze {
 
 	@Override
 	public boolean isTileAt(int x, int y) {
-		return true;
-//		if ( 
-//			(x + offset_x) >= selectionWidth || 
-//			(y + offset_y) >= selectionHeight) {
-//			return false;
-//		} else {
-//			return true;
-//		}
+		return baseMaze.isTileAt((x + offset_x), (y + offset_y));
 	}
 
 	@Override
@@ -72,6 +65,7 @@ public class MazeSelection extends Maze {
 	 * @param amount the number of spaces to shift up
 	 */
 	public void shiftUp(int amount) {
+		// Shift by the amount or the remaining amount if the amount is more than the remaining space
 		if (amount >= offset_y) {
 			offset_y = 0;
 		} else {
@@ -85,13 +79,9 @@ public class MazeSelection extends Maze {
 	 * @param amount the number of spaces to shift down
 	 */
 	public void shiftDown(int amount) {
-		
-		int distanceFromEdge = super.getHeight() - (offset_y + selectionHeight + amount);
-		offset_y += Math.min(distanceFromEdge, amount);
-		
-//		if ((offset_y + selectionHeight + amount) <= super.getHeight()) {
-//			offset_y += amount;
-//		}
+		// Shift by the amount or the remaining amount if the amount is more than the remaining space
+		int amountRemaining = (super.getHeight() - (offset_y + selectionHeight));
+		offset_y += Math.min(amount, amountRemaining);
 	}
 	
 	/**
@@ -100,6 +90,7 @@ public class MazeSelection extends Maze {
 	 * @param amount the number of spaces to shift left
 	 */
 	public void shiftLeft(int amount) {
+		// Shift by the amount or the remaining amount if the amount is more than the remaining space
 		if (amount >= offset_x) {
 			offset_x = 0;
 		} else {
@@ -113,9 +104,9 @@ public class MazeSelection extends Maze {
 	 * @param amount the number of spaces to shift right
 	 */
 	public void shiftRight(int amount) {
-		if ((offset_x + selectionWidth + amount) <= super.getWidth()) {
-			offset_x += amount;
-		}
+		// Shift by the amount or the remaining amount if the amount is more than the remaining space
+		int amountRemaining = (super.getWidth() - (offset_x + selectionWidth));
+		offset_x += Math.min(amount, amountRemaining);
 	}
 
 }

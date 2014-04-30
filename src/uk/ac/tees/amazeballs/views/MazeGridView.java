@@ -23,8 +23,6 @@ import android.view.View;
 public class MazeGridView extends View {
 
 	protected static int TILESIZE = 40;
-	private static final int X_TILECOUNT = 10;
-	private static final int Y_TILECOUNT = 15;
 	private static final Paint LINE_PAINT = new Paint();
 	
 	protected int xGridOffset;
@@ -41,12 +39,14 @@ public class MazeGridView extends View {
 	
 	public MazeGridView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		this.setMaze(new Maze(X_TILECOUNT, Y_TILECOUNT));
+		this.setMaze(new Maze(10, 15));		// For the Activity viewer to display something
 		LINE_PAINT.setStyle(Style.STROKE);
 	}
 	
 	public void setMaze(Maze maze) {
 		currentMaze = maze;
+		onSizeChanged(this.getWidth(), this.getHeight(), this.getWidth(), this.getHeight());
+        invalidate();
 	}
 	
 	public void setShowGridLines(boolean show) {
@@ -62,14 +62,14 @@ public class MazeGridView extends View {
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
 		
-		// Calculate the ideal square size
-        int tileSizeAcross = (int) Math.floor(w / X_TILECOUNT);
-        int tileSizeDown = (int) Math.floor(h / Y_TILECOUNT);
+		// Calculate the ideal square size to use for the current view dimensions
+        int tileSizeAcross = (int) Math.floor(w / currentMaze.getWidth());
+        int tileSizeDown = (int) Math.floor(h / currentMaze.getHeight());
         TILESIZE = Math.min(tileSizeAcross, tileSizeDown);
         
         // Calculate the offsets so we can centre align the grid.
-        xGridOffset = (w - (TILESIZE * X_TILECOUNT)) / 2;
-        yGridOffset = (h - (TILESIZE * Y_TILECOUNT)) / 2;
+        xGridOffset = (w - (TILESIZE * currentMaze.getWidth())) / 2;
+        yGridOffset = (h - (TILESIZE * currentMaze.getHeight())) / 2;
 	}
 	
 	@Override
@@ -81,35 +81,32 @@ public class MazeGridView extends View {
 			return;
 		}
 
-		for (int x = 0; x < X_TILECOUNT; x++) {
-			for (int y = 0; y < Y_TILECOUNT; y++) {
+		for (int x = 0; x < currentMaze.getWidth(); x++) {
+			for (int y = 0; y < currentMaze.getHeight(); y++) {
 				int xTileOffset = (x * TILESIZE) + xGridOffset;
 				int yTileOffset = (y * TILESIZE) + yGridOffset;
-				
-				
-				if (currentMaze.isTileAt(x, y)) {
-					// Draw the current tile.
-					Tile tile = currentMaze.getTileAt(x, y);
-			        if (tile != null) {
-			        	Drawable tileImage = tile.getImage();
-				        tileImage.setBounds(
-				        		xTileOffset, // left
-				        		yTileOffset, // top
-				        		xTileOffset + TILESIZE,  // right
-				        		yTileOffset + TILESIZE); // bottom
-				        
-				        tileImage.draw(canvas);
-			        }
-			        
-					// Draw the grid lines separating each tile if turned on.
-					if (gridLinesShown) {
-						canvas.drawRect(
-								xTileOffset, // left			
-								yTileOffset, // top
-								xTileOffset + TILESIZE, // right
-								yTileOffset + TILESIZE, // bottom
-								LINE_PAINT);
-					}
+
+				// Draw the current tile.
+				Tile tile = currentMaze.getTileAt(x, y);
+				if (tile != null) {
+					Drawable tileImage = tile.getImage();
+					tileImage.setBounds(
+							xTileOffset, // left
+							yTileOffset, // top
+							xTileOffset + TILESIZE,  // right
+							yTileOffset + TILESIZE); // bottom
+
+					tileImage.draw(canvas);
+				}
+
+				// Draw the grid lines separating each tile if turned on.
+				if (gridLinesShown) {
+					canvas.drawRect(
+							xTileOffset, // left			
+							yTileOffset, // top
+							xTileOffset + TILESIZE, // right
+							yTileOffset + TILESIZE, // bottom
+							LINE_PAINT);
 				}
 			}
 		}

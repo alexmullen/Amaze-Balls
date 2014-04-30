@@ -5,5 +5,16 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_maze_editor">Maze Editor</string>
     <string name="hello_world">Hello world!</string>
+    <string name="highscores_msg">Highscores</string>
+    <string name="settings_msg">Settings</string>
+    <string name="level_editor_msg">Level Editor</string>
+    <string name="level_select_msg">Level Select</string>
+    <string name="pic_desc">Our icon</string>
+    <string name="random_level_msg">Random Level</string>
+    <string name="play_level_msg">Play Level</string>
+    <string name="imported_level_msg">Imported Levels</string>
+    <string name="tgl1_msg">Toggle Music</string>
+	<string name="tgl2_msg">Toggle Weather</string>
+    
 
 </resources>

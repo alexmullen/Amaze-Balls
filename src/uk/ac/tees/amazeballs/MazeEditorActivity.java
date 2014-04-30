@@ -38,22 +38,22 @@ public class MazeEditorActivity extends Activity {
 	}
 	
 	public void OnUpButtonClicked(View v) {
-		currentMazeSelection.shiftUp(2);
+		currentMazeSelection.shiftUp(3);
 		mazeEditorView.invalidate();
 	}
 	
 	public void OnRightButtonClicked(View v) {
-		currentMazeSelection.shiftRight(2);
+		currentMazeSelection.shiftRight(3);
 		mazeEditorView.invalidate();
 	}
 	
 	public void OnDownButtonClicked(View v) {
-		currentMazeSelection.shiftDown(2);
+		currentMazeSelection.shiftDown(3);
 		mazeEditorView.invalidate();
 	}
 	
 	public void OnLeftButtonClicked(View v) {
-		currentMazeSelection.shiftLeft(2);
+		currentMazeSelection.shiftLeft(3);
 		mazeEditorView.invalidate();
 	}
 

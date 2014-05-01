@@ -8,7 +8,6 @@ import uk.ac.tees.amazeballs.maze.TileType;
 import uk.ac.tees.amazeballs.views.MazeEditorView;
 import android.os.Bundle;
 import android.app.Activity;
-import android.view.Menu;
 import android.view.View;
 
 public class MazeEditorActivity extends Activity {
@@ -26,7 +25,7 @@ public class MazeEditorActivity extends Activity {
 		
 		mazeEditorView = (MazeEditorView) findViewById(R.id.maze_grid_view);
 		
-		// Create a bordered maze
+		// Create a bordered maze of the specified width and height
 		currentMaze = MazeFactory.createBorderedMaze(25, 30);
 		
 		/*
@@ -36,8 +35,6 @@ public class MazeEditorActivity extends Activity {
 		 * in the MazeEditorView.
 		 */
 		currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
-		
-		currentMaze.setTileAt(5, 5, TileFactory.createTile(TileType.Ball));
 		
 		// Set the maze for the MazeEditorView to display
 		mazeEditorView.setMaze(currentMazeSelection);

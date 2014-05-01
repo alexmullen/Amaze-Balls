@@ -26,8 +26,20 @@ public class MazeEditorActivity extends Activity {
 		
 		mazeEditorView = (MazeEditorView) findViewById(R.id.maze_grid_view);
 		
+		// Create a bordered maze
 		currentMaze = MazeFactory.createBorderedMaze(25, 30);
+		
+		/*
+		 * Create a maze selection to view only a small portion of the maze so
+		 * that we can have mazes that are much larger than most devices'
+		 * displays. The size specified here represents the grid size displayed
+		 * in the MazeEditorView.
+		 */
 		currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
+		
+		currentMaze.setTileAt(5, 5, TileFactory.createTile(TileType.Ball));
+		
+		// Set the maze for the MazeEditorView to display
 		mazeEditorView.setMaze(currentMazeSelection);
 	}
 	

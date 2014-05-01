@@ -3,14 +3,11 @@ package uk.ac.tees.amazeballs.views;
 import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.Tile;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 
@@ -28,7 +25,7 @@ public class MazeGridView extends View {
 	protected int xGridOffset;
 	protected int yGridOffset;
 	
-	private boolean gridLinesShown = true;
+	private boolean gridLinesShown = false;
 	
 	protected Maze currentMaze;
 	

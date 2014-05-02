@@ -25,7 +25,17 @@ public class MazeBallController {
 	 */
 	public void update() {
 		
+		// Get the accelerometer reading
 		
+		// Apply gravity to the ball
+		
+		// Resolve collisions
+		
+		// Potentially scroll the screen
+		
+		// Notify any special blocks if the ball touched them
+		
+		// Update the view
 		
 	}
 

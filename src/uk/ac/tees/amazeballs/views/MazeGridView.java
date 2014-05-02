@@ -2,10 +2,13 @@ package uk.ac.tees.amazeballs.views;
 
 import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.Tile;
+import uk.ac.tees.amazeballs.maze.TileFactory;
+import uk.ac.tees.amazeballs.maze.TileType;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -25,7 +28,11 @@ public class MazeGridView extends View {
 	protected int xGridOffset;
 	protected int yGridOffset;
 	
+	private int ballOffset_x;
+	private int ballOffset_y;
+	
 	private boolean gridLinesShown = false;
+	private boolean showBall = false;
 	
 	protected Maze currentMaze;
 	
@@ -53,6 +60,23 @@ public class MazeGridView extends View {
 	
 	public boolean getShowGridLines() {
 		return gridLinesShown;
+	}
+	
+	public void setShowBall(boolean show) {
+		showBall = show;
+	}
+	
+	public boolean getShowBall() {
+		return showBall;
+	}
+	
+	public void setBallPosition(Point p) {
+		ballOffset_x = p.x;
+		ballOffset_y = p.y;
+	}
+	
+	public Point getBallPosition() {
+		return new Point(ballOffset_x, ballOffset_y);
 	}
 	
 	@Override
@@ -104,6 +128,18 @@ public class MazeGridView extends View {
 							xTileOffset + TILESIZE, // right
 							yTileOffset + TILESIZE, // bottom
 							LINE_PAINT);
+				}
+				
+				// Draw the ball if it needs to be shown.
+				if (showBall) {
+					Drawable ballImage = TileFactory.createTile(TileType.Ball).getImage();
+					ballImage.setBounds(
+							xGridOffset + ballOffset_x, // left
+							yGridOffset + ballOffset_y, // top
+							xGridOffset + ballOffset_x + ballImage.getBounds().width(),  // right
+							yGridOffset + ballOffset_y + ballImage.getBounds().height()); // bottom
+
+					ballImage.draw(canvas);
 				}
 			}
 		}

@@ -38,14 +38,14 @@ public class MazeEditorView extends MazeGridView {
 		}
 		
 		// Normalize the coordinates touched into grid coordinates.
-		int gridPositionTouchedX = (int)Math.floor(((event.getX() - xGridOffset) / TILESIZE));
-		int gridPositionTouchedY = (int)Math.floor(((event.getY() - yGridOffset) / TILESIZE));
+		int gridPositionTouchedX = (int)Math.floor(((event.getX() - gridOffset_x) / getTilesize()));
+		int gridPositionTouchedY = (int)Math.floor(((event.getY() - gridOffset_y) / getTilesize()));
 		
 		// Ignore any touches that are within our view area but outside the displayed grid.
 		if (gridPositionTouchedX < 0 || 
 			gridPositionTouchedY < 0 || 
-			gridPositionTouchedX >= currentMaze.getWidth() ||
-			gridPositionTouchedY >= currentMaze.getHeight()) {
+			gridPositionTouchedX >= getMaze().getWidth() ||
+			gridPositionTouchedY >= getMaze().getHeight()) {
 			return true;
 		}
 		
@@ -56,15 +56,15 @@ public class MazeEditorView extends MazeGridView {
 	
 	private void handleTileTouched(int x, int y) {
 		// Prevent the edges of the maze being modified
-		if (currentMaze.isTileAtAnEdge(x, y)) {
+		if (getMaze().isTileAtAnEdge(x, y)) {
 			return;
 		}
 		
 		// Toggle the tile.
-		if (currentMaze.getTileAt(x, y) instanceof FloorTile) {
-			currentMaze.setTileAt(x, y, TileFactory.createTile(TileType.Wall));
+		if (getMaze().getTileAt(x, y) instanceof FloorTile) {
+			getMaze().setTileAt(x, y, TileFactory.createTile(TileType.Wall));
 		} else {
-			currentMaze.setTileAt(x, y, TileFactory.createTile(TileType.Floor));
+			getMaze().setTileAt(x, y, TileFactory.createTile(TileType.Floor));
 		}
 		
 		// Repaint the view

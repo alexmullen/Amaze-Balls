@@ -1,10 +1,12 @@
 package uk.ac.tees.amazeballs;
 
+import uk.ac.tees.amazeballs.maze.BallTile;
 import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.MazeFactory;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
 import uk.ac.tees.amazeballs.maze.TileFactory;
 import uk.ac.tees.amazeballs.maze.TileType;
+import uk.ac.tees.amazeballs.views.MazeBall;
 import uk.ac.tees.amazeballs.views.MazeGridView;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,7 +14,6 @@ import android.os.Message;
 import android.util.Log;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -39,13 +40,12 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 	private boolean running = true;
 	
 	private long lastMoveTime;
-	private static final long moveDelayTime = 100;
+	private static final long GAME_TICK_INTERVAL = 5;
 	
 	private class GameTickHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
         	update();
-        	gameView.invalidate();
         }
 
         public void sleep(long delayMillis) {
@@ -76,7 +76,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		gameView = (MazeGridView) findViewById(R.id.main_game_view);
 
 		// Create a bordered maze of the specified width and height
-		currentMaze = MazeFactory.createBorderedMaze(25, 30);
+		currentMaze = MazeFactory.createBorderedMaze(10, 15);
 		
 		/*
 		 * Create a maze selection to view only a small portion of the maze so
@@ -88,15 +88,15 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		
 		// Set the maze for the MazeEditorView to display
 		gameView.setMaze(mazeSelection);
-		gameView.setShowBall(true);
-		gameView.setBallPosition(new Point(50, 50));
+		gameView.setBall(new MazeBall(70, 70, (BallTile)TileFactory.createTile(TileType.Ball), 0.8f));
+		gameView.setBallDisplayed(true);
 
 		// Create a MazeBallController for handling the moving, collisions and physics for the ball
 		ballController = new MazeBallController(mazeSelection, gameView);
 		
 		// Start the game loop		
 		tickHandler = new GameTickHandler();
-		update();
+		tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);		// HACKISH!
 	}
 
 	@Override
@@ -146,23 +146,11 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 			 * Only perform an update if the specified delay time has elapsed
 			 * since the last update.
 			 */
-			if ((now - lastMoveTime) >= moveDelayTime) {
-				Log.d(this.getClass().getName(), "tick");
-				
-				// Get the accelerometer reading
-				
-				// Apply gravity to the ball
-				
-				// Resolve collisions
-				
-				// Potentially scroll the screen
-				
-				// Notify any special blocks if the ball touched them
-				
-				// Update the view
-				
+			if ((now - lastMoveTime) >= GAME_TICK_INTERVAL) {
+				//Log.d(this.getClass().getName(), "tick");
+				ballController.update();
 			}
-			tickHandler.sleep(moveDelayTime);
+			tickHandler.sleep(GAME_TICK_INTERVAL);
 		}
 	}
 

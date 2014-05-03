@@ -1,7 +1,6 @@
 package uk.ac.tees.amazeballs;
 
 import uk.ac.tees.amazeballs.maze.Maze;
-import uk.ac.tees.amazeballs.maze.MazeSelection;
 import uk.ac.tees.amazeballs.maze.WallTile;
 import uk.ac.tees.amazeballs.views.MazeBall;
 import uk.ac.tees.amazeballs.views.MazeGridView;
@@ -55,28 +54,28 @@ public class MazeBallController {
 		int gridPositionTouchedY;
 		int ballSize = (int)(view.getTilesize() * view.getBall().imageRelativeSize);
 		
-		// Top left corner of ball
+		// Check top left corner of ball
 		gridPositionTouchedX = (int)Math.floor(((view.getBall().position_x) / view.getTilesize()));
 		gridPositionTouchedY = (int)Math.floor(((view.getBall().position_y) / view.getTilesize()));
 		if (model.getTileAt(gridPositionTouchedX, gridPositionTouchedY) instanceof WallTile) {
 			return true;
 		}
 		
-		// Top right corner of ball
+		// Check top right corner of ball
 		gridPositionTouchedX = (int)Math.floor(((view.getBall().position_x + ballSize) / view.getTilesize()));
 		gridPositionTouchedY = (int)Math.floor(((view.getBall().position_y) / view.getTilesize()));
 		if (model.getTileAt(gridPositionTouchedX, gridPositionTouchedY) instanceof WallTile) {
 			return true;
 		}
 		
-		// Bottom right corner of ball
+		// Check bottom right corner of ball
 		gridPositionTouchedX = (int)Math.floor(((view.getBall().position_x + ballSize) / view.getTilesize()));
 		gridPositionTouchedY = (int)Math.floor(((view.getBall().position_y + ballSize) / view.getTilesize()));
 		if (model.getTileAt(gridPositionTouchedX, gridPositionTouchedY) instanceof WallTile) {
 			return true;
 		}
 		
-		// Bottom left corner of ball
+		// Check bottom left corner of ball
 		gridPositionTouchedX = (int)Math.floor(((view.getBall().position_x) / view.getTilesize()));
 		gridPositionTouchedY = (int)Math.floor(((view.getBall().position_y + ballSize) / view.getTilesize()));
 		if (model.getTileAt(gridPositionTouchedX, gridPositionTouchedY) instanceof WallTile) {

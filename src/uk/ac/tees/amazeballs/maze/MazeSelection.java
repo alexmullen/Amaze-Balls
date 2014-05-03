@@ -63,50 +63,62 @@ public class MazeSelection extends Maze {
 	 * Shifts the selection up if possible.
 	 * 
 	 * @param amount the number of spaces to shift up
+	 * @return the number of spaces actually shifted
 	 */
-	public void shiftUp(int amount) {
+	public int shiftUp(int amount) {
 		// Shift by the amount or the remaining amount if the amount is more than the remaining space
 		if (amount >= offset_y) {
+			amount = offset_y;
 			offset_y = 0;
 		} else {
 			offset_y -= amount;
 		}
+		return amount;
 	}
 	
 	/**
 	 * Shifts the selection down if possible.
 	 * 
 	 * @param amount the number of spaces to shift down
+	 * @return the number of spaces actually shifted
 	 */
-	public void shiftDown(int amount) {
+	public int shiftDown(int amount) {
 		// Shift by the amount or the remaining amount if the amount is more than the remaining space
 		int amountRemaining = (super.getHeight() - (offset_y + selectionHeight));
-		offset_y += Math.min(amount, amountRemaining);
+		int amountToShift = Math.min(amount, amountRemaining);
+		offset_y += amountToShift;
+		return amountToShift;
 	}
 	
 	/**
 	 * Shifts the selection left if possible.
 	 * 
 	 * @param amount the number of spaces to shift left
+	 * @return the number of spaces actually shifted
 	 */
-	public void shiftLeft(int amount) {
+	public int shiftLeft(int amount) {
 		// Shift by the amount or the remaining amount if the amount is more than the remaining space
 		if (amount >= offset_x) {
+			amount = offset_x;
 			offset_x = 0;
 		} else {
 			offset_x -= amount;
 		}
+		return amount;
 	}
 	
 	/**
 	 * Shifts the selection right if possible.
 	 * 
 	 * @param amount the number of spaces to shift right
+	 * @return the number of spaces actually shifted
 	 */
-	public void shiftRight(int amount) {
+	public int shiftRight(int amount) {
 		// Shift by the amount or the remaining amount if the amount is more than the remaining space
 		int amountRemaining = (super.getWidth() - (offset_x + selectionWidth));
-		offset_x += Math.min(amount, amountRemaining);
+		int amountToShift = Math.min(amount, amountRemaining);
+		offset_x += amountToShift;
+		return amountToShift;
 	}
 
 }

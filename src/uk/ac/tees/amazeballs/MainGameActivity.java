@@ -149,6 +149,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 			if ((now - lastMoveTime) >= GAME_TICK_INTERVAL) {
 				//Log.d(this.getClass().getName(), "tick");
 				ballController.update();
+				lastMoveTime = System.currentTimeMillis();
 			}
 			tickHandler.sleep(GAME_TICK_INTERVAL);
 		}

@@ -110,6 +110,7 @@ public class MazeGridView extends View {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
+		// Draw the maze
 		for (int x = 0; x < currentMaze.getWidth(); x++) {
 			for (int y = 0; y < currentMaze.getHeight(); y++) {
 				int xTileOffset = (x * tileSize) + gridOffset_x;
@@ -137,19 +138,24 @@ public class MazeGridView extends View {
 							yTileOffset + tileSize, // bottom
 							LINE_PAINT);
 				}
-				
-				// Draw the ball if it needs to be shown.
-				if (displayBall) {
-					Drawable ballImage = ball.image.getImage();
-					ballImage.setBounds(
-							gridOffset_x + ball.position_x, // left
-							gridOffset_y + ball.position_y, // top
-							gridOffset_x + ball.position_x + (int)(tileSize * ball.imageRelativeSize),  // right
-							gridOffset_y + ball.position_y + (int)(tileSize * ball.imageRelativeSize)); // bottom
-
-					ballImage.draw(canvas);
-				}
 			}
+		}
+		
+		// Draw the ball if it needs to be shown.
+		if (displayBall) {
+			Drawable ballImage = ball.image.getImage();
+			
+			int ballOffset_x = gridOffset_x + ball.position_x;
+			int ballOffset_y = gridOffset_y + ball.position_y;
+			int ballSize = (int)(tileSize * ball.imageRelativeSize);
+			
+			ballImage.setBounds(
+					ballOffset_x, // left
+					ballOffset_y, // top
+					ballOffset_x + ballSize,  // right
+					ballOffset_y + ballSize); // bottom
+
+			ballImage.draw(canvas);
 		}
 	}
 	

@@ -19,22 +19,13 @@ import android.view.View;
  */
 public class MazeGridView extends View {
 
-	private static final Paint LINE_PAINT;
-	
-	static {
-		LINE_PAINT = new Paint();
-		LINE_PAINT.setStyle(Style.STROKE);
-	}
-	
-	
 	private int tileSize;
 	protected int gridOffset_x;
 	protected int gridOffset_y;
 	
 	private Maze currentMaze;
 	private MazeBall ball;
-	
-	private boolean displayGridLines = false;
+
 	private boolean displayBall = false;
 	
 	
@@ -46,7 +37,7 @@ public class MazeGridView extends View {
 	public MazeGridView(Context context, AttributeSet attrs) {
 		// Constructor used when this view is inflated from XML.
 		super(context, attrs);
-		//this.setMaze(new Maze(10, 15));		// For the Activity viewer to display something and not throw an NPE
+		this.setMaze(new Maze(10, 15));		// For the Activity viewer to display something and not throw an NPE
 	}
 	
 	
@@ -60,15 +51,6 @@ public class MazeGridView extends View {
 	
 	public Maze getMaze() {
 		return currentMaze;
-	}
-	
-	public void setGridLinesDisplayed(boolean show) {
-		displayGridLines = show;
-		invalidate();
-	}
-	
-	public boolean getGridLinesDisplayed() {
-		return displayGridLines;
 	}
 	
 	public void setBallDisplayed(boolean show) {
@@ -127,16 +109,6 @@ public class MazeGridView extends View {
 							yTileOffset + tileSize); // bottom
 
 					tileImage.draw(canvas);
-				}
-
-				// Draw the grid lines separating each tile if turned on.
-				if (displayGridLines) {
-					canvas.drawRect(
-							xTileOffset, // left			
-							yTileOffset, // top
-							xTileOffset + tileSize, // right
-							yTileOffset + tileSize, // bottom
-							LINE_PAINT);
 				}
 			}
 		}

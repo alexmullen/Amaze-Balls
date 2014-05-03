@@ -14,8 +14,13 @@ import uk.ac.tees.amazeballs.views.MazeGridView;
  */
 public class MazeBallController {
 	
+	public volatile float lastAccelerometerReading_x;
+	public volatile float lastAccelerometerReading_y;
+	
 	private final Maze model;
 	private final MazeGridView view;
+	
+	private final static int GRID_SCROLLING_AMOUNT = 1;
 	
 	public MazeBallController(Maze mazeModel, MazeGridView mazeView) {
 		this.model = mazeModel;
@@ -28,25 +33,67 @@ public class MazeBallController {
 	 */
 	public void update() {
 		
+		MazeBall ball = view.getBall();
+		MazeSelection mazeSelection = (MazeSelection) model;
 		
 		// Get the accelerometer reading
-		
-		// Apply gravity to the ball
-		MazeBall ball = view.getBall();
-		ball.position_y += 5;
-		
-		// Resolve collisions
-		while (ballHasCollided()) {
-			ball.position_y--;
+		if (lastAccelerometerReading_y > 0.75) {
+			ball.position_y += 5;		
+			// Resolve collisions
+			while (ballHasCollided()) {
+				ball.position_y--;
+			}
+		} 
+		if (lastAccelerometerReading_y < -0.75) {
+			ball.position_y -= 5;		
+			// Resolve collisions
+			while (ballHasCollided()) {
+				ball.position_y++;
+			}
+		} 
+		if (lastAccelerometerReading_x > 0.75) {
+			ball.position_x -= 5;
+			// Resolve collisions
+			while (ballHasCollided()) {
+				ball.position_x++;
+			}
+		}
+		if (lastAccelerometerReading_x < -0.75) {
+			ball.position_x += 5;
+			// Resolve collisions
+			while (ballHasCollided()) {
+				ball.position_x--;
+			}
 		}
 		
-		// Potentially scroll the screen
-		int mazeAreaWidth = view.getTilesize() * model.getWidth();
-		if (ball.position_y / mazeAreaWidth >= 0.75) {
-			MazeSelection mazeSelection = (MazeSelection) model;
-			int amountShiftedDown = mazeSelection.shiftDown(1);
+
+
+		// Potentially scroll the screen down
+		int mazeAreaHeight = view.getTilesize() * model.getHeight();
+		if ((double)ball.position_y / mazeAreaHeight >= 0.75) {
+			int amountShiftedDown = mazeSelection.shiftDown(GRID_SCROLLING_AMOUNT);
 			ball.position_y -= (amountShiftedDown * view.getTilesize());
 		}
+		
+		// Potentially scroll the screen up
+		if ((double)ball.position_y / mazeAreaHeight <= 0.25) {
+			int amountShiftedUp = mazeSelection.shiftUp(GRID_SCROLLING_AMOUNT);
+			ball.position_y += (amountShiftedUp * view.getTilesize());
+		}
+		
+		// Potentially scroll the screen right
+		int mazeAreaWidth = view.getTilesize() * model.getWidth();
+		if ((double)ball.position_x / mazeAreaWidth >= 0.75) {
+			int amountShiftedRight = mazeSelection.shiftRight(GRID_SCROLLING_AMOUNT);
+			ball.position_x -= (amountShiftedRight * view.getTilesize());
+		}
+		
+		// Potentially scroll the screen left
+		if ((double)ball.position_x / mazeAreaWidth <= 0.25) {
+			int amountShiftedLeft = mazeSelection.shiftLeft(GRID_SCROLLING_AMOUNT);
+			ball.position_x += (amountShiftedLeft * view.getTilesize());
+		}
+		
 		
 		// Notify any special blocks if the ball touched them
 

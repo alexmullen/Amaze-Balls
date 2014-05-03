@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.TextView;
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
@@ -28,7 +29,6 @@ import android.hardware.SensorManager;
 public class MainGameActivity extends Activity implements SensorEventListener {
 
 	private Sensor accelerometerSensor;
-	private float[] lastAccelerometerReadings;
 	private SensorManager sensorManager;
 	
 	private Maze currentMaze;
@@ -132,10 +132,15 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		lastAccelerometerReadings = event.values;
-		Log.d(this.getClass().getName(), "X = " + event.values[0]);
-		Log.d(this.getClass().getName(), "Y = " + event.values[1]);
-		Log.d(this.getClass().getName(), "Z = " + event.values[2]);
+
+		TextView x = (TextView)findViewById(R.id.xTextView);
+		TextView y = (TextView)findViewById(R.id.yTextView);
+		
+		x.setText(String.valueOf(event.values[0]));
+		y.setText(String.valueOf(event.values[1]));
+		
+		ballController.lastAccelerometerReading_x = event.values[0];
+		ballController.lastAccelerometerReading_y = event.values[1];
 	}
 	
 	/**

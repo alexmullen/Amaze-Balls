@@ -4,6 +4,9 @@ import uk.ac.tees.amazeballs.maze.FloorTile;
 import uk.ac.tees.amazeballs.maze.TileFactory;
 import uk.ac.tees.amazeballs.maze.TileType;
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -11,6 +14,15 @@ import android.view.View;
 
 public class MazeEditorView extends MazeGridView {
 
+	private static final Paint LINE_PAINT;
+	
+	static {
+		LINE_PAINT = new Paint();
+		LINE_PAINT.setStyle(Style.STROKE);
+	}
+	
+	
+	
 	public MazeEditorView(Context context) {
 		super(context);
 		this.setOnTouchListener(new OnTouchListener() {
@@ -71,6 +83,29 @@ public class MazeEditorView extends MazeGridView {
 		invalidate();
 		
 		Log.d(getClass().getName(), "(" + x + "," + y + ")");
+	}
+
+	@Override
+	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
+	
+		int tilesize = getTilesize();
+		
+		// Draw the grid lines separating each tile
+		for (int x = 0; x < getMaze().getWidth(); x++) {
+			for (int y = 0; y < getMaze().getHeight(); y++) {
+				
+				int xTileOffset = (x * tilesize) + gridOffset_x;
+				int yTileOffset = (y * tilesize) + gridOffset_y;
+	
+				canvas.drawRect(
+						xTileOffset, // left			
+						yTileOffset, // top
+						xTileOffset + tilesize, // right
+						yTileOffset + tilesize, // bottom
+						LINE_PAINT);
+			}
+		}
 	}
 	
 }

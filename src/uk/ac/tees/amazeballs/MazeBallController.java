@@ -1,6 +1,7 @@
 package uk.ac.tees.amazeballs;
 
 import uk.ac.tees.amazeballs.maze.Maze;
+import uk.ac.tees.amazeballs.maze.MazeSelection;
 import uk.ac.tees.amazeballs.maze.WallTile;
 import uk.ac.tees.amazeballs.views.MazeBall;
 import uk.ac.tees.amazeballs.views.MazeGridView;
@@ -31,16 +32,21 @@ public class MazeBallController {
 		// Get the accelerometer reading
 		
 		// Apply gravity to the ball
+		MazeBall ball = view.getBall();
+		ball.position_y += 5;
 		
-		if (!ballHasCollided()) {
-			MazeBall ball = view.getBall();
-			ball.position_y += 5;
+		// Resolve collisions
+		while (ballHasCollided()) {
+			ball.position_y--;
 		}
 		
-
-		// Resolve collisions
-		
 		// Potentially scroll the screen
+		int mazeAreaWidth = view.getTilesize() * model.getWidth();
+		if (ball.position_y / mazeAreaWidth >= 0.75) {
+			MazeSelection mazeSelection = (MazeSelection) model;
+			int amountShiftedDown = mazeSelection.shiftDown(1);
+			ball.position_y -= (amountShiftedDown * view.getTilesize());
+		}
 		
 		// Notify any special blocks if the ball touched them
 
@@ -55,33 +61,34 @@ public class MazeBallController {
 		int ballSize = (int)(view.getTilesize() * view.getBall().imageRelativeSize);
 		
 		// Check top left corner of ball
-		gridPositionTouchedX = (int)Math.floor(((view.getBall().position_x) / view.getTilesize()));
-		gridPositionTouchedY = (int)Math.floor(((view.getBall().position_y) / view.getTilesize()));
+		gridPositionTouchedX = (int)(view.getBall().position_x) / view.getTilesize();
+		gridPositionTouchedY = (int)(view.getBall().position_y) / view.getTilesize();
 		if (model.getTileAt(gridPositionTouchedX, gridPositionTouchedY) instanceof WallTile) {
 			return true;
 		}
 		
 		// Check top right corner of ball
-		gridPositionTouchedX = (int)Math.floor(((view.getBall().position_x + ballSize) / view.getTilesize()));
-		gridPositionTouchedY = (int)Math.floor(((view.getBall().position_y) / view.getTilesize()));
+		gridPositionTouchedX = (int)(view.getBall().position_x + ballSize) / view.getTilesize();
+		gridPositionTouchedY = (int)(view.getBall().position_y) / view.getTilesize();
 		if (model.getTileAt(gridPositionTouchedX, gridPositionTouchedY) instanceof WallTile) {
 			return true;
 		}
 		
 		// Check bottom right corner of ball
-		gridPositionTouchedX = (int)Math.floor(((view.getBall().position_x + ballSize) / view.getTilesize()));
-		gridPositionTouchedY = (int)Math.floor(((view.getBall().position_y + ballSize) / view.getTilesize()));
+		gridPositionTouchedX = (int)(view.getBall().position_x + ballSize) / view.getTilesize();
+		gridPositionTouchedY = (int)(view.getBall().position_y + ballSize) / view.getTilesize();
 		if (model.getTileAt(gridPositionTouchedX, gridPositionTouchedY) instanceof WallTile) {
 			return true;
 		}
 		
 		// Check bottom left corner of ball
-		gridPositionTouchedX = (int)Math.floor(((view.getBall().position_x) / view.getTilesize()));
-		gridPositionTouchedY = (int)Math.floor(((view.getBall().position_y + ballSize) / view.getTilesize()));
+		gridPositionTouchedX = (int)(view.getBall().position_x) / view.getTilesize();
+		gridPositionTouchedY = (int)(view.getBall().position_y + ballSize) / view.getTilesize();
 		if (model.getTileAt(gridPositionTouchedX, gridPositionTouchedY) instanceof WallTile) {
 			return true;
 		}
 		
+		// No collisions
 		return false;
 	}
 

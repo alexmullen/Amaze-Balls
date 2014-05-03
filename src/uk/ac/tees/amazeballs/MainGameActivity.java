@@ -76,7 +76,10 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		gameView = (MazeGridView) findViewById(R.id.main_game_view);
 
 		// Create a bordered maze of the specified width and height
-		currentMaze = MazeFactory.createBorderedMaze(10, 15);
+		currentMaze = MazeFactory.createBorderedMaze(20, 30);
+		
+		currentMaze.setTileAt(3, 10, TileFactory.createTile(TileType.Wall));
+		
 		
 		/*
 		 * Create a maze selection to view only a small portion of the maze so

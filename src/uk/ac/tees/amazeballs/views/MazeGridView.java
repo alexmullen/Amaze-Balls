@@ -95,21 +95,18 @@ public class MazeGridView extends View {
 		// Draw the maze
 		for (int x = 0; x < currentMaze.getWidth(); x++) {
 			for (int y = 0; y < currentMaze.getHeight(); y++) {
+				// Draw the current tile.
 				int xTileOffset = (x * tileSize) + gridOffset_x;
 				int yTileOffset = (y * tileSize) + gridOffset_y;
-
-				// Draw the current tile.
+				
 				Tile tile = currentMaze.getTileAt(x, y);
-				if (tile != null) {
-					Drawable tileImage = tile.getImage();
-					tileImage.setBounds(
-							xTileOffset, // left
-							yTileOffset, // top
-							xTileOffset + tileSize,  // right
-							yTileOffset + tileSize); // bottom
+				Drawable tileImage = tile.getImage();
+				tileImage.setBounds(xTileOffset, // left
+						yTileOffset, // top
+						xTileOffset + tileSize, // right
+						yTileOffset + tileSize); // bottom
 
-					tileImage.draw(canvas);
-				}
+				tileImage.draw(canvas);
 			}
 		}
 		

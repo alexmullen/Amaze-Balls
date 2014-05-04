@@ -1,6 +1,7 @@
 package uk.ac.tees.amazeballs.views;
 
 import uk.ac.tees.amazeballs.maze.FloorTile;
+import uk.ac.tees.amazeballs.maze.MazeSelection;
 import uk.ac.tees.amazeballs.maze.TileFactory;
 import uk.ac.tees.amazeballs.maze.TileType;
 import android.content.Context;
@@ -9,10 +10,12 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class MazeEditorView extends MazeGridView {
+public class MazeEditorView extends MazeGridView implements OnGestureListener {
 
 	private static final Paint LINE_PAINT;
 	
@@ -21,34 +24,67 @@ public class MazeEditorView extends MazeGridView {
 		LINE_PAINT.setStyle(Style.STROKE);
 	}
 	
-	
+	private final GestureDetector gestureDetector;
 	
 	public MazeEditorView(Context context) {
 		super(context);
-		this.setOnTouchListener(new OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				return handleViewTouched(event);
-			}
-		});
+		gestureDetector = new GestureDetector(context, this);
 	}
 	
 	public MazeEditorView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		this.setOnTouchListener(new OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				return handleViewTouched(event);
-			}
-		});
+		gestureDetector = new GestureDetector(context, this);
 	}
 
-	private boolean handleViewTouched(MotionEvent event) {
-		// We only want to know when a square was touched.
-		if (event.getActionMasked() != MotionEvent.ACTION_DOWN) {
-			return true;
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		// This event needs to be handled by the GestureDetector.
+		return gestureDetector.onTouchEvent(event);
+	}
+	
+	@Override
+	public boolean onDown(MotionEvent event) {
+		// This needs to return true for the GestureDetector to detect gestures.
+		return true;
+	}
+
+	@Override
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+		return false;
+	}
+
+	@Override
+	public void onLongPress(MotionEvent event) {
+		Log.d(getClass().getName(), "long press");
+	}
+
+	@Override
+	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+		MazeSelection mazeSelection = (MazeSelection) getMaze();
+
+		if (distanceX < -5) {
+			mazeSelection.shiftLeft(1);
+			invalidate();
 		}
-		
+		if (distanceX > 5) {
+			mazeSelection.shiftRight(1);
+			invalidate();
+		}
+		if (distanceY < -5) {
+			mazeSelection.shiftUp(1);
+			invalidate();
+		}
+		if (distanceY > 5) {
+			mazeSelection.shiftDown(1);
+			invalidate();
+		}
+
+		return true;
+	}
+
+	@Override
+	public boolean onSingleTapUp(MotionEvent event) {
 		// Normalize the coordinates touched into grid coordinates.
 		int gridPositionTouchedX = (int)Math.floor(((event.getX() - gridOffset_x) / getTilesize()));
 		int gridPositionTouchedY = (int)Math.floor(((event.getY() - gridOffset_y) / getTilesize()));
@@ -62,10 +98,15 @@ public class MazeEditorView extends MazeGridView {
 		}
 		
 		handleTileTouched(gridPositionTouchedX, gridPositionTouchedY);
-
 		return true;
 	}
+
+	@Override
+	public void onShowPress(MotionEvent event) {
+		// For providing some form of feedback to the user.
+	}
 	
+
 	private void handleTileTouched(int x, int y) {
 		// Prevent the edges of the maze being modified
 		if (getMaze().isTileAtAnEdge(x, y)) {
@@ -90,22 +131,28 @@ public class MazeEditorView extends MazeGridView {
 		super.onDraw(canvas);
 	
 		int tilesize = getTilesize();
+
+		// Draw vertical grid lines
+		for (int i = 0; i <= getMaze().getWidth(); i++) {
+			int current_x = (gridOffset_x + (tilesize * i));
+			canvas.drawLine(
+					current_x, // start x
+					gridOffset_y, // start y
+					current_x, // stop x
+					(gridOffset_y + (getMaze().getHeight() * tilesize)), // stop y
+					LINE_PAINT); // paint
+		}
 		
-		// Draw the grid lines separating each tile
-		for (int x = 0; x < getMaze().getWidth(); x++) {
-			for (int y = 0; y < getMaze().getHeight(); y++) {
-				
-				int xTileOffset = (x * tilesize) + gridOffset_x;
-				int yTileOffset = (y * tilesize) + gridOffset_y;
-	
-				canvas.drawRect(
-						xTileOffset, // left			
-						yTileOffset, // top
-						xTileOffset + tilesize, // right
-						yTileOffset + tilesize, // bottom
-						LINE_PAINT);
-			}
+		// Draw horizontal grid lines
+		for (int i = 0; i <= getMaze().getHeight(); i++) {
+			int current_y = (gridOffset_y + (tilesize * i));
+			canvas.drawLine(
+					gridOffset_x, // start x
+					current_y, // start y
+					(gridOffset_x + (getMaze().getWidth() * tilesize)), // stop x
+					current_y, // stop y
+					LINE_PAINT); // paint
 		}
 	}
-	
+
 }

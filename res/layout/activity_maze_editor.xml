@@ -8,43 +8,11 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 	    
-	    <Button 
+	    <Button
 	        android:id="@+id/saveMazeButton"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:text="Save" />
-
-	    <Button
-	        android:id="@+id/buttonUp"
-	        style="?android:attr/buttonStyleSmall"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:onClick="OnUpButtonClicked"
-	        android:text="Up" />
-
-	    <Button
-	        android:id="@+id/buttonRight"
-	        style="?android:attr/buttonStyleSmall"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:onClick="OnRightButtonClicked"
-	        android:text="Right" />
-
-	    <Button
-	        android:id="@+id/buttonDown"
-	        style="?android:attr/buttonStyleSmall"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:onClick="OnDownButtonClicked"
-	        android:text="Down" />
-
-	    <Button
-	        android:id="@+id/buttonLeft"
-	        style="?android:attr/buttonStyleSmall"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:onClick="OnLeftButtonClicked"
-	        android:text="Left" />
 	    
 	</LinearLayout>
 	    

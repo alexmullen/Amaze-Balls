@@ -132,13 +132,6 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-
-		TextView x = (TextView)findViewById(R.id.xTextView);
-		TextView y = (TextView)findViewById(R.id.yTextView);
-		
-		x.setText(String.valueOf(event.values[0]));
-		y.setText(String.valueOf(event.values[1]));
-		
 		ballController.lastAccelerometerReading_x = event.values[0];
 		ballController.lastAccelerometerReading_y = event.values[1];
 	}

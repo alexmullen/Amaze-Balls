@@ -45,25 +45,5 @@ public class MazeEditorActivity extends Activity {
 		TileFactory.registerTile(TileType.Wall, this.getResources().getDrawable(R.drawable.wall));
 		TileFactory.registerTile(TileType.Ball, this.getResources().getDrawable(R.drawable.ball));
 	}
-	
-	public void OnUpButtonClicked(View v) {
-		currentMazeSelection.shiftUp(3);
-		mazeEditorView.invalidate();
-	}
-	
-	public void OnRightButtonClicked(View v) {
-		currentMazeSelection.shiftRight(3);
-		mazeEditorView.invalidate();
-	}
-	
-	public void OnDownButtonClicked(View v) {
-		currentMazeSelection.shiftDown(3);
-		mazeEditorView.invalidate();
-	}
-	
-	public void OnLeftButtonClicked(View v) {
-		currentMazeSelection.shiftLeft(3);
-		mazeEditorView.invalidate();
-	}
 
 }

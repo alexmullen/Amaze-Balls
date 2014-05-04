@@ -120,5 +120,61 @@ public class MazeSelection extends Maze {
 		offset_x += amountToShift;
 		return amountToShift;
 	}
-
+	
+	
+	public int expandUp(int amount) {
+		int amountToExpand = Math.min(amount, offset_y);
+		offset_y -= amountToExpand;
+		selectionHeight += amountToExpand;
+		return amountToExpand;
+	}
+	
+	public int expandDown(int amount) {
+		int amountRemaining = (super.getHeight() - (offset_y + selectionHeight));
+		int amountToExpand = Math.min(amount, amountRemaining);
+		selectionHeight += amountToExpand;
+		return amountToExpand;
+	}
+	
+	public int expandRight(int amount) {
+		int amountRemaining = (super.getWidth() - (offset_x + selectionWidth));
+		int amountToExpand = Math.min(amount, amountRemaining);
+		selectionWidth += amountToExpand;
+		return amountToExpand;
+	}
+	
+	public int expandLeft(int amount) {
+		int amountToExpand = Math.min(amount, offset_x);
+		offset_x -= amountToExpand;
+		selectionWidth += amountToExpand;
+		return amountToExpand;
+	}
+	
+	
+	public int contractUp(int amount) {
+		int amountToContract = Math.min(amount, (selectionHeight - 1));
+		selectionHeight -= amountToContract;
+		return amountToContract;
+	}
+	
+	public int contractDown(int amount) {
+		int amountToContract = Math.min(amount, (selectionHeight - 1));
+		offset_y += amountToContract;
+		selectionHeight -= amountToContract;
+		return amountToContract;
+	}
+	
+	public int contractLeft(int amount) {
+		int amountToContract = Math.min(amount, (selectionWidth - 1));
+		selectionWidth -= amountToContract;
+		return amountToContract;
+	}
+	
+	public int contractRight(int amount) {
+		int amountToContract = Math.min(amount, (selectionWidth - 1));
+		offset_x += amountToContract;
+		selectionWidth -= amountToContract;
+		return amountToContract;
+	}
+	
 }

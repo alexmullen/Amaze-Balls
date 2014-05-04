@@ -8,7 +8,6 @@ import uk.ac.tees.amazeballs.maze.TileType;
 import uk.ac.tees.amazeballs.views.MazeEditorView;
 import android.os.Bundle;
 import android.app.Activity;
-import android.view.View;
 
 public class MazeEditorActivity extends Activity {
 

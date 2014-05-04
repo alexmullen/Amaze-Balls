@@ -4,8 +4,6 @@ import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.Tile;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -39,8 +37,6 @@ public class MazeGridView extends View {
 		super(context, attrs);
 		this.setMaze(new Maze(10, 15));		// For the Activity viewer to display something and not throw an NPE
 	}
-	
-	
 	
 	
 	public void setMaze(Maze maze) {
@@ -78,6 +74,25 @@ public class MazeGridView extends View {
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
 		
+//		// Calculate the ideal square size to use for the current view dimensions
+//        int tileSizeAcross = (int) Math.floor(w / currentMaze.getWidth());
+//        int tileSizeDown = (int) Math.floor(h / currentMaze.getHeight());
+//        tileSize = Math.min(tileSizeAcross, tileSizeDown);
+//        
+//        // Calculate the offsets so we can centre align the grid.
+//        gridOffset_x = (w - (tileSize * currentMaze.getWidth())) / 2;
+//        gridOffset_y = (h - (tileSize * currentMaze.getHeight())) / 2;
+	}
+	
+	@Override
+	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
+
+		
+		
+		int w = this.getWidth();
+		int h = this.getHeight();
+		
 		// Calculate the ideal square size to use for the current view dimensions
         int tileSizeAcross = (int) Math.floor(w / currentMaze.getWidth());
         int tileSizeDown = (int) Math.floor(h / currentMaze.getHeight());
@@ -86,12 +101,10 @@ public class MazeGridView extends View {
         // Calculate the offsets so we can centre align the grid.
         gridOffset_x = (w - (tileSize * currentMaze.getWidth())) / 2;
         gridOffset_y = (h - (tileSize * currentMaze.getHeight())) / 2;
-	}
-	
-	@Override
-	protected void onDraw(Canvas canvas) {
-		super.onDraw(canvas);
-
+		
+        
+		
+		
 		// Draw the maze
 		for (int x = 0; x < currentMaze.getWidth(); x++) {
 			for (int y = 0; y < currentMaze.getHeight(); y++) {

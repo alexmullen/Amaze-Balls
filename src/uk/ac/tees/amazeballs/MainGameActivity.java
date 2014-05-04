@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.TextView;
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;

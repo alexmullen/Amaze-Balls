@@ -13,9 +13,10 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
-import android.view.View;
+import android.view.ScaleGestureDetector;
+import android.view.ScaleGestureDetector.OnScaleGestureListener;
 
-public class MazeEditorView extends MazeGridView implements OnGestureListener {
+public class MazeEditorView extends MazeGridView implements OnGestureListener, OnScaleGestureListener {
 
 	private static final Paint LINE_PAINT;
 	
@@ -25,22 +26,27 @@ public class MazeEditorView extends MazeGridView implements OnGestureListener {
 	}
 	
 	private final GestureDetector gestureDetector;
+	private final ScaleGestureDetector scaleGestureDetector;
 	
 	public MazeEditorView(Context context) {
 		super(context);
 		gestureDetector = new GestureDetector(context, this);
+		scaleGestureDetector = new ScaleGestureDetector(context, this);
 	}
 	
 	public MazeEditorView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		gestureDetector = new GestureDetector(context, this);
+		scaleGestureDetector = new ScaleGestureDetector(context, this);
 	}
 
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		// This event needs to be handled by the GestureDetector.
-		return gestureDetector.onTouchEvent(event);
+		gestureDetector.onTouchEvent(event);
+		scaleGestureDetector.onTouchEvent(event);
+		return true;
 	}
 	
 	@Override
@@ -104,6 +110,38 @@ public class MazeEditorView extends MazeGridView implements OnGestureListener {
 	@Override
 	public void onShowPress(MotionEvent event) {
 		// For providing some form of feedback to the user.
+	}
+	
+	@Override
+	public boolean onScale(ScaleGestureDetector detector) {
+		MazeSelection mazeSelection = (MazeSelection) getMaze();
+		
+		if (detector.getScaleFactor() <= 1.0f) {
+			mazeSelection.expandUp(1);
+			mazeSelection.expandDown(1);
+			mazeSelection.expandRight(1);
+			mazeSelection.expandLeft(1);
+			invalidate();
+		} 
+		if (detector.getScaleFactor() >= 1.0f) {
+			mazeSelection.contractUp(1);
+			mazeSelection.contractDown(1);
+			mazeSelection.contractRight(1);
+			mazeSelection.contractLeft(1);
+			invalidate();
+		}
+		
+		return true;
+	}
+
+	@Override
+	public boolean onScaleBegin(ScaleGestureDetector detector) {
+		return true;
+	}
+
+	@Override
+	public void onScaleEnd(ScaleGestureDetector detector) {
+
 	}
 	
 

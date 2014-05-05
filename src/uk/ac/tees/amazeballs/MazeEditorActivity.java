@@ -54,6 +54,7 @@ public class MazeEditorActivity extends Activity {
 		
 		// Set the maze for the MazeEditorView to display
 		mazeEditorView.setMaze(currentMazeSelection);
+		mazeEditorView.invalidate();
 	}
 	
 	@Override
@@ -115,6 +116,7 @@ public class MazeEditorActivity extends Activity {
 		currentMaze = MazeFactory.createBorderedMaze(25, 30);
 		currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
 		mazeEditorView.setMaze(currentMazeSelection);
+		mazeEditorView.invalidate();
 	}
 	
 	private void handleOpenMenuOption() {
@@ -131,6 +133,7 @@ public class MazeEditorActivity extends Activity {
 					currentMaze = LevelManager.getCustomLevel(MazeEditorActivity.this, levels[which]);
 					currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
 					mazeEditorView.setMaze(currentMazeSelection);
+					mazeEditorView.invalidate();
 					Toast.makeText(MazeEditorActivity.this, "Level opened", Toast.LENGTH_SHORT).show();
 				}
 			});

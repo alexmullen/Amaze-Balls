@@ -16,7 +16,7 @@ import android.view.View;
  * @author Alex Mullen (J9858839)
  *
  */
-public class MazeGridView extends View {
+public class MazeView extends View {
 
 	private int tileSize;
 	protected int gridOffset_x;
@@ -28,12 +28,12 @@ public class MazeGridView extends View {
 	private boolean displayBall = false;
 	
 	
-	public MazeGridView(Context context) {
+	public MazeView(Context context) {
 		// Constructor used when this view is created via code.
 		super(context);
 	}
 	
-	public MazeGridView(Context context, AttributeSet attrs) {
+	public MazeView(Context context, AttributeSet attrs) {
 		// Constructor used when this view is inflated from XML.
 		super(context, attrs);
 		this.setMaze(new Maze(10, 15));		// For the Activity viewer to display something and not throw an NPE
@@ -43,7 +43,6 @@ public class MazeGridView extends View {
 	public void setMaze(Maze maze) {
 		currentMaze = maze;
 		//onSizeChanged(this.getWidth(), this.getHeight(), this.getWidth(), this.getHeight());
-        invalidate();
 	}
 	
 	public Maze getMaze() {
@@ -52,7 +51,6 @@ public class MazeGridView extends View {
 	
 	public void setBallDisplayed(boolean show) {
 		displayBall = show;
-		invalidate();
 	}
 	
 	public boolean getBallDisplayed() {

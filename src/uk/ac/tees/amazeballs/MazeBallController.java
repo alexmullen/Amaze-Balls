@@ -4,7 +4,7 @@ import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
 import uk.ac.tees.amazeballs.maze.TileType;
 import uk.ac.tees.amazeballs.views.MazeBall;
-import uk.ac.tees.amazeballs.views.MazeGridView;
+import uk.ac.tees.amazeballs.views.MazeView;
 
 /**
  * A controller class for managing a ball in a maze.
@@ -18,12 +18,12 @@ public class MazeBallController {
 	public volatile float lastAccelerometerReading_y;
 	
 	private final Maze model;
-	private final MazeGridView view;
+	private final MazeView view;
 	
 	private final static int GRID_SCROLLING_AMOUNT = 1;
 	private final static double TILT_SENSITIVITY = 0.75;
 	
-	public MazeBallController(Maze mazeModel, MazeGridView mazeView) {
+	public MazeBallController(Maze mazeModel, MazeView mazeView) {
 		this.model = mazeModel;
 		this.view = mazeView;
 	}

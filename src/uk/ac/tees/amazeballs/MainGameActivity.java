@@ -5,7 +5,7 @@ import uk.ac.tees.amazeballs.maze.MazeSelection;
 import uk.ac.tees.amazeballs.maze.TileImageFactory;
 import uk.ac.tees.amazeballs.maze.TileType;
 import uk.ac.tees.amazeballs.views.MazeBall;
-import uk.ac.tees.amazeballs.views.MazeGridView;
+import uk.ac.tees.amazeballs.views.MazeView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -30,7 +30,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 	
 	private Maze currentMaze;
 	private MazeSelection mazeSelection;
-	private MazeGridView gameView;
+	private MazeView gameView;
 	private MazeBallController ballController;
 	private GameTickHandler tickHandler;
 	
@@ -65,12 +65,12 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		} else {
 			// Failure! No accelerometer
 			Log.e(this.getClass().getName(), "no accelerometer on device, unable to play game");
-			//finish();
+			//finish(); // No accelerometer on the emulator
 		}
 
 		loadTiles();
 		
-		gameView = (MazeGridView) findViewById(R.id.main_game_view);
+		gameView = (MazeView) findViewById(R.id.main_game_view);
 
 		// Load the maze to play
 		currentMaze = (Maze) getIntent().getExtras().getSerializable("maze");

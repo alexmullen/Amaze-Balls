@@ -14,7 +14,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.ScaleGestureDetector.OnScaleGestureListener;
 
-public class MazeEditorView extends MazeGridView implements OnGestureListener, OnScaleGestureListener {
+public class MazeEditorView extends MazeView implements OnGestureListener, OnScaleGestureListener {
 
 	private static final Paint LINE_PAINT;
 	
@@ -65,25 +65,31 @@ public class MazeEditorView extends MazeGridView implements OnGestureListener, O
 
 	@Override
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+		boolean invalidateNeeded = false;
 		MazeSelection mazeSelection = (MazeSelection) getMaze();
 
 		if (distanceX < -5) {
 			mazeSelection.shiftLeft(1);
-			invalidate();
+			invalidateNeeded = true;
 		}
 		if (distanceX > 5) {
 			mazeSelection.shiftRight(1);
-			invalidate();
+			invalidateNeeded = true;
 		}
 		if (distanceY < -5) {
 			mazeSelection.shiftUp(1);
-			invalidate();
+			invalidateNeeded = true;
 		}
 		if (distanceY > 5) {
 			mazeSelection.shiftDown(1);
+			invalidateNeeded = true;
+		}
+		
+		
+		if (invalidateNeeded) {
 			invalidate();
 		}
-
+		
 		return true;
 	}
 
@@ -112,6 +118,7 @@ public class MazeEditorView extends MazeGridView implements OnGestureListener, O
 	
 	@Override
 	public boolean onScale(ScaleGestureDetector detector) {
+		boolean invalidateNeeded = false;
 		MazeSelection mazeSelection = (MazeSelection) getMaze();
 		
 		if (detector.getScaleFactor() <= 1.0f) {
@@ -119,13 +126,17 @@ public class MazeEditorView extends MazeGridView implements OnGestureListener, O
 			mazeSelection.expandDown(1);
 			mazeSelection.expandRight(1);
 			mazeSelection.expandLeft(1);
-			invalidate();
+			invalidateNeeded = true;
 		} 
 		if (detector.getScaleFactor() >= 1.0f) {
 			mazeSelection.contractUp(1);
 			mazeSelection.contractDown(1);
 			mazeSelection.contractRight(1);
 			mazeSelection.contractLeft(1);
+			invalidateNeeded = true;
+		}
+		
+		if (invalidateNeeded) {
 			invalidate();
 		}
 		

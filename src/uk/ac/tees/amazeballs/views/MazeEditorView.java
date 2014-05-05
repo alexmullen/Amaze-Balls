@@ -1,26 +1,63 @@
 package uk.ac.tees.amazeballs.views;
 
+import java.util.ArrayList;
+
+import uk.ac.tees.amazeballs.R;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
+import uk.ac.tees.amazeballs.maze.TileImageFactory;
 import uk.ac.tees.amazeballs.maze.TileType;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.ScaleGestureDetector.OnScaleGestureListener;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MazeEditorView extends MazeView implements OnGestureListener, OnScaleGestureListener {
 
 	private static final Paint LINE_PAINT;
+	private static final ArrayList<SpecialTileChoice> SPECIAL_TILES;
 	
 	static {
 		LINE_PAINT = new Paint();
 		LINE_PAINT.setStyle(Style.STROKE);
+		
+		
+		SPECIAL_TILES = new ArrayList<SpecialTileChoice>();
+		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Chest, TileImageFactory.getImage(TileType.Chest), "Chest"));
+		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Door, TileImageFactory.getImage(TileType.Door), "Door"));
+		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Goal, TileImageFactory.getImage(TileType.Goal), "Goal"));
+		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Ice, TileImageFactory.getImage(TileType.Ice), "Ice"));
+		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Key, TileImageFactory.getImage(TileType.Key), "Key"));
+		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Penalty, TileImageFactory.getImage(TileType.Penalty), "Penalty"));
+		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Rain, TileImageFactory.getImage(TileType.Rain), "Rain"));
+		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Start, TileImageFactory.getImage(TileType.Start), "Start"));
+	}
+	
+	private static class SpecialTileChoice {
+		public TileType type;
+		public Drawable image;
+		public String title;
+		
+		public SpecialTileChoice(TileType type, Drawable image, String title) {
+			this.type = type;
+			this.image = image;
+			this.title = title;
+		}
 	}
 	
 	private final GestureDetector gestureDetector;
@@ -60,7 +97,55 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 
 	@Override
 	public void onLongPress(MotionEvent event) {
-		Log.d(getClass().getName(), "long press");
+
+		// Normalize the coordinates touched into grid coordinates.
+		final int gridPositionTouchedX = (int)Math.floor(((event.getX() - gridOffset_x) / getTilesize()));
+		final int gridPositionTouchedY = (int)Math.floor(((event.getY() - gridOffset_y) / getTilesize()));
+		
+		// Ignore any touches that are within our view area but outside the displayed grid.
+		if (gridPositionTouchedX < 0 || 
+			gridPositionTouchedY < 0 || 
+			gridPositionTouchedX >= getMaze().getWidth() ||
+			gridPositionTouchedY >= getMaze().getHeight()) {
+			return;
+		}
+		
+		// Prevent the edges of the maze being modified
+		if (getMaze().isTileAtAnEdge(gridPositionTouchedX, gridPositionTouchedY)) {
+			return;
+		}
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
+        builder.setTitle("Choose a block");
+        builder.setAdapter(new ArrayAdapter<SpecialTileChoice>(this.getContext(), R.layout.dialog_specialtile_row, SPECIAL_TILES) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view;
+                if (convertView == null) {
+                    LayoutInflater inflater = LayoutInflater.from(getContext());
+                    view = inflater.inflate(R.layout.dialog_specialtile_row, parent, false);
+                } else {
+                    view = convertView;
+                }
+                ImageView imageView = (ImageView) view.findViewById(R.id.special_tile_choice_image);
+                TextView textView = (TextView) view.findViewById(R.id.special_tile_choice_title);
+                SpecialTileChoice specialTileChoice = getItem(position);
+                imageView.setImageDrawable(specialTileChoice.image);
+                textView.setText(specialTileChoice.title);
+                return view;
+            }
+        }, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.i("Dialog", "selected choice: " + SPECIAL_TILES.get(which).title);
+        		getMaze().setTileAt(gridPositionTouchedX, gridPositionTouchedY, SPECIAL_TILES.get(which).type);
+
+        		// Repaint the view
+        		invalidate();
+            }
+        });
+        builder.create().show();;
 	}
 
 	@Override

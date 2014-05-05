@@ -3,8 +3,6 @@ package uk.ac.tees.amazeballs;
 import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.MazeFactory;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
-import uk.ac.tees.amazeballs.maze.TileImageFactory;
-import uk.ac.tees.amazeballs.maze.TileType;
 import uk.ac.tees.amazeballs.views.MazeEditorView;
 import android.os.Bundle;
 import android.view.Menu;
@@ -29,9 +27,7 @@ public class MazeEditorActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_maze_editor);
-		
-		loadTiles();
-		
+
 		mazeEditorView = (MazeEditorView) findViewById(R.id.maze_grid_view);
 	
 		// Check whether we need to restore our state
@@ -62,13 +58,6 @@ public class MazeEditorActivity extends Activity {
 		outState.putString("level_name", currentLevelName);
 		outState.putSerializable("maze", currentMaze);
 		super.onSaveInstanceState(outState);
-	}
-
-
-	private void loadTiles() {
-		TileImageFactory.registerImage(TileType.Floor, this.getResources().getDrawable(R.drawable.floor));
-		TileImageFactory.registerImage(TileType.Wall, this.getResources().getDrawable(R.drawable.wall));
-		TileImageFactory.registerImage(TileType.Ball, this.getResources().getDrawable(R.drawable.ball));
 	}
 
 	@Override

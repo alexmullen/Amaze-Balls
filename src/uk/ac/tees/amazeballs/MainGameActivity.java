@@ -68,8 +68,6 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 			//finish(); // No accelerometer on the emulator
 		}
 
-		loadTiles();
-		
 		gameView = (MazeView) findViewById(R.id.main_game_view);
 
 		// Load the maze to play
@@ -109,15 +107,6 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		super.onResume();
 		sensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
 		running = true;
-	}
-
-	/**
-	 * Loads and registers the tile images used.
-	 */
-	private void loadTiles() {
-		TileImageFactory.registerImage(TileType.Floor, this.getResources().getDrawable(R.drawable.floor));
-		TileImageFactory.registerImage(TileType.Wall, this.getResources().getDrawable(R.drawable.wall));
-		TileImageFactory.registerImage(TileType.Ball, this.getResources().getDrawable(R.drawable.ball));
 	}
 	
 	@Override

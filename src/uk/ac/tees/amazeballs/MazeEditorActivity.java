@@ -30,6 +30,7 @@ public class MazeEditorActivity extends Activity {
 		
 		
 		if (savedInstanceState != null) {
+			// Restore a previous maze being edited
 			currentMaze = (Maze) savedInstanceState.getSerializable("maze");
 		} else {
 			// Create a bordered maze of the specified width and height
@@ -48,14 +49,11 @@ public class MazeEditorActivity extends Activity {
 		mazeEditorView.setMaze(currentMazeSelection);
 	}
 	
-	
-	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		outState.putSerializable("maze", currentMaze);
 		super.onSaveInstanceState(outState);
 	}
-
 
 
 	private void loadTiles() {
@@ -95,6 +93,5 @@ public class MazeEditorActivity extends Activity {
 				return super.onOptionsItemSelected(item);
 		}
 	}
-
 
 }

@@ -2,7 +2,15 @@ package uk.ac.tees.amazeballs.maze;
 
 
 public enum TileType {
+	Ball,
+	Chest,
+	Door,
 	Floor,
-	Wall, 
-	Ball
+	Goal,
+	Ice,
+	Key,
+	Penalty,
+	Rain,
+	Start,
+	Wall
 }

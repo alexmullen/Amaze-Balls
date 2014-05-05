@@ -50,15 +50,19 @@ public final class R {
         public static final int Score3=0x7f08000d;
         public static final int Score4=0x7f080011;
         public static final int Score5=0x7f080015;
-        public static final int action_settings=0x7f080021;
         public static final int button1=0x7f08001a;
         public static final int button2=0x7f080019;
         public static final int button3=0x7f080018;
         public static final int button4=0x7f08001b;
+        public static final int editText1=0x7f080002;
+        public static final int editor_file=0x7f080021;
+        public static final int editor_file_new=0x7f080022;
+        public static final int editor_file_save=0x7f080023;
+        public static final int editor_file_saveas=0x7f080024;
+        public static final int editor_play=0x7f080025;
         public static final int imageView1=0x7f08001c;
         public static final int main_game_view=0x7f080000;
-        public static final int maze_grid_view=0x7f080002;
-        public static final int saveMazeButton=0x7f080001;
+        public static final int maze_grid_view=0x7f080001;
         public static final int spinner1=0x7f080017;
         public static final int tableRow1=0x7f080003;
         public static final int tableRow2=0x7f080007;
@@ -73,10 +77,11 @@ public final class R {
     public static final class layout {
         public static final int activity_main_game=0x7f030000;
         public static final int activity_maze_editor=0x7f030001;
-        public static final int highscores=0x7f030002;
-        public static final int level_select=0x7f030003;
-        public static final int main_menu=0x7f030004;
-        public static final int settings=0x7f030005;
+        public static final int dialog_level_save=0x7f030002;
+        public static final int highscores=0x7f030003;
+        public static final int level_select=0x7f030004;
+        public static final int main_menu=0x7f030005;
+        public static final int settings=0x7f030006;
     }
     public static final class menu {
         public static final int main_game=0x7f070000;

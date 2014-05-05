@@ -78,6 +78,8 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		currentMaze = MazeFactory.createBorderedMaze(20, 30);
 		
 		currentMaze.setTileAt(3, 10, TileFactory.createTile(TileType.Wall));
+		currentMaze.setTileAt(4, 10, TileFactory.createTile(TileType.Wall));
+		currentMaze.setTileAt(3, 11, TileFactory.createTile(TileType.Wall));
 		
 		
 		/*

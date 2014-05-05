@@ -71,20 +71,6 @@ public class MazeGridView extends View {
 	}
 	
 	@Override
-	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-		super.onSizeChanged(w, h, oldw, oldh);
-		
-//		// Calculate the ideal square size to use for the current view dimensions
-//        int tileSizeAcross = (int) Math.floor(w / currentMaze.getWidth());
-//        int tileSizeDown = (int) Math.floor(h / currentMaze.getHeight());
-//        tileSize = Math.min(tileSizeAcross, tileSizeDown);
-//        
-//        // Calculate the offsets so we can centre align the grid.
-//        gridOffset_x = (w - (tileSize * currentMaze.getWidth())) / 2;
-//        gridOffset_y = (h - (tileSize * currentMaze.getHeight())) / 2;
-	}
-	
-	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
@@ -113,6 +99,7 @@ public class MazeGridView extends View {
 				int yTileOffset = (y * tileSize) + gridOffset_y;
 				
 				Tile tile = currentMaze.getTileAt(x, y);
+//				if (tile == null) { continue; }
 				Drawable tileImage = tile.getImage();
 				tileImage.setBounds(xTileOffset, // left
 						yTileOffset, // top

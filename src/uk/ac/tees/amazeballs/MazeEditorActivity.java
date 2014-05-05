@@ -5,9 +5,13 @@ import uk.ac.tees.amazeballs.maze.MazeFactory;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
 import uk.ac.tees.amazeballs.maze.TileFactory;
 import uk.ac.tees.amazeballs.maze.TileType;
+import uk.ac.tees.amazeballs.menus.SaveLevelAsDialogFragment;
 import uk.ac.tees.amazeballs.views.MazeEditorView;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.app.Activity;
+import android.content.Intent;
 
 public class MazeEditorActivity extends Activity {
 
@@ -44,5 +48,38 @@ public class MazeEditorActivity extends Activity {
 		TileFactory.registerTile(TileType.Wall, this.getResources().getDrawable(R.drawable.wall));
 		TileFactory.registerTile(TileType.Ball, this.getResources().getDrawable(R.drawable.ball));
 	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.maze_editor, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle presses on the options menu items
+		switch (item.getItemId()) {			
+			case R.id.editor_file_new:
+				currentMaze = MazeFactory.createBorderedMaze(25, 30);
+				currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
+				mazeEditorView.setMaze(currentMazeSelection);
+				return true;
+			case R.id.editor_file_save:
+				return true;
+			case R.id.editor_file_saveas:
+				new SaveLevelAsDialogFragment().show(this.getFragmentManager(), "savelevel");
+				return true;
+			case R.id.editor_play:
+				//Bundle b = new Bundle();
+				//b.putSerializable("maze", currentMaze);
+				Intent i = new Intent(this, MainGameActivity.class);
+				//i.putExtras(b);
+				startActivity(i);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
 
 }

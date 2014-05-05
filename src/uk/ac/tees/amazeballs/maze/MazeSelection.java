@@ -8,6 +8,8 @@ package uk.ac.tees.amazeballs.maze;
  */
 public class MazeSelection extends Maze {
 
+	private static final long serialVersionUID = 1L;
+	
 	private int offset_x;
 	private int offset_y;
 	private int selectionWidth;

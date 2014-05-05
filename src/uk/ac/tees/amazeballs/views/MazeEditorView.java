@@ -158,8 +158,6 @@ public class MazeEditorView extends MazeGridView implements OnGestureListener, O
 		
 		// Repaint the view
 		invalidate();
-		
-		Log.d(getClass().getName(), "(" + x + "," + y + ")");
 	}
 
 	@Override

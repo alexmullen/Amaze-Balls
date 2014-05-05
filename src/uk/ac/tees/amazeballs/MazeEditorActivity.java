@@ -5,12 +5,16 @@ import uk.ac.tees.amazeballs.maze.MazeFactory;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
 import uk.ac.tees.amazeballs.maze.TileImageFactory;
 import uk.ac.tees.amazeballs.maze.TileType;
-import uk.ac.tees.amazeballs.menus.SaveLevelAsDialogFragment;
 import uk.ac.tees.amazeballs.views.MazeEditorView;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 
 public class MazeEditorActivity extends Activity {
@@ -18,6 +22,8 @@ public class MazeEditorActivity extends Activity {
 	private Maze currentMaze;
 	private MazeSelection currentMazeSelection;
 	private MazeEditorView mazeEditorView;
+	
+	private String currentLevelName;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,13 +33,14 @@ public class MazeEditorActivity extends Activity {
 		loadTiles();
 		
 		mazeEditorView = (MazeEditorView) findViewById(R.id.maze_grid_view);
-		
-		
+	
+		// Check whether we need to restore our state
 		if (savedInstanceState != null) {
-			// Restore a previous maze being edited
+			// Restore our state
+			currentLevelName = savedInstanceState.getString("level_name");
 			currentMaze = (Maze) savedInstanceState.getSerializable("maze");
 		} else {
-			// Create a bordered maze of the specified width and height
+			// Create a new bordered maze of the specified width and height
 			currentMaze = MazeFactory.createBorderedMaze(25, 30);
 		}
 		
@@ -51,6 +58,7 @@ public class MazeEditorActivity extends Activity {
 	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
+		outState.putString("level_name", currentLevelName);
 		outState.putSerializable("maze", currentMaze);
 		super.onSaveInstanceState(outState);
 	}
@@ -73,14 +81,22 @@ public class MazeEditorActivity extends Activity {
 		// Handle presses on the options menu items
 		switch (item.getItemId()) {			
 			case R.id.editor_file_new:
-				currentMaze = MazeFactory.createBorderedMaze(25, 30);
-				currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
-				mazeEditorView.setMaze(currentMazeSelection);
+				handleNewMenuOption();
+				return true;
+			case R.id.editor_file_open:
+				handleOpenMenuOption();
 				return true;
 			case R.id.editor_file_save:
+				// Check it already has a name that it has been saved by
+				if (currentLevelName != null) {
+					// Overwrite
+					saveCurrentLevel(currentLevelName);
+				} else {
+					handleSaveAsMenuOption();
+				}
 				return true;
 			case R.id.editor_file_saveas:
-				new SaveLevelAsDialogFragment().show(this.getFragmentManager(), "savelevel");
+				handleSaveAsMenuOption();
 				return true;
 			case R.id.editor_play:
 				Bundle b = new Bundle();
@@ -93,5 +109,59 @@ public class MazeEditorActivity extends Activity {
 				return super.onOptionsItemSelected(item);
 		}
 	}
+	
+	private void handleNewMenuOption() {
+		currentLevelName = null;
+		currentMaze = MazeFactory.createBorderedMaze(25, 30);
+		currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
+		mazeEditorView.setMaze(currentMazeSelection);
+	}
+	
+	private void handleOpenMenuOption() {
+		final String[] levels = LevelManager.getCustomLevels(this);
+		if (levels.length == 0) {
+			Toast.makeText(this, "There are no custom levels to open", Toast.LENGTH_SHORT).show();
+		} else {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Choose a level to edit");
+			builder.setItems(levels, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					currentLevelName = levels[which];
+					currentMaze = LevelManager.getCustomLevel(MazeEditorActivity.this, levels[which]);
+					currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
+					mazeEditorView.setMaze(currentMazeSelection);
+					Toast.makeText(MazeEditorActivity.this, "Level opened", Toast.LENGTH_SHORT).show();
+				}
+			});
+			builder.create().show();
+		}
+	}
 
+	private void handleSaveAsMenuOption() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		final View inflatedView = this.getLayoutInflater().inflate(R.layout.dialog_level_save, null);
+		builder.setView(inflatedView);
+		builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				EditText levelNameTextView = (EditText) inflatedView.findViewById(R.id.dialog_save_levelname_edittext);
+				currentLevelName = levelNameTextView.getText().toString();
+				saveCurrentLevel(currentLevelName);
+			}
+		});
+		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		});
+		builder.create().show();
+	}
+
+	private void saveCurrentLevel(String levelname) {
+		LevelManager.saveCustomLevel(MazeEditorActivity.this, levelname, currentMaze);
+		Toast.makeText(MazeEditorActivity.this, "Level saved", Toast.LENGTH_SHORT).show();
+	}
+	
 }

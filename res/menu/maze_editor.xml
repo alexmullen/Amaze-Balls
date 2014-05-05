@@ -10,6 +10,9 @@
                 android:id="@+id/editor_file_new"
                 android:title="New"/>
             <item
+                android:id="@+id/editor_file_open"
+                android:title="Open"/>
+            <item
                 android:id="@+id/editor_file_save"
                 android:title="Save"/>
             <item
@@ -17,7 +20,6 @@
                 android:title="Save As"/>
         </menu>
     </item>
-    
     <item
         android:id="@+id/editor_play"
         android:orderInCategory="200"

@@ -54,12 +54,13 @@ public final class R {
         public static final int button2=0x7f080019;
         public static final int button3=0x7f080018;
         public static final int button4=0x7f08001b;
-        public static final int editText1=0x7f080002;
+        public static final int dialog_save_levelname_edittext=0x7f080002;
         public static final int editor_file=0x7f080021;
         public static final int editor_file_new=0x7f080022;
-        public static final int editor_file_save=0x7f080023;
-        public static final int editor_file_saveas=0x7f080024;
-        public static final int editor_play=0x7f080025;
+        public static final int editor_file_open=0x7f080023;
+        public static final int editor_file_save=0x7f080024;
+        public static final int editor_file_saveas=0x7f080025;
+        public static final int editor_play=0x7f080026;
         public static final int imageView1=0x7f08001c;
         public static final int main_game_view=0x7f080000;
         public static final int maze_grid_view=0x7f080001;

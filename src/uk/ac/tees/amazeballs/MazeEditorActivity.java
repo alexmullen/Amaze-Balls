@@ -3,7 +3,7 @@ package uk.ac.tees.amazeballs;
 import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.MazeFactory;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
-import uk.ac.tees.amazeballs.maze.TileFactory;
+import uk.ac.tees.amazeballs.maze.TileImageFactory;
 import uk.ac.tees.amazeballs.maze.TileType;
 import uk.ac.tees.amazeballs.menus.SaveLevelAsDialogFragment;
 import uk.ac.tees.amazeballs.views.MazeEditorView;
@@ -28,8 +28,13 @@ public class MazeEditorActivity extends Activity {
 		
 		mazeEditorView = (MazeEditorView) findViewById(R.id.maze_grid_view);
 		
-		// Create a bordered maze of the specified width and height
-		currentMaze = MazeFactory.createBorderedMaze(25, 30);
+		
+		if (savedInstanceState != null) {
+			currentMaze = (Maze) savedInstanceState.getSerializable("maze");
+		} else {
+			// Create a bordered maze of the specified width and height
+			currentMaze = MazeFactory.createBorderedMaze(25, 30);
+		}
 		
 		/*
 		 * Create a maze selection to view only a small portion of the maze so
@@ -43,10 +48,20 @@ public class MazeEditorActivity extends Activity {
 		mazeEditorView.setMaze(currentMazeSelection);
 	}
 	
+	
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putSerializable("maze", currentMaze);
+		super.onSaveInstanceState(outState);
+	}
+
+
+
 	private void loadTiles() {
-		TileFactory.registerTile(TileType.Floor, this.getResources().getDrawable(R.drawable.floor));
-		TileFactory.registerTile(TileType.Wall, this.getResources().getDrawable(R.drawable.wall));
-		TileFactory.registerTile(TileType.Ball, this.getResources().getDrawable(R.drawable.ball));
+		TileImageFactory.registerImage(TileType.Floor, this.getResources().getDrawable(R.drawable.floor));
+		TileImageFactory.registerImage(TileType.Wall, this.getResources().getDrawable(R.drawable.wall));
+		TileImageFactory.registerImage(TileType.Ball, this.getResources().getDrawable(R.drawable.ball));
 	}
 
 	@Override
@@ -70,10 +85,10 @@ public class MazeEditorActivity extends Activity {
 				new SaveLevelAsDialogFragment().show(this.getFragmentManager(), "savelevel");
 				return true;
 			case R.id.editor_play:
-				//Bundle b = new Bundle();
-				//b.putSerializable("maze", currentMaze);
+				Bundle b = new Bundle();
+				b.putSerializable("maze", currentMaze);
 				Intent i = new Intent(this, MainGameActivity.class);
-				//i.putExtras(b);
+				i.putExtras(b);
 				startActivity(i);
 				return true;
 			default:

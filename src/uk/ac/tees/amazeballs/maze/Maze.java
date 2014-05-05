@@ -41,7 +41,7 @@ public class Maze implements Serializable {
 	
 	private final int width;
 	private final int height;
-	private final Tile[][] grid;
+	private final TileType[][] grid;
 
 	/**
 	 * Instantiates a new empty maze of the specified dimensions.
@@ -52,7 +52,7 @@ public class Maze implements Serializable {
 	public Maze(int width, int height) {
 		this.width = width;
 		this.height = height;
-		this.grid = new Tile[width][height];
+		this.grid = new TileType[width][height];
 	}
 	
 	/**
@@ -81,7 +81,7 @@ public class Maze implements Serializable {
 	 * @param y the y position (down)
 	 * @return the tile at that location or null if there is no tile
 	 */
-	public Tile getTileAt(int x, int y) {
+	public TileType getTileAt(int x, int y) {
 		return grid[x][y];
 	}
 	
@@ -93,7 +93,7 @@ public class Maze implements Serializable {
 	 * @param y the y position (down)
 	 * @param tile the tile to place at the specified coordinates
 	 */
-	public void setTileAt(int x, int y, Tile tile) {
+	public void setTileAt(int x, int y, TileType tile) {
 		grid[x][y] = tile;
 	}
 	

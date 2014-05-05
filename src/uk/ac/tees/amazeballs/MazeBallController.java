@@ -2,7 +2,7 @@ package uk.ac.tees.amazeballs;
 
 import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
-import uk.ac.tees.amazeballs.maze.WallTile;
+import uk.ac.tees.amazeballs.maze.TileType;
 import uk.ac.tees.amazeballs.views.MazeBall;
 import uk.ac.tees.amazeballs.views.MazeGridView;
 
@@ -71,26 +71,26 @@ public class MazeBallController {
 
 		// Potentially scroll the screen down
 		int mazeAreaHeight = view.getTilesize() * model.getHeight();
-		if ((double)ball.position_y / mazeAreaHeight >= 0.95) {
+		if ((double)ball.position_y / mazeAreaHeight >= 0.75) {
 			int amountShiftedDown = mazeSelection.shiftDown(GRID_SCROLLING_AMOUNT);
 			ball.position_y -= (amountShiftedDown * view.getTilesize());
 		}
 		
 		// Potentially scroll the screen up
-		if ((double)ball.position_y / mazeAreaHeight <= 0.05) {
+		if ((double)ball.position_y / mazeAreaHeight <= 0.25) {
 			int amountShiftedUp = mazeSelection.shiftUp(GRID_SCROLLING_AMOUNT);
 			ball.position_y += (amountShiftedUp * view.getTilesize());
 		}
 		
 		// Potentially scroll the screen right
 		int mazeAreaWidth = view.getTilesize() * model.getWidth();
-		if ((double)ball.position_x / mazeAreaWidth >= 0.95) {
+		if ((double)ball.position_x / mazeAreaWidth >= 0.75) {
 			int amountShiftedRight = mazeSelection.shiftRight(GRID_SCROLLING_AMOUNT);
 			ball.position_x -= (amountShiftedRight * view.getTilesize());
 		}
 		
 		// Potentially scroll the screen left
-		if ((double)ball.position_x / mazeAreaWidth <= 0.05) {
+		if ((double)ball.position_x / mazeAreaWidth <= 0.25) {
 			int amountShiftedLeft = mazeSelection.shiftLeft(GRID_SCROLLING_AMOUNT);
 			ball.position_x += (amountShiftedLeft * view.getTilesize());
 		}
@@ -111,28 +111,28 @@ public class MazeBallController {
 		// Check top left corner of ball
 		gridPositionTouchedX = (int)(view.getBall().position_x) / view.getTilesize();
 		gridPositionTouchedY = (int)(view.getBall().position_y) / view.getTilesize();
-		if (model.getTileAt(gridPositionTouchedX, gridPositionTouchedY) instanceof WallTile) {
+		if (model.getTileAt(gridPositionTouchedX, gridPositionTouchedY) == TileType.Wall) {
 			return true;
 		}
 		
 		// Check top right corner of ball
 		gridPositionTouchedX = (int)(view.getBall().position_x + ballSize) / view.getTilesize();
 		gridPositionTouchedY = (int)(view.getBall().position_y) / view.getTilesize();
-		if (model.getTileAt(gridPositionTouchedX, gridPositionTouchedY) instanceof WallTile) {
+		if (model.getTileAt(gridPositionTouchedX, gridPositionTouchedY) == TileType.Wall) {
 			return true;
 		}
 		
 		// Check bottom right corner of ball
 		gridPositionTouchedX = (int)(view.getBall().position_x + ballSize) / view.getTilesize();
 		gridPositionTouchedY = (int)(view.getBall().position_y + ballSize) / view.getTilesize();
-		if (model.getTileAt(gridPositionTouchedX, gridPositionTouchedY) instanceof WallTile) {
+		if (model.getTileAt(gridPositionTouchedX, gridPositionTouchedY) == TileType.Wall) {
 			return true;
 		}
 		
 		// Check bottom left corner of ball
 		gridPositionTouchedX = (int)(view.getBall().position_x) / view.getTilesize();
 		gridPositionTouchedY = (int)(view.getBall().position_y + ballSize) / view.getTilesize();
-		if (model.getTileAt(gridPositionTouchedX, gridPositionTouchedY) instanceof WallTile) {
+		if (model.getTileAt(gridPositionTouchedX, gridPositionTouchedY) == TileType.Wall) {
 			return true;
 		}
 		

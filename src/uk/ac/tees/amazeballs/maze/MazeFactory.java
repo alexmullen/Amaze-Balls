@@ -20,7 +20,7 @@ public class MazeFactory {
 		Maze blankMaze = new Maze(width, height);
 		for (int x = 0; x < blankMaze.getWidth(); x++) {
 			for (int y = 0; y < blankMaze.getHeight(); y++) {
-				blankMaze.setTileAt(x, y, TileFactory.createTile(TileType.Floor));
+				blankMaze.setTileAt(x, y, TileType.Floor);
 			}
 		}
 		return blankMaze;
@@ -41,10 +41,10 @@ public class MazeFactory {
 				// Check if the current position is at an edge
 				if (borderedMaze.isTileAtAnEdge(x, y)) {
 					// Position is at an edge so set it to be a wall tile
-					borderedMaze.setTileAt(x, y, TileFactory.createTile(TileType.Wall));
+					borderedMaze.setTileAt(x, y, TileType.Wall);
 				} else {
 					// Position is not an edge so fill it with a floor tile
-					borderedMaze.setTileAt(x, y, TileFactory.createTile(TileType.Floor));
+					borderedMaze.setTileAt(x, y, TileType.Floor);
 				}
 			}
 		}

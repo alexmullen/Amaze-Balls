@@ -1,10 +1,8 @@
 package uk.ac.tees.amazeballs;
 
-import uk.ac.tees.amazeballs.maze.BallTile;
 import uk.ac.tees.amazeballs.maze.Maze;
-import uk.ac.tees.amazeballs.maze.MazeFactory;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
-import uk.ac.tees.amazeballs.maze.TileFactory;
+import uk.ac.tees.amazeballs.maze.TileImageFactory;
 import uk.ac.tees.amazeballs.maze.TileType;
 import uk.ac.tees.amazeballs.views.MazeBall;
 import uk.ac.tees.amazeballs.views.MazeGridView;
@@ -74,12 +72,8 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		
 		gameView = (MazeGridView) findViewById(R.id.main_game_view);
 
-		// Create a bordered maze of the specified width and height
-		currentMaze = MazeFactory.createBorderedMaze(20, 30);
-		
-		currentMaze.setTileAt(3, 10, TileFactory.createTile(TileType.Wall));
-		currentMaze.setTileAt(4, 10, TileFactory.createTile(TileType.Wall));
-		currentMaze.setTileAt(3, 11, TileFactory.createTile(TileType.Wall));
+		// Load the maze to play
+		currentMaze = (Maze) getIntent().getExtras().getSerializable("maze");
 		
 		
 		/*
@@ -92,7 +86,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		
 		// Set the maze for the MazeEditorView to display
 		gameView.setMaze(mazeSelection);
-		gameView.setBall(new MazeBall(70, 70, (BallTile)TileFactory.createTile(TileType.Ball), 0.8f));
+		gameView.setBall(new MazeBall(70, 70, TileImageFactory.getImage(TileType.Ball), 0.8f));
 		gameView.setBallDisplayed(true);
 
 		// Create a MazeBallController for handling the moving, collisions and physics for the ball
@@ -121,9 +115,9 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 	 * Loads and registers the tile images used.
 	 */
 	private void loadTiles() {
-		TileFactory.registerTile(TileType.Floor, this.getResources().getDrawable(R.drawable.floor));
-		TileFactory.registerTile(TileType.Wall, this.getResources().getDrawable(R.drawable.wall));
-		TileFactory.registerTile(TileType.Ball, this.getResources().getDrawable(R.drawable.ball));
+		TileImageFactory.registerImage(TileType.Floor, this.getResources().getDrawable(R.drawable.floor));
+		TileImageFactory.registerImage(TileType.Wall, this.getResources().getDrawable(R.drawable.wall));
+		TileImageFactory.registerImage(TileType.Ball, this.getResources().getDrawable(R.drawable.ball));
 	}
 	
 	@Override

@@ -1,7 +1,8 @@
 package uk.ac.tees.amazeballs.views;
 
 import uk.ac.tees.amazeballs.maze.Maze;
-import uk.ac.tees.amazeballs.maze.Tile;
+import uk.ac.tees.amazeballs.maze.TileImageFactory;
+import uk.ac.tees.amazeballs.maze.TileType;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -98,9 +99,9 @@ public class MazeGridView extends View {
 				int xTileOffset = (x * tileSize) + gridOffset_x;
 				int yTileOffset = (y * tileSize) + gridOffset_y;
 				
-				Tile tile = currentMaze.getTileAt(x, y);
+				TileType tileType = currentMaze.getTileAt(x, y);
 //				if (tile == null) { continue; }
-				Drawable tileImage = tile.getImage();
+				Drawable tileImage = TileImageFactory.getImage(tileType);
 				tileImage.setBounds(xTileOffset, // left
 						yTileOffset, // top
 						xTileOffset + tileSize, // right
@@ -112,7 +113,7 @@ public class MazeGridView extends View {
 		
 		// Draw the ball if it needs to be shown.
 		if (displayBall) {
-			Drawable ballImage = ball.image.getImage();
+			Drawable ballImage = ball.image;
 			
 			int ballOffset_x = gridOffset_x + ball.position_x;
 			int ballOffset_y = gridOffset_y + ball.position_y;

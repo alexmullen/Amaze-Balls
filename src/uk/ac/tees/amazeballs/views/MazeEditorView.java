@@ -1,8 +1,6 @@
 package uk.ac.tees.amazeballs.views;
 
-import uk.ac.tees.amazeballs.maze.FloorTile;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
-import uk.ac.tees.amazeballs.maze.TileFactory;
 import uk.ac.tees.amazeballs.maze.TileType;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -152,10 +150,10 @@ public class MazeEditorView extends MazeGridView implements OnGestureListener, O
 		}
 		
 		// Toggle the tile.
-		if (getMaze().getTileAt(x, y) instanceof FloorTile) {
-			getMaze().setTileAt(x, y, TileFactory.createTile(TileType.Wall));
+		if (getMaze().getTileAt(x, y) == TileType.Floor) {
+			getMaze().setTileAt(x, y, TileType.Wall);
 		} else {
-			getMaze().setTileAt(x, y, TileFactory.createTile(TileType.Floor));
+			getMaze().setTileAt(x, y, TileType.Floor);
 		}
 		
 		// Repaint the view

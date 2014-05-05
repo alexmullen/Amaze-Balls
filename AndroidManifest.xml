@@ -22,11 +22,6 @@
             android:name="uk.ac.tees.amazeballs.MazeEditorActivity"
             android:label="@string/title_activity_maze_editor"
             android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".menus.LevelSelect" >
         </activity>
@@ -35,6 +30,11 @@
         <activity android:name=".menus.Settings" >
         </activity>
         <activity android:name=".menus.MainMenuActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

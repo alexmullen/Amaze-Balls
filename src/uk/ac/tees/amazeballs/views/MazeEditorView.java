@@ -26,6 +26,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+
+/**
+ * A custom implementation of a View for displaying a maze with grid lines and
+ * the ability for users to interact with to design a maze.
+ * 
+ * @author Alex Mullen (J9858839)
+ *
+ */
 public class MazeEditorView extends MazeView implements OnGestureListener, OnScaleGestureListener {
 
 	private static final Paint LINE_PAINT;
@@ -99,8 +107,8 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 	public void onLongPress(MotionEvent event) {
 
 		// Normalize the coordinates touched into grid coordinates.
-		final int gridPositionTouchedX = (int)Math.floor(((event.getX() - gridOffset_x) / getTilesize()));
-		final int gridPositionTouchedY = (int)Math.floor(((event.getY() - gridOffset_y) / getTilesize()));
+		final int gridPositionTouchedX = (int) Math.floor(((event.getX() - gridOffset_x) / getTilesize()));
+		final int gridPositionTouchedY = (int) Math.floor(((event.getY() - gridOffset_y) / getTilesize()));
 		
 		// Ignore any touches that are within our view area but outside the displayed grid.
 		if (gridPositionTouchedX < 0 || 
@@ -178,8 +186,8 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 	@Override
 	public boolean onSingleTapUp(MotionEvent event) {
 		// Normalize the coordinates touched into grid coordinates.
-		int gridPositionTouchedX = (int)Math.floor(((event.getX() - gridOffset_x) / getTilesize()));
-		int gridPositionTouchedY = (int)Math.floor(((event.getY() - gridOffset_y) / getTilesize()));
+		int gridPositionTouchedX = (int) Math.floor(((event.getX() - gridOffset_x) / getTilesize()));
+		int gridPositionTouchedY = (int) Math.floor(((event.getY() - gridOffset_y) / getTilesize()));
 		
 		// Ignore any touches that are within our view area but outside the displayed grid.
 		if (gridPositionTouchedX < 0 || 

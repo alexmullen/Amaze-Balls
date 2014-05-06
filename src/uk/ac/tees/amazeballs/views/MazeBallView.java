@@ -5,6 +5,13 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
+
+/**
+ * A custom implementation of a View for displaying a maze and a ball.
+ * 
+ * @author Alex Mullen (J9858839)
+ *
+ */
 public class MazeBallView extends MazeView {
 	
 	public class Ball {

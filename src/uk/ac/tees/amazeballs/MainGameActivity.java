@@ -29,10 +29,9 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 	private Sensor accelerometerSensor;
 	private SensorManager sensorManager;
 	
-	private Maze currentMaze;
 	private MazeSelection mazeSelection;
 	private MazeBallView gameView;
-	private MazeBallController ballController;
+	private GameController ballController;
 	private GameTickHandler tickHandler;
 	
 	private boolean running = true;
@@ -71,7 +70,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		gameView = (MazeBallView) findViewById(R.id.main_game_view);
 
 		// Load the maze to play
-		currentMaze = (Maze) getIntent().getExtras().getSerializable("maze");
+		Maze loadedMaze = (Maze) getIntent().getExtras().getSerializable("maze");
 		
 		
 		/*
@@ -80,7 +79,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		 * displays. The size specified here represents the grid size displayed
 		 * in the MazeEditorView.
 		 */
-		mazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
+		mazeSelection = new MazeSelection(loadedMaze, 0, 0, 10, 15);
 		
 		// Set the maze for the MazeEditorView to display
 		gameView.setMaze(mazeSelection);
@@ -92,7 +91,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		gameView.getBall().imageRelativeSize = 0.8f;
 				
 		// Create a MazeBallController for handling the moving, collisions and physics for the ball
-		ballController = new MazeBallController(mazeSelection, gameView);
+		ballController = new GameController(mazeSelection, gameView);
 		
 		// Start the game loop		
 		tickHandler = new GameTickHandler();
@@ -139,8 +138,11 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 				//Log.d(this.getClass().getName(), "tick");
 				ballController.update();
 				lastMoveTime = System.currentTimeMillis();
+				tickHandler.sleep(GAME_TICK_INTERVAL);
+			} else {
+				// Wait the remaining time
+				tickHandler.sleep(GAME_TICK_INTERVAL - (now - lastMoveTime));
 			}
-			tickHandler.sleep(GAME_TICK_INTERVAL);
 		}
 	}
 

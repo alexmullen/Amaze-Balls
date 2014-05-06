@@ -12,7 +12,7 @@ import uk.ac.tees.amazeballs.views.MazeBallView.Ball;
  * @author Alex Mullen (J9858839)
  *
  */
-public class MazeBallController {
+public class GameController {
 	
 	private final static int GRID_SCROLLING_AMOUNT = 1;
 	private final static double TILT_SENSITIVITY = 0.75;
@@ -24,7 +24,7 @@ public class MazeBallController {
 	private final MazeBallView view;
 	
 
-	public MazeBallController(Maze mazeModel, MazeBallView mazeView) {
+	public GameController(Maze mazeModel, MazeBallView mazeView) {
 		this.model = mazeModel;
 		this.view = mazeView;
 	}

@@ -36,15 +36,30 @@ public class MazeView extends View {
 		//this.setMaze(new Maze(10, 15));		// For the Activity viewer to display something and not throw an NPE
 	}
 	
-	
+	/**
+	 * Sets the maze to display. The new maze won't be displayed until 
+	 * invalidate() has been called on this MazeView.
+	 * 
+	 * @param maze the maze to display
+	 */
 	public void setMaze(Maze maze) {
 		currentMaze = maze;
 	}
 	
+	/**
+	 * Gets the maze model that this MazeView is currently displaying.
+	 * 
+	 * @return the maze that is being displayed by this MazeView
+	 */
 	public Maze getMaze() {
 		return currentMaze;
 	}
 
+	/**
+	 * Gets the current pixel size of each tile currently being displayed.
+	 * 
+	 * @return
+	 */
 	public int getTilesize() {
 		return tileSize;
 	}
@@ -53,7 +68,7 @@ public class MazeView extends View {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
-		
+		// Get the current width and height of our canvas
 		int w = this.getWidth();
 		int h = this.getHeight();
 		

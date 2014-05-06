@@ -5,7 +5,7 @@ import java.util.EnumMap;
 import android.graphics.drawable.Drawable;
 
 /**
- * A factory class for creating tiles for a maze.
+ * A factory class for holding tiles images.
  * 
  * @author Alex Mullen (J9858839)
  *
@@ -19,14 +19,14 @@ public class TileImageFactory {
 	}
 	
 	/**
-	 * Creates and returns a new Tile instance of the requested type.
+	 * Creates and returns a new Drawable instance of the requested type of tile.
 	 * 
 	 * @param  the type the type of Tile to create
-	 * @return the created tile or null if the requested tile type does not
+	 * @return the image or null if the requested tile type does not
 	 * exist or the tile type was not previously registered with a call first
-	 * to registerTile.
+	 * to registerImage.
 	 * 
-	 * @see registerTile
+	 * @see registerImage
 	 */
 	public static Drawable getImage(TileType type) {
 		return registeredTiles.get(type);

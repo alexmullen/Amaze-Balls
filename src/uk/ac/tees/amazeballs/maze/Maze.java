@@ -125,10 +125,6 @@ public class Maze implements Serializable {
 	 */
 	public boolean isTileAtAnEdge(int x, int y) {
 		// Check if it is at an edge
-		if ((x == 0 || x == (width - 1)) || (y == 0 || y == (height - 1))) {
-			return true;
-		} else {
-			return false;
-		}
+		return (x == 0 || x == (width - 1) || y == 0 || y == (height - 1));
 	}
 }

@@ -34,8 +34,8 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 	private GameController gameController;
 	private GameTickHandler tickHandler;
 	
-	private boolean running = true;
-	private long lastMoveTime;
+	private boolean running;
+	private long lastUpdateTime;
 	
 	
 	private class GameTickHandler extends Handler {
@@ -69,7 +69,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 
 		// Get a reference to the inflated MazeBallView 
 		gameView = (MazeBallView) findViewById(R.id.main_game_view);
-
+		
 		// Load the maze to play
 		Maze loadedMaze = (Maze) getIntent().getExtras().getSerializable("maze");
 		
@@ -83,19 +83,27 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		
 		// Set the maze for the MazeEditorView to display
 		gameView.setMaze(mazeSelection);
-		
-		// Initialize the ball position, image and size
-		gameView.getBall().position_x = 70;
-		gameView.getBall().position_y = 70;
-		gameView.getBall().image = TileImageFactory.getImage(TileType.Ball);
-		gameView.getBall().imageRelativeSize = 0.8f;
 				
 		// Create a GameController for handling the moving, collisions and physics for the game
 		gameController = new GameController(mazeSelection, gameView);
 		
-		// Start the game loop		
 		tickHandler = new GameTickHandler();
-		tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);		// HACKISH!
+	}
+	
+	
+	
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+		if (hasFocus) {
+			/*
+			 *  Start the game loop going when we have focus. Starting it any earlier
+			 *  causes problems with getting the dimensions of gameView. This is because
+			 *  gameView won't have been displayed and so, does not have any dimensions.
+			 */
+			running = true;
+			tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
+		}
 	}
 
 	@Override
@@ -135,14 +143,18 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 			 * Only perform an update if the specified delay time has elapsed
 			 * since the last update.
 			 */
-			if ((now - lastMoveTime) >= GAME_TICK_INTERVAL) {
+			if ((now - lastUpdateTime) >= GAME_TICK_INTERVAL) {
 				//Log.d(this.getClass().getName(), "tick");
+				if (gameController.isFinished()) {
+					finish();
+					return;
+				}
 				gameController.update();
-				lastMoveTime = System.currentTimeMillis();
+				lastUpdateTime = System.currentTimeMillis();
 				tickHandler.sleep(GAME_TICK_INTERVAL);
 			} else {
 				// Wait the remaining time
-				tickHandler.sleep(GAME_TICK_INTERVAL - (now - lastMoveTime));
+				tickHandler.sleep(GAME_TICK_INTERVAL - (now - lastUpdateTime));
 			}
 		}
 	}

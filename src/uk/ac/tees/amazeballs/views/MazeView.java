@@ -24,12 +24,7 @@ public class MazeView extends View {
 	
 	protected Maze currentMaze;
 
-	
-	public MazeView(Context context) {
-		// Constructor used when this view is created via code.
-		super(context);
-	}
-	
+
 	public MazeView(Context context, AttributeSet attrs) {
 		// Constructor used when this view is inflated from XML.
 		super(context, attrs);
@@ -64,22 +59,34 @@ public class MazeView extends View {
 		return tileSize;
 	}
 	
+	
+	
+	@Override
+	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+		super.onSizeChanged(w, h, oldw, oldh);
+		
+		// Calculate the ideal square size to use for the current view dimensions
+        int tileSizeAcross = (int) Math.floor(getWidth() / currentMaze.getWidth());
+        int tileSizeDown = (int) Math.floor(getHeight() / currentMaze.getHeight());
+        tileSize = Math.min(tileSizeAcross, tileSizeDown);
+        
+        // Calculate the offsets so we can centre align the grid.
+        gridOffset_x = (getWidth() - (tileSize * currentMaze.getWidth())) / 2;
+        gridOffset_y = (getHeight() - (tileSize * currentMaze.getHeight())) / 2;
+	}
+
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
-		// Get the current width and height of our canvas
-		int w = this.getWidth();
-		int h = this.getHeight();
-		
 		// Calculate the ideal square size to use for the current view dimensions
-        int tileSizeAcross = (int) Math.floor(w / currentMaze.getWidth());
-        int tileSizeDown = (int) Math.floor(h / currentMaze.getHeight());
+        int tileSizeAcross = (int) Math.floor(getWidth() / currentMaze.getWidth());
+        int tileSizeDown = (int) Math.floor(getHeight() / currentMaze.getHeight());
         tileSize = Math.min(tileSizeAcross, tileSizeDown);
         
         // Calculate the offsets so we can centre align the grid.
-        gridOffset_x = (w - (tileSize * currentMaze.getWidth())) / 2;
-        gridOffset_y = (h - (tileSize * currentMaze.getHeight())) / 2;
+        gridOffset_x = (getWidth() - (tileSize * currentMaze.getWidth())) / 2;
+        gridOffset_y = (getHeight() - (tileSize * currentMaze.getHeight())) / 2;
 
         
 		// Draw the maze

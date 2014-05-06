@@ -71,13 +71,9 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 	private final GestureDetector gestureDetector;
 	private final ScaleGestureDetector scaleGestureDetector;
 	
-	public MazeEditorView(Context context) {
-		super(context);
-		gestureDetector = new GestureDetector(context, this);
-		scaleGestureDetector = new ScaleGestureDetector(context, this);
-	}
 	
 	public MazeEditorView(Context context, AttributeSet attrs) {
+		// Constructor used when this view is inflated from XML.
 		super(context, attrs);
 		gestureDetector = new GestureDetector(context, this);
 		scaleGestureDetector = new ScaleGestureDetector(context, this);

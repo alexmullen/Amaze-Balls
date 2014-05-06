@@ -14,7 +14,7 @@ import android.util.AttributeSet;
  */
 public class MazeBallView extends MazeView {
 	
-	public class Ball {
+	public static class Ball {
 		public int position_x;
 		public int position_y;
 		public Drawable image;
@@ -32,16 +32,16 @@ public class MazeBallView extends MazeView {
 		}
 	}
 	
-	private final Ball ball;
+	private Ball ball;
 	
-	public MazeBallView(Context context) {
-		super(context);
-		ball = new Ball();
+
+	public MazeBallView(Context context, AttributeSet attrs) {
+		// Constructor used when this view is inflated from XML.
+		super(context, attrs);
 	}
 	
-	public MazeBallView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		ball = new Ball();
+	public void setBall(Ball ball) {
+		this.ball = ball;
 	}
 
 	public Ball getBall() {
@@ -51,20 +51,22 @@ public class MazeBallView extends MazeView {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		
-		Drawable ballImage = ball.image;
+
+		if (ball == null) {
+			return;
+		}
 		
 		int ballOffset_x = gridOffset_x + ball.position_x;
 		int ballOffset_y = gridOffset_y + ball.position_y;
 		int ballSize = (int)(tileSize * ball.imageRelativeSize);
 		
-		ballImage.setBounds(
+		ball.image.setBounds(
 				ballOffset_x, // left
 				ballOffset_y, // top
 				ballOffset_x + ballSize,  // right
 				ballOffset_y + ballSize); // bottom
 
-		ballImage.draw(canvas);
+		ball.image.draw(canvas);
 	}
 
 }

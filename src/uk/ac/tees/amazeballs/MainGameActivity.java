@@ -4,8 +4,7 @@ import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
 import uk.ac.tees.amazeballs.maze.TileImageFactory;
 import uk.ac.tees.amazeballs.maze.TileType;
-import uk.ac.tees.amazeballs.views.MazeBall;
-import uk.ac.tees.amazeballs.views.MazeView;
+import uk.ac.tees.amazeballs.views.MazeBallView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -24,20 +23,21 @@ import android.hardware.SensorManager;
  *
  */
 public class MainGameActivity extends Activity implements SensorEventListener {
-
+	
+	private static final long GAME_TICK_INTERVAL = 5;
+	
 	private Sensor accelerometerSensor;
 	private SensorManager sensorManager;
 	
 	private Maze currentMaze;
 	private MazeSelection mazeSelection;
-	private MazeView gameView;
+	private MazeBallView gameView;
 	private MazeBallController ballController;
 	private GameTickHandler tickHandler;
 	
 	private boolean running = true;
-	
 	private long lastMoveTime;
-	private static final long GAME_TICK_INTERVAL = 5;
+	
 	
 	private class GameTickHandler extends Handler {
         @Override
@@ -68,7 +68,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 			//finish(); // No accelerometer on the emulator
 		}
 
-		gameView = (MazeView) findViewById(R.id.main_game_view);
+		gameView = (MazeBallView) findViewById(R.id.main_game_view);
 
 		// Load the maze to play
 		currentMaze = (Maze) getIntent().getExtras().getSerializable("maze");
@@ -84,9 +84,13 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		
 		// Set the maze for the MazeEditorView to display
 		gameView.setMaze(mazeSelection);
-		gameView.setBall(new MazeBall(70, 70, TileImageFactory.getImage(TileType.Ball), 0.8f));
-		gameView.setBallDisplayed(true);
-
+		
+		// Initialize the ball position, image and size
+		gameView.getBall().position_x = 70;
+		gameView.getBall().position_y = 70;
+		gameView.getBall().image = TileImageFactory.getImage(TileType.Ball);
+		gameView.getBall().imageRelativeSize = 0.8f;
+				
 		// Create a MazeBallController for handling the moving, collisions and physics for the ball
 		ballController = new MazeBallController(mazeSelection, gameView);
 		

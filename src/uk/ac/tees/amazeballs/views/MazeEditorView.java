@@ -14,7 +14,6 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.LayoutInflater;
@@ -35,7 +34,6 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 	static {
 		LINE_PAINT = new Paint();
 		LINE_PAINT.setStyle(Style.STROKE);
-		
 		
 		SPECIAL_TILES = new ArrayList<SpecialTileChoice>();
 		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Chest, TileImageFactory.getImage(TileType.Chest), "Chest"));
@@ -59,6 +57,8 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 			this.title = title;
 		}
 	}
+	
+	
 	
 	private final GestureDetector gestureDetector;
 	private final ScaleGestureDetector scaleGestureDetector;
@@ -105,17 +105,17 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 		// Ignore any touches that are within our view area but outside the displayed grid.
 		if (gridPositionTouchedX < 0 || 
 			gridPositionTouchedY < 0 || 
-			gridPositionTouchedX >= getMaze().getWidth() ||
-			gridPositionTouchedY >= getMaze().getHeight()) {
+			gridPositionTouchedX >= currentMaze.getWidth() ||
+			gridPositionTouchedY >= currentMaze.getHeight()) {
 			return;
 		}
 		
 		// Prevent the edges of the maze being modified
-		if (getMaze().isTileAtAnEdge(gridPositionTouchedX, gridPositionTouchedY)) {
+		if (currentMaze.isTileAtAnEdge(gridPositionTouchedX, gridPositionTouchedY)) {
 			return;
 		}
 
-
+		// Display a dialog of special blocks to choose from
         AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
         builder.setTitle("Choose a block");
         builder.setAdapter(new ArrayAdapter<SpecialTileChoice>(this.getContext(), R.layout.dialog_specialtile_row, SPECIAL_TILES) {
@@ -138,10 +138,7 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
         }, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Log.i("Dialog", "selected choice: " + SPECIAL_TILES.get(which).title);
-        		getMaze().setTileAt(gridPositionTouchedX, gridPositionTouchedY, SPECIAL_TILES.get(which).type);
-
-        		// Repaint the view
+            	currentMaze.setTileAt(gridPositionTouchedX, gridPositionTouchedY, SPECIAL_TILES.get(which).type);
         		invalidate();
             }
         });
@@ -151,7 +148,7 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 	@Override
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 		boolean invalidateNeeded = false;
-		MazeSelection mazeSelection = (MazeSelection) getMaze();
+		MazeSelection mazeSelection = (MazeSelection) currentMaze;
 
 		if (distanceX < -5) {
 			mazeSelection.shiftLeft(1);
@@ -187,8 +184,8 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 		// Ignore any touches that are within our view area but outside the displayed grid.
 		if (gridPositionTouchedX < 0 || 
 			gridPositionTouchedY < 0 || 
-			gridPositionTouchedX >= getMaze().getWidth() ||
-			gridPositionTouchedY >= getMaze().getHeight()) {
+			gridPositionTouchedX >= currentMaze.getWidth() ||
+			gridPositionTouchedY >= currentMaze.getHeight()) {
 			return true;
 		}
 		
@@ -204,7 +201,7 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 	@Override
 	public boolean onScale(ScaleGestureDetector detector) {
 		boolean invalidateNeeded = false;
-		MazeSelection mazeSelection = (MazeSelection) getMaze();
+		MazeSelection mazeSelection = (MazeSelection) currentMaze;
 		
 		if (detector.getScaleFactor() <= 1.0f) {
 			mazeSelection.expandUp(1);
@@ -241,15 +238,15 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 
 	private void handleTileTouched(int x, int y) {
 		// Prevent the edges of the maze being modified
-		if (getMaze().isTileAtAnEdge(x, y)) {
+		if (currentMaze.isTileAtAnEdge(x, y)) {
 			return;
 		}
 		
 		// Toggle the tile.
-		if (getMaze().getTileAt(x, y) == TileType.Floor) {
-			getMaze().setTileAt(x, y, TileType.Wall);
+		if (currentMaze.getTileAt(x, y) == TileType.Floor) {
+			currentMaze.setTileAt(x, y, TileType.Wall);
 		} else {
-			getMaze().setTileAt(x, y, TileType.Floor);
+			currentMaze.setTileAt(x, y, TileType.Floor);
 		}
 		
 		// Repaint the view
@@ -259,27 +256,25 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-	
-		int tilesize = getTilesize();
-
+		
 		// Draw vertical grid lines
-		for (int i = 0; i <= getMaze().getWidth(); i++) {
-			int current_x = (gridOffset_x + (tilesize * i));
+		for (int i = 0; i <= currentMaze.getWidth(); i++) {
+			int current_x = (gridOffset_x + (tileSize * i));
 			canvas.drawLine(
 					current_x, // start x
 					gridOffset_y, // start y
 					current_x, // stop x
-					(gridOffset_y + (getMaze().getHeight() * tilesize)), // stop y
+					(gridOffset_y + (currentMaze.getHeight() * tileSize)), // stop y
 					LINE_PAINT); // paint
 		}
 		
 		// Draw horizontal grid lines
-		for (int i = 0; i <= getMaze().getHeight(); i++) {
-			int current_y = (gridOffset_y + (tilesize * i));
+		for (int i = 0; i <= currentMaze.getHeight(); i++) {
+			int current_y = (gridOffset_y + (tileSize * i));
 			canvas.drawLine(
 					gridOffset_x, // start x
 					current_y, // start y
-					(gridOffset_x + (getMaze().getWidth() * tilesize)), // stop x
+					(gridOffset_x + (currentMaze.getWidth() * tileSize)), // stop x
 					current_y, // stop y
 					LINE_PAINT); // paint
 		}

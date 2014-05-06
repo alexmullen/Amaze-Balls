@@ -3,8 +3,8 @@ package uk.ac.tees.amazeballs;
 import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
 import uk.ac.tees.amazeballs.maze.TileType;
-import uk.ac.tees.amazeballs.views.MazeBall;
-import uk.ac.tees.amazeballs.views.MazeView;
+import uk.ac.tees.amazeballs.views.MazeBallView;
+import uk.ac.tees.amazeballs.views.MazeBallView.Ball;
 
 /**
  * A controller class for managing a ball in a maze.
@@ -14,16 +14,17 @@ import uk.ac.tees.amazeballs.views.MazeView;
  */
 public class MazeBallController {
 	
+	private final static int GRID_SCROLLING_AMOUNT = 1;
+	private final static double TILT_SENSITIVITY = 0.75;
+	
 	public volatile float lastAccelerometerReading_x;
 	public volatile float lastAccelerometerReading_y;
 	
 	private final Maze model;
-	private final MazeView view;
+	private final MazeBallView view;
 	
-	private final static int GRID_SCROLLING_AMOUNT = 1;
-	private final static double TILT_SENSITIVITY = 0.75;
-	
-	public MazeBallController(Maze mazeModel, MazeView mazeView) {
+
+	public MazeBallController(Maze mazeModel, MazeBallView mazeView) {
 		this.model = mazeModel;
 		this.view = mazeView;
 	}
@@ -34,7 +35,7 @@ public class MazeBallController {
 	 */
 	public void update() {
 		
-		MazeBall ball = view.getBall();
+		Ball ball = view.getBall();
 		MazeSelection mazeSelection = (MazeSelection) model;
 		
 		// Get the accelerometer reading

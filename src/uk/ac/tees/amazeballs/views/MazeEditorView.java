@@ -264,7 +264,7 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		
+
 		// Draw vertical grid lines
 		for (int i = 0; i <= currentMaze.getWidth(); i++) {
 			int current_x = (gridOffset_x + (tileSize * i));

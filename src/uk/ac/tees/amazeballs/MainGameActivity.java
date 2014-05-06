@@ -52,7 +52,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);   
 		setContentView(R.layout.activity_main_game);
 		
 		// Check the device has an accelerometer

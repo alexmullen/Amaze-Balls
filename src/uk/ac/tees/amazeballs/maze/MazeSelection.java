@@ -14,18 +14,18 @@ public class MazeSelection extends Maze {
 	private int offset_y;
 	private int selectionWidth;
 	private int selectionHeight;
-	private Maze baseMaze;
+	private Maze underlyingMaze;
 	
-	public MazeSelection(Maze baseMaze, int offset_x, int offset_y, int selectionWidth, int selectionHeight) {
-		super(baseMaze.getWidth(), baseMaze.getHeight());
+	public MazeSelection(Maze maze, int offset_x, int offset_y, int selectionWidth, int selectionHeight) {
+		super(maze.getWidth(), maze.getHeight());
 		
-		this.baseMaze = baseMaze;
+		this.underlyingMaze = maze;
 		this.offset_x = offset_x;
 		this.offset_y = offset_y;
 		
 		// Set the selection size, clamping the size to the maximum size of the maze
-		this.selectionWidth = Math.min(selectionWidth, baseMaze.getWidth());
-		this.selectionHeight = Math.min(selectionHeight, baseMaze.getHeight());
+		this.selectionWidth = Math.min(selectionWidth, maze.getWidth());
+		this.selectionHeight = Math.min(selectionHeight, maze.getHeight());
 	}
 	
 	/**
@@ -34,7 +34,7 @@ public class MazeSelection extends Maze {
 	 * @return the full maze
 	 */
 	public Maze getUnderlyingMaze() {
-		return baseMaze;
+		return underlyingMaze;
 	}
 	
 	@Override
@@ -51,22 +51,22 @@ public class MazeSelection extends Maze {
 
 	@Override
 	public TileType getTileAt(int x, int y) {
-		return baseMaze.getTileAt((x + offset_x), (y + offset_y));
+		return underlyingMaze.getTileAt((x + offset_x), (y + offset_y));
 	}
 
 	@Override
 	public void setTileAt(int x, int y, TileType tile) {
-		baseMaze.setTileAt((x + offset_x), (y + offset_y), tile);
+		underlyingMaze.setTileAt((x + offset_x), (y + offset_y), tile);
 	}
 
-	@Override
-	public boolean isTileAt(int x, int y) {
-		return baseMaze.isTileAt((x + offset_x), (y + offset_y));
-	}
+//	@Override
+//	public boolean isTileAt(int x, int y) {
+//		return baseMaze.isTileAt((x + offset_x), (y + offset_y));
+//	}
 
 	@Override
 	public boolean isTileAtAnEdge(int x, int y) {
-		return baseMaze.isTileAtAnEdge((x + offset_x), (y + offset_y));
+		return underlyingMaze.isTileAtAnEdge((x + offset_x), (y + offset_y));
 	}
 
 	/**

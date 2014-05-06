@@ -31,7 +31,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 	
 	private MazeSelection mazeSelection;
 	private MazeBallView gameView;
-	private GameController ballController;
+	private GameController gameController;
 	private GameTickHandler tickHandler;
 	
 	private boolean running = true;
@@ -67,11 +67,11 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 			//finish(); // No accelerometer on the emulator
 		}
 
+		// Get a reference to the inflated MazeBallView 
 		gameView = (MazeBallView) findViewById(R.id.main_game_view);
 
 		// Load the maze to play
 		Maze loadedMaze = (Maze) getIntent().getExtras().getSerializable("maze");
-		
 		
 		/*
 		 * Create a maze selection to view only a small portion of the maze so
@@ -90,8 +90,8 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		gameView.getBall().image = TileImageFactory.getImage(TileType.Ball);
 		gameView.getBall().imageRelativeSize = 0.8f;
 				
-		// Create a MazeBallController for handling the moving, collisions and physics for the ball
-		ballController = new GameController(mazeSelection, gameView);
+		// Create a GameController for handling the moving, collisions and physics for the game
+		gameController = new GameController(mazeSelection, gameView);
 		
 		// Start the game loop		
 		tickHandler = new GameTickHandler();
@@ -119,8 +119,9 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		ballController.lastAccelerometerReading_x = event.values[0];
-		ballController.lastAccelerometerReading_y = event.values[1];
+		// Give the GameController the latest accelerometer readings
+		gameController.lastAccelerometerReading_x = event.values[0];
+		gameController.lastAccelerometerReading_y = event.values[1];
 	}
 	
 	/**
@@ -136,7 +137,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 			 */
 			if ((now - lastMoveTime) >= GAME_TICK_INTERVAL) {
 				//Log.d(this.getClass().getName(), "tick");
-				ballController.update();
+				gameController.update();
 				lastMoveTime = System.currentTimeMillis();
 				tickHandler.sleep(GAME_TICK_INTERVAL);
 			} else {

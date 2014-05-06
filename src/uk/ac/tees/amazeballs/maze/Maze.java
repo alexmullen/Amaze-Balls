@@ -97,22 +97,22 @@ public class Maze implements Serializable {
 		grid[x][y] = tile;
 	}
 	
-	/**
-	 * Checks if the specified tile position is valid for this maze 
-	 * (a boundary check).Index
-	 * 
-	 * @param x the x position (across)
-	 * @param y the y position (down)
-	 * @return true if the specified position is valid for this maze,
-	 * otherwise false is returned if it is out of range
-	 */
-	public boolean isTileAt(int x, int y) {
-		if (x < 0 || y < 0 || x >= width || y >= height) {
-			return false;
-		} else {
-			return true;
-		}
-	}
+//	/**
+//	 * Checks if the specified tile position is valid for this maze 
+//	 * (a boundary check).Index
+//	 * 
+//	 * @param x the x position (across)
+//	 * @param y the y position (down)
+//	 * @return true if the specified position is valid for this maze,
+//	 * otherwise false is returned if it is out of range
+//	 */
+//	public boolean isTileAt(int x, int y) {
+//		if (x < 0 || y < 0 || x >= width || y >= height) {
+//			return false;
+//		} else {
+//			return true;
+//		}
+//	}
 	
 	/**
 	 * Checks if the specified tile position is located at the border of 

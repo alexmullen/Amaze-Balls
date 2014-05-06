@@ -119,7 +119,7 @@ public class MazeEditorActivity extends Activity {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					currentLevelName = levels[which];
-					currentMaze = LevelManager.getCustomLevel(MazeEditorActivity.this, levels[which]);
+					currentMaze = LevelManager.loadCustomLevel(MazeEditorActivity.this, levels[which]);
 					currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
 					mazeEditorView.setMaze(currentMazeSelection);
 					mazeEditorView.invalidate();

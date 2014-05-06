@@ -27,7 +27,7 @@ public class LevelSelect extends Activity{
 		Object selectedItem = levelSpinner.getSelectedItem();
 		if (selectedItem != null) {
 			Bundle b = new Bundle();
-			b.putSerializable("maze", LevelManager.getCustomLevel(this, (String)selectedItem));
+			b.putSerializable("maze", LevelManager.loadCustomLevel(this, (String)selectedItem));
 			Intent i = new Intent(this, MainGameActivity.class);
 			i.putExtras(b);
 			startActivity(i);

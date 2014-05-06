@@ -2,13 +2,13 @@ package uk.ac.tees.amazeballs;
 
 import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
-import uk.ac.tees.amazeballs.maze.TileImageFactory;
-import uk.ac.tees.amazeballs.maze.TileType;
 import uk.ac.tees.amazeballs.views.MazeBallView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.widget.Toast;
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
@@ -66,9 +66,6 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 			Log.e(this.getClass().getName(), "no accelerometer on device, unable to play game");
 			//finish(); // No accelerometer on the emulator
 		}
-
-		// Get a reference to the inflated MazeBallView 
-		gameView = (MazeBallView) findViewById(R.id.main_game_view);
 		
 		// Load the maze to play
 		Maze loadedMaze = (Maze) getIntent().getExtras().getSerializable("maze");
@@ -81,29 +78,38 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		 */
 		mazeSelection = new MazeSelection(loadedMaze, 0, 0, 10, 15);
 		
+		// Get a reference to the inflated MazeBallView 
+		gameView = (MazeBallView) findViewById(R.id.main_game_view);
+		
 		// Set the maze for the MazeEditorView to display
 		gameView.setMaze(mazeSelection);
-				
-		// Create a GameController for handling the moving, collisions and physics for the game
-		gameController = new GameController(mazeSelection, gameView);
 		
-		tickHandler = new GameTickHandler();
-	}
-	
-	
-	
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		super.onWindowFocusChanged(hasFocus);
-		if (hasFocus) {
-			/*
-			 *  Start the game loop going when we have focus. Starting it any earlier
-			 *  causes problems with getting the dimensions of gameView. This is because
-			 *  gameView won't have been displayed and so, does not have any dimensions.
-			 */
-			running = true;
-			tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
-		}
+		/* 
+		 * Add a listener to listen for when the game view has been displayed so that we can
+		 * get its dimensions. 
+		 */
+		gameView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+			@Override
+			public void onGlobalLayout() {
+				// Unregister the listener
+				gameView.getViewTreeObserver().removeGlobalOnLayoutListener(this); // Need API 16 for latest
+				/* 
+				 * Create a GameController for handling the moving, collisions and physics 
+				 * for the game.
+				 */
+				gameController = new GameController(mazeSelection, gameView);
+				
+				/*
+				 * Start the game loop after the game view has been displayed. This is because
+				 * we need to know the dimensions of it so we can position the ball correctly.
+				 * Give it a 1 second delay to give the user a chance to be ready before the 
+				 * ball moves.
+				 */
+				running = true;
+				tickHandler = new GameTickHandler();
+				tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
+			}
+		});
 	}
 
 	@Override
@@ -146,6 +152,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 			if ((now - lastUpdateTime) >= GAME_TICK_INTERVAL) {
 				//Log.d(this.getClass().getName(), "tick");
 				if (gameController.isFinished()) {
+					Toast.makeText(this, "Level completed", Toast.LENGTH_LONG).show();
 					finish();
 					return;
 				}

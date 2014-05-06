@@ -21,7 +21,7 @@ public class LevelManager {
 		}
 	}
 	
-	public static Maze getLevel(Context context, String levelname) {
+	public static Maze loadLevel(Context context, String levelname) {
 		ObjectInputStream objInput = null;
 		try {
 			objInput = new ObjectInputStream(context.getAssets().open(levelname, AssetManager.ACCESS_STREAMING));
@@ -40,7 +40,7 @@ public class LevelManager {
 		return context.getFilesDir().list();
 	}
 	
-	public static Maze getCustomLevel(Context context, String levelname) {
+	public static Maze loadCustomLevel(Context context, String levelname) {
 		ObjectInputStream objInput = null;
 		try {
 			objInput = new ObjectInputStream(context.openFileInput(levelname));

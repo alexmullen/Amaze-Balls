@@ -36,11 +36,12 @@ public class GameController {
 		}
 	}
 	
-	private final static int NORMAL_BALL_SPEED = 5;
-	private final static int ICE_BALL_SPEED = 10;
-	private final static int RAIN_BALL_SPEED = 1;
+	private int NORMAL_BALL_SPEED = 5;
+	private int ICE_BALL_SPEED = 10;
+	private int RAIN_BALL_SPEED = 1;
+	
 	private final static int GRID_SCROLLING_AMOUNT = 1;
-	private final static double TILT_SENSITIVITY = 0.75;
+	private final static double TILT_SENSITIVITY = 0.50;
 	
 	public volatile float lastAccelerometerReading_x;
 	public volatile float lastAccelerometerReading_y;
@@ -70,6 +71,10 @@ public class GameController {
 		ball.position_y = startPosition.y * view.getTilesize() + ballStartOffset;
 		
 		view.setBall(ball);
+		
+		NORMAL_BALL_SPEED = view.getTilesize() / 10;
+		ICE_BALL_SPEED = NORMAL_BALL_SPEED * 2;
+		RAIN_BALL_SPEED = (int) Math.ceil(NORMAL_BALL_SPEED * 0.2);
 	}
 	
 	/**

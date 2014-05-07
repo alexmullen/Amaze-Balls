@@ -111,6 +111,18 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 			}
 		});
 	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		running = false;
+		sensorManager.unregisterListener(this);
+	}
 
 	@Override
 	protected void onPause() {

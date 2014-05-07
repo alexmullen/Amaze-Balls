@@ -37,6 +37,8 @@ public class GameController {
 	}
 	
 	private final static int NORMAL_BALL_SPEED = 5;
+	private final static int ICE_BALL_SPEED = 10;
+	private final static int RAIN_BALL_SPEED = 1;
 	private final static int GRID_SCROLLING_AMOUNT = 1;
 	private final static double TILT_SENSITIVITY = 0.75;
 	
@@ -86,6 +88,9 @@ public class GameController {
 		view.invalidate();
 	}
 	
+	/**
+	 * Move the ball depending on the tilt of the device.
+	 */
 	private void moveBall() {
 		// Get the accelerometer reading
 		if (lastAccelerometerReading_y > TILT_SENSITIVITY) {
@@ -118,42 +123,47 @@ public class GameController {
 		}
 	}
 	
-	
+	/**
+	 * Gets whether the ball has collided with a wall or door.
+	 * 
+	 * @return true if the ball intersects a wall or door tile by 1 pixel
+	 * or more.
+	 */
 	private boolean ballHasCollided() {
-		int gridPositionTouchedX;
-		int gridPositionTouchedY;
+		int gridPosTouchedX;
+		int gridPosTouchedY;
 		int ballSize = (int)(view.getTilesize() * ball.imageRelativeSize);
 		int tileSize = view.getTilesize();
 		TileType tileTouched;
 		
 		// Check top left corner of ball
-		gridPositionTouchedX = (int)(ball.position_x) / tileSize;
-		gridPositionTouchedY = (int)(ball.position_y) / tileSize;
-		tileTouched = mazeSelection.getTileAt(gridPositionTouchedX, gridPositionTouchedY);
+		gridPosTouchedX = (int)(ball.position_x) / tileSize;
+		gridPosTouchedY = (int)(ball.position_y) / tileSize;
+		tileTouched = mazeSelection.getTileAt(gridPosTouchedX, gridPosTouchedY);
 		if (tileTouched == TileType.Wall || tileTouched == TileType.Door) {
 			return true;
 		}
 		
 		// Check top right corner of ball
-		gridPositionTouchedX = (int)(ball.position_x + ballSize) / tileSize;
-		gridPositionTouchedY = (int)(ball.position_y) / tileSize;
-		tileTouched = mazeSelection.getTileAt(gridPositionTouchedX, gridPositionTouchedY);
+		gridPosTouchedX = (int)(ball.position_x + ballSize) / tileSize;
+		gridPosTouchedY = (int)(ball.position_y) / tileSize;
+		tileTouched = mazeSelection.getTileAt(gridPosTouchedX, gridPosTouchedY);
 		if (tileTouched == TileType.Wall || tileTouched == TileType.Door) {
 			return true;
 		}
 		
 		// Check bottom right corner of ball
-		gridPositionTouchedX = (int)(ball.position_x + ballSize) / tileSize;
-		gridPositionTouchedY = (int)(ball.position_y + ballSize) / tileSize;
-		tileTouched = mazeSelection.getTileAt(gridPositionTouchedX, gridPositionTouchedY);
+		gridPosTouchedX = (int)(ball.position_x + ballSize) / tileSize;
+		gridPosTouchedY = (int)(ball.position_y + ballSize) / tileSize;
+		tileTouched = mazeSelection.getTileAt(gridPosTouchedX, gridPosTouchedY);
 		if (tileTouched == TileType.Wall || tileTouched == TileType.Door) {
 			return true;
 		}
 		
 		// Check bottom left corner of ball
-		gridPositionTouchedX = (int)(ball.position_x) / tileSize;
-		gridPositionTouchedY = (int)(ball.position_y + ballSize) / tileSize;
-		tileTouched = mazeSelection.getTileAt(gridPositionTouchedX, gridPositionTouchedY);
+		gridPosTouchedX = (int)(ball.position_x) / tileSize;
+		gridPosTouchedY = (int)(ball.position_y + ballSize) / tileSize;
+		tileTouched = mazeSelection.getTileAt(gridPosTouchedX, gridPosTouchedY);
 		if (tileTouched == TileType.Wall || tileTouched == TileType.Door) {
 			return true;
 		}
@@ -162,6 +172,10 @@ public class GameController {
 		return false;
 	}
 	
+	/**
+	 * Scroll to another part of the maze if the ball is within a certain distance
+	 * from the view edge.
+	 */
 	private void scrollScreen() {
 		// Potentially scroll the screen down
 		int mazeAreaHeight = view.getTilesize() * mazeSelection.getHeight();
@@ -190,6 +204,9 @@ public class GameController {
 		}
 	}
 	
+	/**
+	 * Handles what happens when certain tiles are touched.
+	 */
 	private void handleTouchedTiles() {
 		boolean touchingRain = false;
 		boolean touchingIce = false;
@@ -245,9 +262,9 @@ public class GameController {
 		 * we will let rain behaviour have the priority.
 		 */
 		if (touchingRain) {
-			ballSpeed = 1;
+			ballSpeed = RAIN_BALL_SPEED;
 		} else if (touchingIce) {
-			ballSpeed = 10;
+			ballSpeed = ICE_BALL_SPEED;
 		} else {
 			ballSpeed = NORMAL_BALL_SPEED;
 		}
@@ -256,41 +273,41 @@ public class GameController {
 	private List<TouchedTile> getTouchingTiles() {
 		TouchedTile tile;
 		ArrayList<TouchedTile> touchedTiles = new ArrayList<TouchedTile>(4);
-		int gridPositionTouchedX;
-		int gridPositionTouchedY;
+		int gridPosTouchedX;
+		int gridPosTouchedY;
 		int ballSize = (int)(view.getTilesize() * ball.imageRelativeSize);
 		int tileSize = view.getTilesize();
 		
 		// Check top left corner of ball
-		gridPositionTouchedX = (int)(ball.position_x) / tileSize;
-		gridPositionTouchedY = (int)(ball.position_y) / tileSize;
-		tile = new TouchedTile(gridPositionTouchedX, gridPositionTouchedY, 
-				mazeSelection.getTileAt(gridPositionTouchedX, gridPositionTouchedY));
+		gridPosTouchedX = (int)(ball.position_x) / tileSize;
+		gridPosTouchedY = (int)(ball.position_y) / tileSize;
+		tile = new TouchedTile(gridPosTouchedX, gridPosTouchedY, 
+				mazeSelection.getTileAt(gridPosTouchedX, gridPosTouchedY));
 		touchedTiles.add(tile);
 		
 		// Check top right corner of ball
-		gridPositionTouchedX = (int)(ball.position_x + ballSize) / tileSize;
-		gridPositionTouchedY = (int)(ball.position_y) / tileSize;
-		tile = new TouchedTile(gridPositionTouchedX, gridPositionTouchedY, 
-				mazeSelection.getTileAt(gridPositionTouchedX, gridPositionTouchedY));
+		gridPosTouchedX = (int)(ball.position_x + ballSize) / tileSize;
+		gridPosTouchedY = (int)(ball.position_y) / tileSize;
+		tile = new TouchedTile(gridPosTouchedX, gridPosTouchedY, 
+				mazeSelection.getTileAt(gridPosTouchedX, gridPosTouchedY));
 		if (!touchedTiles.contains(tile)) {
 			touchedTiles.add(tile);
 		}
 		
 		// Check bottom right corner of ball
-		gridPositionTouchedX = (int)(ball.position_x + ballSize) / tileSize;
-		gridPositionTouchedY = (int)(ball.position_y + ballSize) / tileSize;
-		tile = new TouchedTile(gridPositionTouchedX, gridPositionTouchedY, 
-				mazeSelection.getTileAt(gridPositionTouchedX, gridPositionTouchedY));
+		gridPosTouchedX = (int)(ball.position_x + ballSize) / tileSize;
+		gridPosTouchedY = (int)(ball.position_y + ballSize) / tileSize;
+		tile = new TouchedTile(gridPosTouchedX, gridPosTouchedY, 
+				mazeSelection.getTileAt(gridPosTouchedX, gridPosTouchedY));
 		if (!touchedTiles.contains(tile)) {
 			touchedTiles.add(tile);
 		}
 		
 		// Check bottom left corner of ball
-		gridPositionTouchedX = (int)(ball.position_x) / tileSize;
-		gridPositionTouchedY = (int)(ball.position_y + ballSize) / tileSize;
-		tile = new TouchedTile(gridPositionTouchedX, gridPositionTouchedY, 
-				mazeSelection.getTileAt(gridPositionTouchedX, gridPositionTouchedY));
+		gridPosTouchedX = (int)(ball.position_x) / tileSize;
+		gridPosTouchedY = (int)(ball.position_y + ballSize) / tileSize;
+		tile = new TouchedTile(gridPosTouchedX, gridPosTouchedY, 
+				mazeSelection.getTileAt(gridPosTouchedX, gridPosTouchedY));
 		if (!touchedTiles.contains(tile)) {
 			touchedTiles.add(tile);
 		}

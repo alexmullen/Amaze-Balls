@@ -24,7 +24,7 @@ import android.hardware.SensorManager;
  */
 public class MainGameActivity extends Activity implements SensorEventListener {
 	
-	private static final long GAME_TICK_INTERVAL = 5;
+	private static final long GAME_TICK_INTERVAL = 16;
 	
 	private Sensor accelerometerSensor;
 	private SensorManager sensorManager;
@@ -170,7 +170,8 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 				}
 				gameController.update();
 				lastUpdateTime = System.currentTimeMillis();
-				tickHandler.sleep(GAME_TICK_INTERVAL);
+				long updateTime = lastUpdateTime - now;
+				tickHandler.sleep(GAME_TICK_INTERVAL - updateTime);
 			} else {
 				// Wait the remaining time
 				tickHandler.sleep(GAME_TICK_INTERVAL - (now - lastUpdateTime));

@@ -61,7 +61,6 @@ public class MazeBallView extends MazeView {
 				ballOffset_y, // top
 				ballOffset_x + ballSize,  // right
 				ballOffset_y + ballSize); // bottom
-
 		ball.image.draw(canvas);
 	}
 

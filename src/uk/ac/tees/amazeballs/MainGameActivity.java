@@ -55,18 +55,6 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		super.onCreate(savedInstanceState);   
 		setContentView(R.layout.activity_main_game);
 		
-		// Check the device has an accelerometer
-		sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
-		if (sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).size() > 0) {
-			// Register ourselves as a listener so that we can receive accelerometer updates
-			accelerometerSensor = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
-			sensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
-		} else {
-			// Failure! No accelerometer
-			Log.e(this.getClass().getName(), "no accelerometer on device, unable to play game");
-			//finish(); // No accelerometer on the emulator
-		}
-		
 		// Load the maze to play
 		Maze loadedMaze = (Maze) getIntent().getExtras().getSerializable("maze");
 		
@@ -98,6 +86,12 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 				 * for the game.
 				 */
 				gameController = new GameController(mazeSelection, gameView);
+				
+				// Initialize the accelerometer
+				if (!initAccelerometer()) {
+					//finish(); // No accelerometer on the emulator
+					return;
+				}
 				
 				/*
 				 * Start the game loop after the game view has been displayed. This is because
@@ -134,7 +128,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		sensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
+		initAccelerometer();
 		running = true;
 	}
 	
@@ -148,6 +142,22 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		// Give the GameController the latest accelerometer readings
 		gameController.lastAccelerometerReading_x = event.values[0];
 		gameController.lastAccelerometerReading_y = event.values[1];
+	}
+	
+	private boolean initAccelerometer() {
+		// Check the device has an accelerometer
+		sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
+		if (sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).size() > 0) {
+			// Register ourselves as a listener so that we can receive accelerometer updates
+			accelerometerSensor = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
+			sensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
+			return true;
+		} else {
+			// Failure! No accelerometer
+			Log.e(this.getClass().getName(), "no accelerometer on device, unable to play game");
+			return false;
+			//finish(); // No accelerometer on the emulator
+		}
 	}
 	
 	/**

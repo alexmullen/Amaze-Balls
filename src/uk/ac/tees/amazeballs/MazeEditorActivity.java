@@ -92,15 +92,7 @@ public class MazeEditorActivity extends Activity {
 				handleSaveAsMenuOption();
 				return true;
 			case R.id.editor_play:
-				if (currentMaze == null) {
-					Toast.makeText(this, "No level to play", Toast.LENGTH_SHORT).show();
-					return true;
-				}
-				Bundle b = new Bundle();
-				b.putSerializable("maze", currentMaze);
-				Intent i = new Intent(this, MainGameActivity.class);
-				i.putExtras(b);
-				startActivity(i);
+				handlePlayMenuOption();
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -208,6 +200,18 @@ public class MazeEditorActivity extends Activity {
 	private void saveCurrentLevel(String levelname) {
 		LevelManager.saveCustomLevel(MazeEditorActivity.this, levelname, currentMaze);
 		Toast.makeText(MazeEditorActivity.this, "Level saved", Toast.LENGTH_SHORT).show();
+	}
+	
+	private void handlePlayMenuOption() {
+		if (currentMaze == null) {
+			Toast.makeText(this, "No level to play", Toast.LENGTH_SHORT).show();
+		} else {
+			Bundle b = new Bundle();
+			b.putSerializable("maze", currentMaze);
+			Intent i = new Intent(this, MainGameActivity.class);
+			i.putExtras(b);
+			startActivity(i);
+		}
 	}
 	
 }

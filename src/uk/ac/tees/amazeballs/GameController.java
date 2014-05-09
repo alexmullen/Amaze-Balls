@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.Point;
+import android.util.Log;
+import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
 import uk.ac.tees.amazeballs.maze.TileImageFactory;
 import uk.ac.tees.amazeballs.maze.TileType;
@@ -236,8 +238,6 @@ public class GameController {
 			}
 			
 			switch (touchedTile.type) {
-				case Floor:
-
 				case Chest:
 					mazeSelection.setTileAt(touchedTile.x, touchedTile.y, TileType.Floor);
 					break;				
@@ -255,6 +255,8 @@ public class GameController {
 					break;
 				case Penalty:
 					// Apply the penalty
+					
+					mazeSelection.setTileAt(touchedTile.x, touchedTile.y, TileType.Floor);
 					break;
 				case Rain:
 					touchingRain = true;
@@ -325,11 +327,12 @@ public class GameController {
 	
 	private Point findStartPosition() {
 		Point firstEmptySpace = null;
-		for (int y = 0; y < mazeSelection.getHeight(); y++) {
-			for (int x = 0; x < mazeSelection.getWidth(); x++) {
-				if (mazeSelection.getTileAt(x, y) == TileType.Start) {
+		Maze underlyingMaze = mazeSelection.getUnderlyingMaze();
+		for (int y = 0; y < underlyingMaze.getHeight(); y++) {
+			for (int x = 0; x < underlyingMaze.getWidth(); x++) {
+				if (underlyingMaze.getTileAt(x, y) == TileType.Start) {
 					return new Point(x, y);
-				} else if (firstEmptySpace == null && mazeSelection.getTileAt(x, y) == TileType.Floor) {
+				} else if (firstEmptySpace == null && underlyingMaze.getTileAt(x, y) == TileType.Floor) {
 					firstEmptySpace = new Point(x, y);
 				}
 			}
@@ -338,12 +341,6 @@ public class GameController {
 	}
 	
 	public boolean isNextToADoor(int x, int y) {
-		// Above
-		if (y - 1 >= 0) {
-			if (mazeSelection.getTileAt(x, (y - 1)) == TileType.Door) {
-				return true;
-			}
-		}
 		// Below
 		if (y + 1 < mazeSelection.getHeight()) {
 			if (mazeSelection.getTileAt(x, (y + 1)) == TileType.Door) {
@@ -359,6 +356,12 @@ public class GameController {
 		// Right
 		if (x + 1 < mazeSelection.getWidth()) {
 			if (mazeSelection.getTileAt((x + 1), y) == TileType.Door) {
+				return true;
+			}
+		}
+		// Above
+		if (y - 1 >= 0) {
+			if (mazeSelection.getTileAt(x, (y - 1)) == TileType.Door) {
 				return true;
 			}
 		}

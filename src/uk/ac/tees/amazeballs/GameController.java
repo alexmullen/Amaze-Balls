@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.Point;
-import android.util.Log;
 import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
 import uk.ac.tees.amazeballs.maze.TileImageFactory;
@@ -68,7 +67,14 @@ public class GameController {
 		int ballSize = (int)(view.getTilesize() * ball.imageRelativeSize);
 		int ballStartOffset = (view.getTilesize() - ballSize) / 2;
 		
+		// Search for the (or a) start position
 		Point startPosition = findStartPosition();
+		if (startPosition == null) {
+			finished = true;
+			return;
+		}
+		
+		
 		ball.position_x = startPosition.x * view.getTilesize() + ballStartOffset;
 		ball.position_y = startPosition.y * view.getTilesize() + ballStartOffset;
 		
@@ -85,6 +91,10 @@ public class GameController {
 	 */
 	public void update() {
 
+		if (finished) {
+			return;
+		}
+		
 		moveBall();
 
 		scrollScreen();

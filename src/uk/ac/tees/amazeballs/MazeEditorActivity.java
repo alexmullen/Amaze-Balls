@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,7 +16,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 
-public class MazeEditorActivity extends Activity {
+public class MazeEditorActivity extends Activity implements SaveLevelDialogFragment.OnLevelSaveRequestListener {
 
 	private Maze currentMaze;
 	private MazeSelection currentMazeSelection;
@@ -41,19 +40,19 @@ public class MazeEditorActivity extends Activity {
 			// Check there was a maze to load from the previous state
 			if (currentMaze == null) {
 				return;
+			} else {
+				/*
+				 * Create a maze selection to view only a small portion of the maze so
+				 * that we can have mazes that are much larger than most devices'
+				 * displays. The size specified here represents the grid size displayed
+				 * in the MazeEditorView.
+				 */
+				currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
+				
+				// Set the maze for the MazeEditorView to display
+				mazeEditorView.setMaze(currentMazeSelection);
+				mazeEditorView.invalidate();
 			}
-			
-			/*
-			 * Create a maze selection to view only a small portion of the maze so
-			 * that we can have mazes that are much larger than most devices'
-			 * displays. The size specified here represents the grid size displayed
-			 * in the MazeEditorView.
-			 */
-			currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
-			
-			// Set the maze for the MazeEditorView to display
-			mazeEditorView.setMaze(currentMazeSelection);
-			mazeEditorView.invalidate();
 		}
 	}
 	
@@ -75,7 +74,7 @@ public class MazeEditorActivity extends Activity {
 		// Handle presses on the options menu items
 		switch (item.getItemId()) {			
 			case R.id.editor_file_new:
-				handleNewMenuOption();
+				handleNewMenuOption();			
 				return true;
 			case R.id.editor_file_open:
 				handleOpenMenuOption();
@@ -182,24 +181,14 @@ public class MazeEditorActivity extends Activity {
 	}
 
 	private void handleSaveAsMenuOption() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		final View inflatedView = this.getLayoutInflater().inflate(R.layout.dialog_level_save, null);
-		builder.setView(inflatedView);
-		builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				EditText levelNameTextView = (EditText) inflatedView.findViewById(R.id.dialog_save_levelname_edittext);
-				currentLevelName = levelNameTextView.getText().toString();
-				saveCurrentLevel(currentLevelName);
-			}
-		});
-		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.cancel();
-			}
-		});
-		builder.create().show();
+		SaveLevelDialogFragment dft = new SaveLevelDialogFragment();
+		dft.show(getFragmentManager(), "savelevel_dialogfragment");
+	}
+	
+	@Override
+	public void onLevelSaveRequested(String levelname) {
+		currentLevelName = levelname;
+		saveCurrentLevel(levelname);
 	}
 
 	private void saveCurrentLevel(String levelname) {
@@ -218,5 +207,4 @@ public class MazeEditorActivity extends Activity {
 			startActivity(i);
 		}
 	}
-	
 }

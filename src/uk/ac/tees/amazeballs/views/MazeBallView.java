@@ -52,6 +52,10 @@ public class MazeBallView extends MazeView {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
+		if (ball == null) {
+			return;
+		}
+		
 		int ballOffset_x = gridOffset_x + ball.position_x;
 		int ballOffset_y = gridOffset_y + ball.position_y;
 		int ballSize = (int)(tileSize * ball.imageRelativeSize);

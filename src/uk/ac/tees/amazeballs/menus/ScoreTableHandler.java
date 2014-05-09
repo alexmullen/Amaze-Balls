@@ -39,17 +39,15 @@ public class ScoreTableHandler extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		
 		String CREATE_SCORES_TABLE = "CREATE TABLE "
-				+
-				TABLE_NAME
-				+ "(" 
-				+ COL_ID
+				+ TABLE_NAME
+				+ "(" + COL_ID
 				+ " INTEGER PRIMARY KEY,"
 				+ COL_NAME
 				+ " TEXT,"
 				+ COL_SCORE 
 				+ " INT,"
 				+ COL_DATE
-				+ " TEXT )";
+				+ " TEXT)";
 				db.execSQL(CREATE_SCORES_TABLE);
 				
 	}

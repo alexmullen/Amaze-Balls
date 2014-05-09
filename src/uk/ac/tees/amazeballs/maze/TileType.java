@@ -17,5 +17,6 @@ public enum TileType {
 	Penalty,
 	Rain,
 	Start,
-	Wall
+	Wall,
+	Weather
 }

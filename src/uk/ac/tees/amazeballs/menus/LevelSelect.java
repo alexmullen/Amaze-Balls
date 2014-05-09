@@ -20,14 +20,14 @@ public class LevelSelect extends Activity{
 		setContentView(R.layout.level_select);
 		
 		levelSpinner = (Spinner) findViewById(R.id.spinner1);
-		levelSpinner.setAdapter(new ArrayAdapter<String>(this, R.layout.simplerow, LevelManager.getCustomLevels(this)));
+		levelSpinner.setAdapter(new ArrayAdapter<String>(this, R.layout.simplerow, LevelManager.getLevels(this)));
 	}
 	
 	public void onPlayLevelButtonClicked(View v) {
 		Object selectedItem = levelSpinner.getSelectedItem();
 		if (selectedItem != null) {
 			Bundle b = new Bundle();
-			b.putSerializable("maze", LevelManager.loadCustomLevel(this, (String)selectedItem));
+			b.putSerializable("maze", LevelManager.loadLevel(this, (String)selectedItem));
 			Intent i = new Intent(this, MainGameActivity.class);
 			i.putExtras(b);
 			startActivity(i);

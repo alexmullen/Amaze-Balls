@@ -24,7 +24,7 @@ public class LevelManager {
 	public static Maze loadLevel(Context context, String levelname) {
 		ObjectInputStream objInput = null;
 		try {
-			objInput = new ObjectInputStream(context.getAssets().open(levelname, AssetManager.ACCESS_STREAMING));
+			objInput = new ObjectInputStream(context.getAssets().open("levels/" + levelname, AssetManager.ACCESS_STREAMING));
 			Maze level = (Maze) objInput.readObject();
 			objInput.close();
 			return level;

@@ -15,47 +15,47 @@ public class MainMenuActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.maze_viewport_layout);
+		setContentView(R.layout.main_menu);
 		
-//		Button btnLevelSelect = (Button) findViewById(R.id.button1);
-//		btnLevelSelect.setOnClickListener(new View.OnClickListener() { 
-//            public void onClick(View arg0) {
-//                //Starting a new Intent
-//                Intent nextScreen = new Intent(getApplicationContext(), LevelSelect.class);
-//                startActivity(nextScreen);
-// 
-//            }
-//        });
-//		
-//		Button btnHighscores = (Button) findViewById(R.id.button2);
-//		btnHighscores.setOnClickListener(new View.OnClickListener() { 
-//            public void onClick(View arg0) {
-//                //Starting a new Intent
-//                Intent nextScreen = new Intent(getApplicationContext(), Highscores.class);
-//                startActivity(nextScreen);
-// 
-//            }
-//        });
-//		
-//		Button btnLevelEditor = (Button) findViewById(R.id.button3);
-//		btnLevelEditor.setOnClickListener(new View.OnClickListener() { 
-//            public void onClick(View arg0) {
-//                //Starting a new Intent
-//                Intent nextScreen = new Intent(getApplicationContext(), MazeEditorActivity.class);
-//                startActivity(nextScreen);
-// 
-//            }
-//        });
-//		
-//		Button btnSettings = (Button) findViewById(R.id.button4);
-//		btnSettings.setOnClickListener(new View.OnClickListener() { 
-//            public void onClick(View arg0) {
-//                //Starting a new Intent
-//                Intent nextScreen = new Intent(getApplicationContext(), Settings.class);
-//                startActivity(nextScreen);
-// 
-//            }
-//        });
+		Button btnLevelSelect = (Button) findViewById(R.id.button1);
+		btnLevelSelect.setOnClickListener(new View.OnClickListener() { 
+            public void onClick(View arg0) {
+                //Starting a new Intent
+                Intent nextScreen = new Intent(getApplicationContext(), LevelSelect.class);
+                startActivity(nextScreen);
+ 
+            }
+        });
+		
+		Button btnHighscores = (Button) findViewById(R.id.button2);
+		btnHighscores.setOnClickListener(new View.OnClickListener() { 
+            public void onClick(View arg0) {
+                //Starting a new Intent
+                Intent nextScreen = new Intent(getApplicationContext(), Highscores.class);
+                startActivity(nextScreen);
+ 
+            }
+        });
+		
+		Button btnLevelEditor = (Button) findViewById(R.id.button3);
+		btnLevelEditor.setOnClickListener(new View.OnClickListener() { 
+            public void onClick(View arg0) {
+                //Starting a new Intent
+                Intent nextScreen = new Intent(getApplicationContext(), MazeEditorActivity.class);
+                startActivity(nextScreen);
+ 
+            }
+        });
+		
+		Button btnSettings = (Button) findViewById(R.id.button4);
+		btnSettings.setOnClickListener(new View.OnClickListener() { 
+            public void onClick(View arg0) {
+                //Starting a new Intent
+                Intent nextScreen = new Intent(getApplicationContext(), Settings.class);
+                startActivity(nextScreen);
+ 
+            }
+        });
 		
 		
 		loadTiles();
@@ -77,6 +77,7 @@ public class MainMenuActivity extends Activity {
 		TileImageFactory.registerImage(TileType.Penalty, this.getResources().getDrawable(R.drawable.penalty));
 		TileImageFactory.registerImage(TileType.Rain, this.getResources().getDrawable(R.drawable.rain));
 		TileImageFactory.registerImage(TileType.Start, this.getResources().getDrawable(R.drawable.start));
+		TileImageFactory.registerImage(TileType.Weather, this.getResources().getDrawable(R.drawable.weathertile));
 	}
 
 //	@Override

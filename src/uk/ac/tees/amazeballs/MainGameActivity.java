@@ -128,8 +128,10 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		initAccelerometer();
-		running = true;
+		if (gameController != null) {
+			initAccelerometer();
+			running = true;
+		}
 	}
 	
 	@Override

@@ -63,6 +63,10 @@ public class MazeView extends View {
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
 		
+		if (currentMaze == null) {
+			return;
+		}
+		
 		// Calculate the ideal square size to use for the current view dimensions
         int tileSizeAcross = (int) Math.floor(getWidth() / currentMaze.getWidth());
         int tileSizeDown = (int) Math.floor(getHeight() / currentMaze.getHeight());
@@ -77,6 +81,10 @@ public class MazeView extends View {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
+		if (currentMaze == null) {
+			return;
+		}
+		
 		// Calculate the ideal square size to use for the current view dimensions
         int tileSizeAcross = (int) Math.floor(getWidth() / currentMaze.getWidth());
         int tileSizeDown = (int) Math.floor(getHeight() / currentMaze.getHeight());

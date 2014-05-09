@@ -221,20 +221,23 @@ public class GameController {
 		
 		// Handle touching any special tiles we care about
 		for (TouchedTile touchedTile : touchingTiles) {
+			
+			// "Use" any picked up keys to unlock any doors near
+			if ((keys > 0) && (isNextToADoor(touchedTile.x, touchedTile.y))) {
+				List<Point> doors = getDoorsAround(touchedTile.x, touchedTile.y);
+				for (Point d : doors) {
+					if (keys > 0) {
+						keys--;;
+						mazeSelection.setTileAt(d.x, d.y, TileType.Floor);	
+					} else {
+						break;
+					}
+				}
+			}
+			
 			switch (touchedTile.type) {
 				case Floor:
-					// "Use" any picked up keys to unlock any doors near
-					if ((keys > 0) && (isNextToADoor(touchedTile.x, touchedTile.y))) {
-						List<Point> doors = getDoorsAround(touchedTile.x, touchedTile.y);
-						for (Point d : doors) {
-							if (keys > 0) {
-								keys--;;
-								mazeSelection.setTileAt(d.x, d.y, TileType.Floor);	
-							} else {
-								break;
-							}
-						}
-					}
+
 				case Chest:
 					mazeSelection.setTileAt(touchedTile.x, touchedTile.y, TileType.Floor);
 					break;				

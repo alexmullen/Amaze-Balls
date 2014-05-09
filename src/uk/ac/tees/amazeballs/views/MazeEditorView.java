@@ -52,6 +52,7 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Penalty, TileImageFactory.getImage(TileType.Penalty), "Penalty"));
 		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Rain, TileImageFactory.getImage(TileType.Rain), "Rain"));
 		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Start, TileImageFactory.getImage(TileType.Start), "Start"));
+		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Weather, TileImageFactory.getImage(TileType.Weather), "Weather"));
 	}
 	
 	private static class SpecialTileChoice {
@@ -101,6 +102,9 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 
 	@Override
 	public void onLongPress(MotionEvent event) {
+		if (currentMaze == null) {
+			return;
+		}
 
 		// Normalize the coordinates touched into grid coordinates.
 		final int gridPositionTouchedX = (int) Math.floor(((event.getX() - gridOffset_x) / getTilesize()));
@@ -151,6 +155,10 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 
 	@Override
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+		if (currentMaze == null) {
+			return true;
+		}
+		
 		boolean invalidateNeeded = false;
 		MazeSelection mazeSelection = (MazeSelection) currentMaze;
 
@@ -181,6 +189,10 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 
 	@Override
 	public boolean onSingleTapUp(MotionEvent event) {
+		if (currentMaze == null) {
+			return true;
+		}
+		
 		// Normalize the coordinates touched into grid coordinates.
 		int gridPositionTouchedX = (int) Math.floor(((event.getX() - gridOffset_x) / getTilesize()));
 		int gridPositionTouchedY = (int) Math.floor(((event.getY() - gridOffset_y) / getTilesize()));
@@ -204,6 +216,10 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 	
 	@Override
 	public boolean onScale(ScaleGestureDetector detector) {
+		if (currentMaze == null) {
+			return true;
+		}
+		
 		boolean invalidateNeeded = false;
 		MazeSelection mazeSelection = (MazeSelection) currentMaze;
 		
@@ -261,6 +277,10 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
+		if (currentMaze == null) {
+			return;
+		}
+		
 		// Draw vertical grid lines
 		for (int i = 0; i <= currentMaze.getWidth(); i++) {
 			int current_x = (gridOffset_x + (tileSize * i));

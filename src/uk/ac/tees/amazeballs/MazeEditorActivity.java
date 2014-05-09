@@ -38,6 +38,11 @@ public class MazeEditorActivity extends Activity {
 			currentLevelName = savedInstanceState.getString("level_name");
 			currentMaze = (Maze) savedInstanceState.getSerializable("maze");
 			
+			// Check there was a maze to load from the previous state
+			if (currentMaze == null) {
+				return;
+			}
+			
 			/*
 			 * Create a maze selection to view only a small portion of the maze so
 			 * that we can have mazes that are much larger than most devices'
@@ -49,18 +54,14 @@ public class MazeEditorActivity extends Activity {
 			// Set the maze for the MazeEditorView to display
 			mazeEditorView.setMaze(currentMazeSelection);
 			mazeEditorView.invalidate();
-		} else {
-			// Create a new bordered maze of the specified width and height
-			//currentMaze = MazeFactory.createBorderedMaze(25, 30);
-			handleNewMenuOption();
 		}
 	}
 	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
 		outState.putString("level_name", currentLevelName);
 		outState.putSerializable("maze", currentMaze);
-		super.onSaveInstanceState(outState);
 	}
 
 	@Override
@@ -80,16 +81,20 @@ public class MazeEditorActivity extends Activity {
 				handleOpenMenuOption();
 				return true;
 			case R.id.editor_file_save:
-				// Check it already has a name that it has been saved by
-				if (currentLevelName != null) {
-					// Overwrite
-					saveCurrentLevel(currentLevelName);
-				} else {
-					handleSaveAsMenuOption();
+				if (currentMaze != null) {
+					// Check it already has a name that it has been saved by
+					if (currentLevelName != null) {
+						// Overwrite
+						saveCurrentLevel(currentLevelName);
+					} else {
+						handleSaveAsMenuOption();
+					}
 				}
 				return true;
 			case R.id.editor_file_saveas:
-				handleSaveAsMenuOption();
+				if (currentMaze != null) {
+					handleSaveAsMenuOption();
+				}
 				return true;
 			case R.id.editor_play:
 				handlePlayMenuOption();

@@ -277,6 +277,7 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
+		// Don't draw a maze if there is no maze
 		if (currentMaze == null) {
 			return;
 		}

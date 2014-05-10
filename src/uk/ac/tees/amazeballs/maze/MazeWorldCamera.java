@@ -15,16 +15,16 @@ public class MazeWorldCamera {
 	
 	public MazeWorldCamera(MazeWorld world, int left, int top, int right, int bottom) {
 		this.world = world;
-		this.left = left;
-		this.top = top;
-		this.right = right;
-		this.bottom = bottom;
+		this.left = Math.max(0, left);
+		this.top = Math.max(0, top);
+		this.right = Math.min(world.getWidth(), right);
+		this.bottom = Math.min(world.getHeight(), bottom);
 	}
 	
 	public MazeWorld getWorld() {
 		return world;
 	}
-	
+
 	public int getLeft() {
 		return left;
 	}
@@ -39,6 +39,14 @@ public class MazeWorldCamera {
 	
 	public int getBottom() {
 		return bottom;
+	}
+	
+	public int getWidth() {
+		return (right - left);
+	}
+	
+	public int getHeight() {
+		return (bottom - top);
 	}
 	
 	public int moveLeft(int amount) {
@@ -87,8 +95,8 @@ public class MazeWorldCamera {
 	
 	public List<Point> getVisibleTiles() {
 		ArrayList<Point> visTileCoords = new ArrayList<Point>();
-		for (int x = left; x <= (right - left); x += world.getTilesize()) {
-			for (int y = top; y <= (bottom - top); y += world.getTilesize()) {
+		for (int x = left; x <= getWidth(); x += world.getTilesize()) {
+			for (int y = top; y <= getHeight(); y += world.getTilesize()) {
 				Point gridCoords = world.getGridCoords(x, y);
 				if (world.getMaze().isTileAt(gridCoords.x, gridCoords.y)) {
 					visTileCoords.add(gridCoords);

@@ -14,6 +14,7 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 public class MazeViewport extends View {
@@ -29,15 +30,12 @@ public class MazeViewport extends View {
 		
 		loadTiles();
 		
-		Maze maze = MazeFactory.createBorderedMaze(10, 15);
-		MazeWorld mazeWorld = new MazeWorld(maze, 10);
+		Maze maze = MazeFactory.createBorderedMaze(10, 16);
+		MazeWorld mazeWorld = new MazeWorld(maze, 50);
 		
-		
-//		WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-//		Display display = wm.getDefaultDisplay();
-		
-		camera = new MazeWorldCamera(mazeWorld, 0, 0, 100, 150);
-		
+		camera = new MazeWorldCamera(mazeWorld, 0, 0, 500, 725);
+		//camera.moveDown(50);
+		//camera.moveRight(50);
 	}
 
 	public MazeViewport(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -59,19 +57,34 @@ public class MazeViewport extends View {
 		if (camera == null) {
 			return;
 		}
-		
-		float xScale = getWidth() / (camera.getRight() - camera.getLeft());
-		float yScale = getHeight() / (camera.getBottom() - camera.getTop());
-		float scale = Math.min(xScale, yScale);
-		canvas.scale(scale, scale);
-		
+
+		//float scale = Math.min((getWidth() / camera.getWidth()), (getHeight() / camera.getHeight()));
+
+//		// Calculate the offsets so we can centre align the grid.
+//		int gridOffset_x = (int) ((getWidth() - (camera.getWidth() * scale)) / 2);
+//      int gridOffset_y = (int) ((getHeight() - (camera.getHeight() * scale)) / 2);
+//      	
+//      	
+//		int scaledTileSize = (int) (camera.getWorld().getTilesize() * scale);
+      	
+
+		//canvas.clipRect(gridOffset_x, gridOffset_y, (getWidth() - gridOffset_x) , (getHeight() - gridOffset_y));
+		canvas.clipRect(0, 0, camera.getWidth(), camera.getHeight());
+      	
 		List<Point> visibleTiles = camera.getVisibleTiles();
+		
+		
+		Log.d(getClass().getName(), String.valueOf(visibleTiles.size()));
+		
+		
 		for (Point gridPosition : visibleTiles) {
 			
 			TileType tileType = 
 					camera.getWorld().getMaze().getTileAt(gridPosition.x, gridPosition.y);
 			
 			Point worldPosition = camera.getWorld().getWorldCoords(gridPosition.x, gridPosition.y);
+			//worldPosition.x *= scale;
+			//worldPosition.y *= scale;
 			
 			Drawable tileImage = TileImageFactory.getImage(tileType);
 			tileImage.setBounds(
@@ -82,6 +95,15 @@ public class MazeViewport extends View {
 
 			tileImage.draw(canvas);
 		}
+		
+		try {
+			Thread.sleep(250);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.invalidate();
+		camera.moveDown(1);
 	}
 	
 	private void loadTiles() {

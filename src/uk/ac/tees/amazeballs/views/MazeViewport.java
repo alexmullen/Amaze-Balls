@@ -2,10 +2,6 @@ package uk.ac.tees.amazeballs.views;
 
 import java.util.List;
 
-import uk.ac.tees.amazeballs.R;
-import uk.ac.tees.amazeballs.maze.Maze;
-import uk.ac.tees.amazeballs.maze.MazeFactory;
-import uk.ac.tees.amazeballs.maze.MazeWorld;
 import uk.ac.tees.amazeballs.maze.MazeWorldCamera;
 import uk.ac.tees.amazeballs.maze.TileImageFactory;
 import uk.ac.tees.amazeballs.maze.TileType;
@@ -14,8 +10,8 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
+
 
 public class MazeViewport extends View {
 
@@ -27,15 +23,13 @@ public class MazeViewport extends View {
 
 	public MazeViewport(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		
-		loadTiles();
-		
-		Maze maze = MazeFactory.createBorderedMaze(10, 16);
-		MazeWorld mazeWorld = new MazeWorld(maze, 50);
-		
-		camera = new MazeWorldCamera(mazeWorld, 0, 0, 500, 725);
-		//camera.moveDown(50);
-		//camera.moveRight(50);
+//		
+//		loadTiles();
+//		
+//		Maze maze = MazeFactory.createBorderedMaze(13, 18);
+//		MazeWorld mazeWorld = new MazeWorld(maze, 10);
+//		
+//		camera = new MazeWorldCamera(mazeWorld, 0, 0, 100, 150);
 	}
 
 	public MazeViewport(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -58,67 +52,63 @@ public class MazeViewport extends View {
 			return;
 		}
 
-		//float scale = Math.min((getWidth() / camera.getWidth()), (getHeight() / camera.getHeight()));
+		/*
+		 *  Calculate the scale required to make best use of the screen space we have
+		 *  whilst keeping the camera's aspect ratio the same.
+		 */
+		float scale = Math.min((getWidth() / camera.getWidth()), (getHeight() / camera.getHeight()));
 
-//		// Calculate the offsets so we can centre align the grid.
-//		int gridOffset_x = (int) ((getWidth() - (camera.getWidth() * scale)) / 2);
-//      int gridOffset_y = (int) ((getHeight() - (camera.getHeight() * scale)) / 2);
-//      	
-//      	
-//		int scaledTileSize = (int) (camera.getWorld().getTilesize() * scale);
+		// Calculate the offsets so we can centre align the grid.
+		int gridOffset_x = (int) ((getWidth() - (camera.getWidth() * scale)) / 2);
+		int gridOffset_y = (int) ((getHeight() - (camera.getHeight() * scale)) / 2);
+		int scaledTileSize = (int) (camera.getWorld().getTilesize() * scale);
       	
+		// Create a clipping region to remove any tiles that cannot be seen
+		canvas.clipRect(gridOffset_x, gridOffset_y, (getWidth() - gridOffset_x) , (getHeight() - gridOffset_y));
 
-		//canvas.clipRect(gridOffset_x, gridOffset_y, (getWidth() - gridOffset_x) , (getHeight() - gridOffset_y));
-		canvas.clipRect(0, 0, camera.getWidth(), camera.getHeight());
-      	
 		List<Point> visibleTiles = camera.getVisibleTiles();
-		
-		
-		Log.d(getClass().getName(), String.valueOf(visibleTiles.size()));
-		
-		
 		for (Point gridPosition : visibleTiles) {
 			
+			// Get the type of tile it is
 			TileType tileType = 
 					camera.getWorld().getMaze().getTileAt(gridPosition.x, gridPosition.y);
 			
+			// Get its world coordinates
 			Point worldPosition = camera.getWorld().getWorldCoords(gridPosition.x, gridPosition.y);
-			//worldPosition.x *= scale;
-			//worldPosition.y *= scale;
 			
+			// Convert the tile's world coordinates into view/camera coordinates
+			int viewPositionX = (worldPosition.x - camera.getLeft());
+			int viewPositionY = (worldPosition.y - camera.getTop());
+			
+			// Scale the positions for the display
+			int scaledViewPositionX = (int) (viewPositionX * scale);
+			int scaledViewPositionY = (int) (viewPositionY * scale);
+			
+			// Draw the tile
 			Drawable tileImage = TileImageFactory.getImage(tileType);
 			tileImage.setBounds(
-					worldPosition.x - camera.getLeft(), // left
-					worldPosition.y - camera.getTop(), // top
-					worldPosition.x - camera.getLeft() + camera.getWorld().getTilesize(), // right
-					worldPosition.y - camera.getTop() + camera.getWorld().getTilesize()); // bottom
+					gridOffset_x + scaledViewPositionX, // left
+					gridOffset_y + scaledViewPositionY, // top
+					gridOffset_x + scaledViewPositionX + scaledTileSize, // right
+					gridOffset_y + scaledViewPositionY + scaledTileSize); // bottom
 
 			tileImage.draw(canvas);
 		}
-		
-		try {
-			Thread.sleep(250);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		this.invalidate();
-		camera.moveDown(1);
 	}
-	
-	private void loadTiles() {
-		TileImageFactory.registerImage(TileType.Floor, this.getResources().getDrawable(R.drawable.floor));
-		TileImageFactory.registerImage(TileType.Wall, this.getResources().getDrawable(R.drawable.wall));
-		TileImageFactory.registerImage(TileType.Ball, this.getResources().getDrawable(R.drawable.ball));
-		
-		TileImageFactory.registerImage(TileType.Chest, this.getResources().getDrawable(R.drawable.chest));
-		TileImageFactory.registerImage(TileType.Door, this.getResources().getDrawable(R.drawable.door));
-		TileImageFactory.registerImage(TileType.Goal, this.getResources().getDrawable(R.drawable.goal));
-		TileImageFactory.registerImage(TileType.Ice, this.getResources().getDrawable(R.drawable.ice));
-		TileImageFactory.registerImage(TileType.Key, this.getResources().getDrawable(R.drawable.key));
-		TileImageFactory.registerImage(TileType.Penalty, this.getResources().getDrawable(R.drawable.penalty));
-		TileImageFactory.registerImage(TileType.Rain, this.getResources().getDrawable(R.drawable.rain));
-		TileImageFactory.registerImage(TileType.Start, this.getResources().getDrawable(R.drawable.start));
-	}
+//	
+//	private void loadTiles() {
+//		TileImageFactory.registerImage(TileType.Floor, this.getResources().getDrawable(R.drawable.floor));
+//		TileImageFactory.registerImage(TileType.Wall, this.getResources().getDrawable(R.drawable.wall));
+//		TileImageFactory.registerImage(TileType.Ball, this.getResources().getDrawable(R.drawable.ball));
+//		
+//		TileImageFactory.registerImage(TileType.Chest, this.getResources().getDrawable(R.drawable.chest));
+//		TileImageFactory.registerImage(TileType.Door, this.getResources().getDrawable(R.drawable.door));
+//		TileImageFactory.registerImage(TileType.Goal, this.getResources().getDrawable(R.drawable.goal));
+//		TileImageFactory.registerImage(TileType.Ice, this.getResources().getDrawable(R.drawable.ice));
+//		TileImageFactory.registerImage(TileType.Key, this.getResources().getDrawable(R.drawable.key));
+//		TileImageFactory.registerImage(TileType.Penalty, this.getResources().getDrawable(R.drawable.penalty));
+//		TileImageFactory.registerImage(TileType.Rain, this.getResources().getDrawable(R.drawable.rain));
+//		TileImageFactory.registerImage(TileType.Start, this.getResources().getDrawable(R.drawable.start));
+//	}
 	
 }

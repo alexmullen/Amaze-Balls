@@ -54,7 +54,7 @@ public class MazeWorldCamera {
 		if (amount >= left) {
 			amount = left;
 			left = 0;
-			right -= left;
+			right -= amount;
 		} else {
 			left -= amount;
 			right -= amount;
@@ -67,7 +67,7 @@ public class MazeWorldCamera {
 		if (amount >= top) {
 			amount = top;
 			top = 0;
-			bottom -= top;
+			bottom -= amount;
 		} else {
 			top -= amount;
 			bottom -= amount;
@@ -95,12 +95,17 @@ public class MazeWorldCamera {
 	
 	public List<Point> getVisibleTiles() {
 		ArrayList<Point> visTileCoords = new ArrayList<Point>();
-		for (int x = left; x <= getWidth(); x += world.getTilesize()) {
-			for (int y = top; y <= getHeight(); y += world.getTilesize()) {
-				Point gridCoords = world.getGridCoords(x, y);
-				if (world.getMaze().isTileAt(gridCoords.x, gridCoords.y)) {
-					visTileCoords.add(gridCoords);
-				}
+//		for (int x = left; x <= getWidth(); x += world.getTilesize()) {
+//			for (int y = top; y <= getHeight(); y += world.getTilesize()) {
+//				Point gridCoords = world.getGridCoords(x, y);
+//				if (world.getMaze().isTileAt(gridCoords.x, gridCoords.y)) {
+//					visTileCoords.add(gridCoords);
+//				}
+//			}
+//		}
+		for (int x = 0; x < world.getMaze().getWidth(); x++) {
+			for (int y = 0; y < world.getMaze().getHeight(); y++) {
+				visTileCoords.add(new Point(x, y));
 			}
 		}
 		return visTileCoords;

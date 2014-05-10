@@ -13,12 +13,22 @@ public class MazeWorldCamera {
 	private int right;
 	private int bottom;
 	
+	private final ArrayList<Point> cachedTileCoords;
+	
 	public MazeWorldCamera(MazeWorld world, int left, int top, int right, int bottom) {
 		this.world = world;
 		this.left = Math.max(0, left);
 		this.top = Math.max(0, top);
 		this.right = Math.min(world.getWidth(), right);
 		this.bottom = Math.min(world.getHeight(), bottom);
+		
+		
+		cachedTileCoords = new ArrayList<Point>(world.getMaze().getWidth() * world.getMaze().getHeight());
+		for (int x = 0; x < world.getMaze().getWidth(); x++) {
+			for (int y = 0; y < world.getMaze().getHeight(); y++) {
+				cachedTileCoords.add(new Point(x, y));
+			}
+		}
 	}
 	
 	public MazeWorld getWorld() {
@@ -94,7 +104,7 @@ public class MazeWorldCamera {
 	}
 	
 	public List<Point> getVisibleTiles() {
-		ArrayList<Point> visTileCoords = new ArrayList<Point>();
+//		ArrayList<Point> visTileCoords = new ArrayList<Point>();
 //		for (int x = left; x <= getWidth(); x += world.getTilesize()) {
 //			for (int y = top; y <= getHeight(); y += world.getTilesize()) {
 //				Point gridCoords = world.getGridCoords(x, y);
@@ -103,12 +113,12 @@ public class MazeWorldCamera {
 //				}
 //			}
 //		}
-		for (int x = 0; x < world.getMaze().getWidth(); x++) {
-			for (int y = 0; y < world.getMaze().getHeight(); y++) {
-				visTileCoords.add(new Point(x, y));
-			}
-		}
-		return visTileCoords;
+//		for (int x = 0; x < world.getMaze().getWidth(); x++) {
+//			for (int y = 0; y < world.getMaze().getHeight(); y++) {
+//				visTileCoords.add(new Point(x, y));
+//			}
+//		}
+		return cachedTileCoords;
 	}
 
 }

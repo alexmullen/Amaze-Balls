@@ -3,6 +3,7 @@ package uk.ac.tees.amazeballs;
 import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
 import uk.ac.tees.amazeballs.views.MazeBallView;
+import uk.ac.tees.amazeballs.views.MazeViewport;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -30,8 +31,10 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 	private SensorManager sensorManager;
 	
 	private MazeSelection mazeSelection;
-	private MazeBallView gameView;
-	private GameController gameController;
+	//private MazeBallView gameView;
+	private MazeViewport gameView;
+	//private GameController gameController;
+	private NewImprovedGameController gameController;
 	private GameTickHandler tickHandler;
 	
 	private boolean running;
@@ -56,7 +59,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		setContentView(R.layout.activity_main_game);
 		
 		// Load the maze to play
-		Maze loadedMaze = (Maze) getIntent().getExtras().getSerializable("maze");
+		final Maze loadedMaze = (Maze) getIntent().getExtras().getSerializable("maze");
 		
 		/*
 		 * Create a maze selection to view only a small portion of the maze so
@@ -67,10 +70,11 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		mazeSelection = new MazeSelection(loadedMaze, 0, 0, 10, 15);
 		
 		// Get a reference to the inflated MazeBallView 
-		gameView = (MazeBallView) findViewById(R.id.main_game_view);
+		//gameView = (MazeBallView) findViewById(R.id.main_game_view);
+		gameView = (MazeViewport) findViewById(R.id.main_game_view);
 		
-		// Set the maze for the MazeEditorView to display
-		gameView.setMaze(mazeSelection);
+		// Set the maze for the MazeBallView to display
+		//gameView.setMaze(mazeSelection);
 		
 		/* 
 		 * Add a listener to listen for when the game view has been displayed so that we can
@@ -85,7 +89,8 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 				 * Create a GameController for handling the moving, collisions and physics 
 				 * for the game.
 				 */
-				gameController = new GameController(mazeSelection, gameView);
+				//gameController = new GameController(mazeSelection, gameView);
+				gameController = new NewImprovedGameController(loadedMaze, gameView);
 				
 				// Initialize the accelerometer
 				if (!initAccelerometer()) {

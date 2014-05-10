@@ -31,12 +31,11 @@ public class NewImprovedGameController {
 		}
 	}
 	
-	private final int NORMAL_BALL_SPEED = 5;
-	private final int ICE_BALL_SPEED = 10;
+	private final int NORMAL_BALL_SPEED = 3;
+	private final int ICE_BALL_SPEED = 7;
 	private final int RAIN_BALL_SPEED = 1;
 	
-	private final static int GRID_SCROLLING_AMOUNT = 1;
-	private final static double TILT_SENSITIVITY = 0.75;
+	private final static double TILT_SENSITIVITY = 0.50;
 	
 	public volatile float lastAccelerometerReading_x;
 	public volatile float lastAccelerometerReading_y;
@@ -52,15 +51,17 @@ public class NewImprovedGameController {
 	
 	public NewImprovedGameController(Maze maze, MazeViewport mazeVewport) {
 		this.mazeViewport = mazeVewport;
-		mazeWorld = new MazeWorld(maze, 10);
-		mazeWorldCamera = new MazeWorldCamera(mazeWorld, 0, 0, 100, 150);
+		mazeWorld = new MazeWorld(maze, 20);
+		mazeWorldCamera = new MazeWorldCamera(mazeWorld, 0, 0, 
+				10 * mazeWorld.getTilesize(), 
+				15 * mazeWorld.getTilesize());
 		mazeViewport.setCamera(mazeWorldCamera);
 		
 		// Search for the (or a) start position to place the ball
 		Point startPosition = findStartPosition();
 		if (startPosition == null) {
 			// No start position available!
-			//finished = true;
+			finished = true;
 			return;
 		}
 		
@@ -175,31 +176,34 @@ public class NewImprovedGameController {
 	 * from the view edge.
 	 */
 	private void scrollScreen() {
-		// Potentially scroll the screen down
+		
 		int mazeAreaHeight = mazeWorldCamera.getHeight();
-		if ((double)mazeWorld.getBall().position_y / mazeAreaHeight >= 0.75) {
-			int amountShiftedDown = mazeWorldCamera.moveDown(GRID_SCROLLING_AMOUNT);
-			mazeWorld.getBall().position_y -= amountShiftedDown;
+		int mazeAreaWidth = mazeWorldCamera.getWidth();
+		
+		// Convert the balls world coordinates into view/camera coordinates
+		int viewBallPositionX = (mazeWorldCamera.getWorld().getBall().position_x - mazeWorldCamera.getLeft());
+		int viewBallPositionY = (mazeWorldCamera.getWorld().getBall().position_y - mazeWorldCamera.getTop());
+		
+		
+		// Potentially scroll the screen down
+		if ((double)viewBallPositionY / mazeAreaHeight >= 0.75) {
+			mazeWorldCamera.moveDown(ballSpeed);
 		}
 		
 		// Potentially scroll the screen up
-		if ((double)mazeWorld.getBall().position_y / mazeAreaHeight <= 0.25) {
-			int amountShiftedUp = mazeWorldCamera.moveUp(GRID_SCROLLING_AMOUNT);
-			mazeWorld.getBall().position_y += amountShiftedUp;
+		if ((double)viewBallPositionY / mazeAreaHeight <= 0.25) {
+			mazeWorldCamera.moveUp(ballSpeed);
 		}
 		
 		// Potentially scroll the screen right
-		int mazeAreaWidth = mazeWorldCamera.getWidth();
-		if ((double)mazeWorld.getBall().position_x / mazeAreaWidth >= 0.75) {
-			int amountShiftedRight = mazeWorldCamera.moveRight(GRID_SCROLLING_AMOUNT);
-			mazeWorld.getBall().position_x -= amountShiftedRight;
+		if ((double)viewBallPositionX / mazeAreaWidth >= 0.75) {
+			mazeWorldCamera.moveRight(ballSpeed);
 		}
 		
 		// Potentially scroll the screen left
-		if ((double)mazeWorld.getBall().position_x / mazeAreaWidth <= 0.25) {
-			int amountShiftedLeft = mazeWorldCamera.moveLeft(GRID_SCROLLING_AMOUNT);
-			mazeWorld.getBall().position_x += amountShiftedLeft;
-		}
+		if ((double)viewBallPositionX / mazeAreaWidth <= 0.25) {
+			mazeWorldCamera.moveLeft(ballSpeed);
+		} 
 	}
 	
 	/**

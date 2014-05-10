@@ -1,5 +1,8 @@
-package uk.ac.tees.amazeballs;
+package uk.ac.tees.amazeballs.dialogs;
 
+import uk.ac.tees.amazeballs.R;
+import uk.ac.tees.amazeballs.R.id;
+import uk.ac.tees.amazeballs.R.layout;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;

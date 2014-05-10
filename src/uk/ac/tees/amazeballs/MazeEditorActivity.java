@@ -1,5 +1,7 @@
 package uk.ac.tees.amazeballs;
 
+import uk.ac.tees.amazeballs.dialogs.NewLevelDialogFragment;
+import uk.ac.tees.amazeballs.dialogs.SaveLevelDialogFragment;
 import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.MazeFactory;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
@@ -7,16 +9,16 @@ import uk.ac.tees.amazeballs.views.MazeEditorView;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 
-public class MazeEditorActivity extends Activity implements SaveLevelDialogFragment.OnLevelSaveRequestListener {
+
+public class MazeEditorActivity extends Activity 
+		implements 	SaveLevelDialogFragment.OnLevelSaveRequestListener, 
+					NewLevelDialogFragment.OnNewLevelRequestListener {
 
 	private Maze currentMaze;
 	private MazeSelection currentMazeSelection;
@@ -34,13 +36,12 @@ public class MazeEditorActivity extends Activity implements SaveLevelDialogFragm
 		// Check whether we need to restore our state
 		if (savedInstanceState != null) {
 			// Restore our state
-			currentLevelName = savedInstanceState.getString("level_name");
 			currentMaze = (Maze) savedInstanceState.getSerializable("maze");
-			
 			// Check there was a maze to load from the previous state
 			if (currentMaze == null) {
 				return;
 			} else {
+				currentLevelName = savedInstanceState.getString("level_name");
 				/*
 				 * Create a maze selection to view only a small portion of the maze so
 				 * that we can have mazes that are much larger than most devices'
@@ -104,58 +105,16 @@ public class MazeEditorActivity extends Activity implements SaveLevelDialogFragm
 	}
 	
 	private void handleNewMenuOption() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		final View inflatedView = this.getLayoutInflater().inflate(R.layout.dialog_newmazesize, null);
-		
-		final SeekBar seekWidthBar = (SeekBar) inflatedView.findViewById(R.id.seekbar_maze_width);
-		final SeekBar seekHeightBar = (SeekBar) inflatedView.findViewById(R.id.seekbar_maze_height);
-		final TextView seekWidthValue = (TextView) inflatedView.findViewById(R.id.width_value);
-		final TextView seekHeightValue = (TextView) inflatedView.findViewById(R.id.height_value);
-
-		seekWidthBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-			@Override
-			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				seekWidthValue.setText(String.valueOf(Math.max(8, progress)));
-			}
-			@Override
-			public void onStopTrackingTouch(SeekBar seekBar) { }
-			@Override
-			public void onStartTrackingTouch(SeekBar seekBar) { }
-		});
-		
-		seekHeightBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-			@Override
-			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				seekHeightValue.setText(String.valueOf(Math.max(8, progress)));
-			}
-			@Override
-			public void onStopTrackingTouch(SeekBar seekBar) { }
-			@Override
-			public void onStartTrackingTouch(SeekBar seekBar) { }
-		});
-		
-		builder.setTitle("Choose the maze dimensions");
-		builder.setView(inflatedView);
-		builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				currentLevelName = null;
-				currentMaze = MazeFactory.createBorderedMaze(
-						Math.max(8, seekWidthBar.getProgress()), 
-						Math.max(8, seekHeightBar.getProgress()));
-				
-				currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
-				mazeEditorView.setMaze(currentMazeSelection);
-				mazeEditorView.invalidate();
-			}
-		});
-		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.cancel();
-			}
-		});
-		builder.create().show();
+		new NewLevelDialogFragment().show(getFragmentManager(), "savelevel_dialogfragment");
+	}
+	
+	@Override
+	public void onNewLevelRequested(int width, int height) {
+		currentLevelName = null;
+		currentMaze = MazeFactory.createBorderedMaze(width, height);
+		currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
+		mazeEditorView.setMaze(currentMazeSelection);
+		mazeEditorView.invalidate();
 	}
 	
 	private void handleOpenMenuOption() {
@@ -181,8 +140,7 @@ public class MazeEditorActivity extends Activity implements SaveLevelDialogFragm
 	}
 
 	private void handleSaveAsMenuOption() {
-		SaveLevelDialogFragment dft = new SaveLevelDialogFragment();
-		dft.show(getFragmentManager(), "savelevel_dialogfragment");
+		new SaveLevelDialogFragment().show(getFragmentManager(), "savelevel_dialogfragment");
 	}
 	
 	@Override

@@ -34,7 +34,7 @@ public class NewLevelDialogFragment extends DialogFragment {
 		try {
 			listener = (OnNewLevelRequestListener) activity;
 		} catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnLevelSaveRequestListener");
+            throw new ClassCastException(activity.toString() + " must implement OnNewLevelRequestListener");
         }
 	}
 	

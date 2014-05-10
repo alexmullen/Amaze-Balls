@@ -10,11 +10,24 @@ import android.graphics.Point;
  *
  */
 public class MazeWorld {
+	
+	public static class Ball {
+		public int position_x;
+		public int position_y;
+		public int size;
+		public Ball(int position_x, int position_y, int size) {
+			this.position_x = position_x;
+			this.position_y = position_y;
+			this.size = size;
+		}
+	}
 
 	private final Maze maze;
 	private final int tilesize;
 	private final int width;
 	private final int height;
+	
+	private Ball ball;
 	
 	public MazeWorld(Maze maze, int tilesize) {
 		this.maze = maze;
@@ -45,6 +58,14 @@ public class MazeWorld {
 	
 	public Point getWorldCoords(int gridX, int gridY) {
 		return new Point(gridX * tilesize, gridY * tilesize);
+	}
+	
+	public void setBall(Ball ball) {
+		this.ball = ball;
+	}
+	
+	public Ball getBall() {
+		return ball;
 	}
 
 }

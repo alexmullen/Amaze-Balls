@@ -1,14 +1,11 @@
 package uk.ac.tees.amazeballs;
 
 import uk.ac.tees.amazeballs.maze.Maze;
-import uk.ac.tees.amazeballs.maze.MazeSelection;
-import uk.ac.tees.amazeballs.views.MazeBallView;
 import uk.ac.tees.amazeballs.views.MazeViewport;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.Toast;
 import android.app.Activity;
 import android.content.Context;
@@ -16,6 +13,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+
 
 /**
  * The main activity for displaying a game.
@@ -30,11 +28,8 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 	private Sensor accelerometerSensor;
 	private SensorManager sensorManager;
 	
-	private MazeSelection mazeSelection;
-	//private MazeBallView gameView;
 	private MazeViewport gameView;
-	//private GameController gameController;
-	private NewImprovedGameController gameController;
+	private GameController gameController;
 	private GameTickHandler tickHandler;
 	
 	private boolean running;
@@ -46,7 +41,6 @@ public class MainGameActivity extends Activity implements SensorEventListener {
         public void handleMessage(Message msg) {
         	update();
         }
-
         public void sleep(long delayMillis) {
             this.removeMessages(0);
             sendMessageDelayed(obtainMessage(0), delayMillis);
@@ -61,68 +55,31 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		// Load the maze to play
 		final Maze loadedMaze = (Maze) getIntent().getExtras().getSerializable("maze");
 		
-		/*
-		 * Create a maze selection to view only a small portion of the maze so
-		 * that we can have mazes that are much larger than most devices'
-		 * displays. The size specified here represents the grid size displayed
-		 * in the MazeEditorView.
-		 */
-		mazeSelection = new MazeSelection(loadedMaze, 0, 0, 10, 15);
-		
-		// Get a reference to the inflated MazeBallView 
-		//gameView = (MazeBallView) findViewById(R.id.main_game_view);
+		// Get a reference to the inflated MazeViewport 
 		gameView = (MazeViewport) findViewById(R.id.main_game_view);
-		
-		// Set the maze for the MazeBallView to display
-		//gameView.setMaze(mazeSelection);
-		
+
 		/* 
-		 * Add a listener to listen for when the game view has been displayed so that we can
-		 * get its dimensions. 
+		 * Create a GameController for handling the moving, collisions and physics 
+		 * for the game.
 		 */
-		gameView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-			@Override
-			public void onGlobalLayout() {
-				// Unregister the listener
-				gameView.getViewTreeObserver().removeGlobalOnLayoutListener(this); // Need API 16 for latest
-				/* 
-				 * Create a GameController for handling the moving, collisions and physics 
-				 * for the game.
-				 */
-				//gameController = new GameController(mazeSelection, gameView);
-				gameController = new NewImprovedGameController(loadedMaze, gameView);
-				
-				// Initialize the accelerometer
-				if (!initAccelerometer()) {
-					//finish(); // No accelerometer on the emulator
-					return;
-				}
-				
-				/*
-				 * Start the game loop after the game view has been displayed. This is because
-				 * we need to know the dimensions of it so we can position the ball correctly.
-				 * Give it a 1 second delay to give the user a chance to be ready before the 
-				 * ball moves.
-				 */
-				running = true;
-				tickHandler = new GameTickHandler();
-				tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
-			}
-		});
+		gameController = new GameController(loadedMaze, gameView);
+		
+		// Initialize the accelerometer
+//		if (!initAccelerometer()) {
+//			//finish(); // No accelerometer on the emulator
+//			return;
+//		}
+
+		running = true;
+		tickHandler = new GameTickHandler();
+		tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
 	}
 	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		running = false;
-		sensorManager.unregisterListener(this);
-	}
-
+	
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -133,10 +90,15 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (gameController != null) {
-			initAccelerometer();
-			running = true;
-		}
+		initAccelerometer();
+		running = true;
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		running = false;
+		sensorManager.unregisterListener(this);
 	}
 	
 	@Override
@@ -162,8 +124,8 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		} else {
 			// Failure! No accelerometer
 			Log.e(this.getClass().getName(), "no accelerometer on device, unable to play game");
-			return false;
 			//finish(); // No accelerometer on the emulator
+			return false;
 		}
 	}
 	

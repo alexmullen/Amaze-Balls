@@ -23,18 +23,8 @@ public class MazeViewport extends View {
 
 	public MazeViewport(Context context, AttributeSet attrs) {
 		super(context, attrs);
-//		
-//		loadTiles();
-//		
-//		Maze maze = MazeFactory.createBorderedMaze(13, 18);
-//		MazeWorld mazeWorld = new MazeWorld(maze, 10);
-//		
-//		camera = new MazeWorldCamera(mazeWorld, 0, 0, 100, 150);
 	}
-
-	public MazeViewport(Context context, AttributeSet attrs, int defStyleAttr) {
-		super(context, attrs, defStyleAttr);
-	}
+	
 	
 	public MazeWorldCamera getCamera() {
 		return camera;
@@ -117,20 +107,4 @@ public class MazeViewport extends View {
 		tileImage.draw(canvas);
 		
 	}
-//	
-//	private void loadTiles() {
-//		TileImageFactory.registerImage(TileType.Floor, this.getResources().getDrawable(R.drawable.floor));
-//		TileImageFactory.registerImage(TileType.Wall, this.getResources().getDrawable(R.drawable.wall));
-//		TileImageFactory.registerImage(TileType.Ball, this.getResources().getDrawable(R.drawable.ball));
-//		
-//		TileImageFactory.registerImage(TileType.Chest, this.getResources().getDrawable(R.drawable.chest));
-//		TileImageFactory.registerImage(TileType.Door, this.getResources().getDrawable(R.drawable.door));
-//		TileImageFactory.registerImage(TileType.Goal, this.getResources().getDrawable(R.drawable.goal));
-//		TileImageFactory.registerImage(TileType.Ice, this.getResources().getDrawable(R.drawable.ice));
-//		TileImageFactory.registerImage(TileType.Key, this.getResources().getDrawable(R.drawable.key));
-//		TileImageFactory.registerImage(TileType.Penalty, this.getResources().getDrawable(R.drawable.penalty));
-//		TileImageFactory.registerImage(TileType.Rain, this.getResources().getDrawable(R.drawable.rain));
-//		TileImageFactory.registerImage(TileType.Start, this.getResources().getDrawable(R.drawable.start));
-//	}
-	
 }

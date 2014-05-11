@@ -50,10 +50,8 @@ public class GameController {
 		// Create and initialize the ball
 		int ballSize = (int) (mazeWorld.getTilesize() * 0.8);
 		int ballStartOffset = (mazeWorld.getTilesize() - ballSize) / 2;
-		int ballStart_x = startPosition.x * mazeWorld.getTilesize()
-				+ ballStartOffset;
-		int ballStart_y = startPosition.y * mazeWorld.getTilesize()
-				+ ballStartOffset;
+		int ballStart_x = startPosition.x * mazeWorld.getTilesize() + ballStartOffset;
+		int ballStart_y = startPosition.y * mazeWorld.getTilesize() + ballStartOffset;
 		Ball ball = new Ball(ballStart_x, ballStart_y, ballSize);
 		mazeWorld.setBall(ball);
 	}

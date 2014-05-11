@@ -2,6 +2,7 @@ package uk.ac.tees.amazeballs;
 
 import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.views.MazeViewport;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -34,6 +35,8 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 	
 	private boolean running;
 	private long lastUpdateTime;
+	
+	private MediaPlayer mp = new MediaPlayer();
 	
 	
 	private class GameTickHandler extends Handler {
@@ -71,6 +74,9 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		
 		
 		tickHandler = new GameTickHandler();
+		
+		mp = MediaPlayer.create(this, R.raw.maze);
+		mp.setLooping(true);
 	}
 	
 	@Override
@@ -83,6 +89,8 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		super.onPause();
 		running = false;
 		sensorManager.unregisterListener(this);
+		mp.stop();
+		mp.release();
 	}
 
 	@Override
@@ -91,6 +99,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		initAccelerometer();
 		running = true;
 		tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
+		mp.start();
 	}
 	
 	@Override
@@ -98,6 +107,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		super.onDestroy();
 		running = false;
 		sensorManager.unregisterListener(this);
+		mp.release();
 	}
 	
 	@Override

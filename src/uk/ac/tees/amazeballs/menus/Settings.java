@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ToggleButton;
 
+
 public class Settings extends Activity {
 	
 	MediaPlayer mp;
@@ -21,9 +22,9 @@ public class Settings extends Activity {
 		
 		boolean on = ((ToggleButton) view).isChecked();
 		if (on) {
-            // Turn music on    
+			
 		} else {
-			// Turn music off
+			
 		}
 	}
 	

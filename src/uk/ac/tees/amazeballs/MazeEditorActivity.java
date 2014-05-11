@@ -47,12 +47,18 @@ public class MazeEditorActivity extends Activity
 				 * in the MazeEditorView.
 				 */
 				currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
-				
-				// Set the maze for the MazeEditorView to display
-				mazeEditorView.setMaze(currentMazeSelection);
-				mazeEditorView.invalidate();
+			} else {
+				currentMaze = MazeFactory.createBorderedMaze(25, 30);
+				currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
 			}
+		} else {
+			currentMaze = MazeFactory.createBorderedMaze(25, 30);
+			currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
 		}
+		
+		// Set the maze for the MazeEditorView to display
+		mazeEditorView.setMaze(currentMazeSelection);
+		mazeEditorView.invalidate();
 	}
 	
 	@Override

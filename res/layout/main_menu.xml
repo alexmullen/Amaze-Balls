@@ -10,15 +10,6 @@
     tools:context=".MainMenu" >
 
     <Button
-        android:id="@+id/button_custom_levels"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button_play_level"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:text="@string/highscores_msg" />
-
-    <Button
         android:id="@+id/button4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -36,23 +27,22 @@
         android:layout_marginTop="20dp"
         android:text="@string/level_editor_msg" />
 
-    <ImageView
-        android:contentDescription="@string/pic_desc"
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="22dp"
-        android:src="@drawable/ic_launcher" />
-
     <Button
         android:id="@+id/button_play_level"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageView1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_alignLeft="@+id/button_custom_levels"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="129dp"
         android:text="@string/level_select_msg" />
+
+    <Button
+        android:id="@+id/button_custom_levels"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/button_random_level"
+        android:layout_below="@+id/button_play_level"
+        android:layout_marginTop="28dp"
+        android:text="@string/highscores_msg" />
 
 </RelativeLayout>

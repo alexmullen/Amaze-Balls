@@ -22,14 +22,21 @@ public class Weather {
 	
 	public void getWeatherData() {
 		
+		owm = new OpenWeatherMap("ebe4cc284208eb70ca4be827307d6967");
+		
 		try {
-			longitude = (float) coords.getLongitude();
-			latitude = (float) coords.getLatitude();
+			latitude = 54.60854f;
+			longitude = -1.096573f;
+		
+			
+			//longitude = (float) coords.getLongitude();
+			//latitude = (float) coords.getLatitude();
 			if(longitude != 0 && latitude != 0) {
 				CurrentWeatherData cwd = owm.currentWeatherByCoordinates(latitude, longitude);
-				
+				cwd.getMainData_Object().getTemperature();
+				boolean gotRainData = cwd.getRain_Object().hasRain3Hours();
 				//weatherData = owm.currentWeatherByCoordinates(latitude, longitude);
-				setWeatherTile(weatherData);
+				//setWeatherTile(weatherData);
 			} else {
 				//go to default weather tiles method..
 			}

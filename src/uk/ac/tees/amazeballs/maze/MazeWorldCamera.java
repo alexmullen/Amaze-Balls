@@ -111,6 +111,14 @@ public class MazeWorldCamera {
 		top += amountToShift;
 		return amountToShift;
 	}
+
+	public void getVisibleRange(int[] outRange) {
+		outRange[0] = Math.max(0, (left / world.tilesize) - 1);
+		outRange[1] = Math.max(0, (top / world.tilesize) - 1);
+		outRange[2] = Math.min((world.maze.width - 1), (right / world.tilesize) + 1);
+		outRange[3] = Math.min((world.maze.height - 1), (bottom / world.tilesize) + 1);
+	}
+	
 	
 //	public VisibleTile[] getVisibleTiles() {
 //		ArrayList<Point> visTileCoords = new ArrayList<Point>();
@@ -133,12 +141,5 @@ public class MazeWorldCamera {
 //		
 //		return cachedVisibleTiles;
 //	}
-	
-	public void getVisibleRange(int[] outRange) {
-		outRange[0] = Math.max(0, (left / world.tilesize) - 1);
-		outRange[1] = Math.max(0, (top / world.tilesize) - 1);
-		outRange[2] = Math.min((world.maze.width - 1), (right / world.tilesize) + 1);
-		outRange[3] = Math.min((world.maze.height - 1), (bottom / world.tilesize) + 1);
-	}
 
 }

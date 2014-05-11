@@ -85,15 +85,6 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 	}
 	
 	@Override
-	protected void onPause() {
-		super.onPause();
-		running = false;
-		sensorManager.unregisterListener(this);
-		mp.stop();
-		mp.release();
-	}
-
-	@Override
 	protected void onResume() {
 		super.onResume();
 		initAccelerometer();
@@ -102,6 +93,14 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		mp.start();
 	}
 	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		running = false;
+		sensorManager.unregisterListener(this);
+		mp.pause();
+	}
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();

@@ -56,12 +56,12 @@ public final class R {
         public static final int button3=0x7f08001f;
         public static final int button4=0x7f080023;
         public static final int dialog_save_levelname_edittext=0x7f080002;
-        public static final int editor_file=0x7f08002a;
-        public static final int editor_file_new=0x7f08002b;
-        public static final int editor_file_open=0x7f08002c;
-        public static final int editor_file_save=0x7f08002d;
-        public static final int editor_file_saveas=0x7f08002e;
-        public static final int editor_play=0x7f08002f;
+        public static final int editor_file=0x7f080029;
+        public static final int editor_file_new=0x7f08002a;
+        public static final int editor_file_open=0x7f08002b;
+        public static final int editor_file_save=0x7f08002c;
+        public static final int editor_file_saveas=0x7f08002d;
+        public static final int editor_play=0x7f08002e;
         public static final int height_textview=0x7f080006;
         public static final int height_value=0x7f080008;
         public static final int imageView1=0x7f080024;
@@ -77,7 +77,6 @@ public final class R {
         public static final int tableRow3=0x7f080013;
         public static final int tableRow4=0x7f080017;
         public static final int tableRow5=0x7f08001b;
-        public static final int test_maze_viewport=0x7f080029;
         public static final int textView1=0x7f080026;
         public static final int toggleButton1=0x7f080025;
         public static final int toggleButton2=0x7f080028;
@@ -96,7 +95,6 @@ public final class R {
         public static final int main_menu=0x7f030007;
         public static final int settings=0x7f030008;
         public static final int simplerow=0x7f030009;
-        public static final int test_viewport=0x7f03000a;
     }
     public static final class menu {
         public static final int main_game=0x7f070000;

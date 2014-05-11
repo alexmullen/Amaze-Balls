@@ -55,6 +55,11 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		// Load the maze to play
 		final Maze loadedMaze = (Maze) getIntent().getExtras().getSerializable("maze");
 		
+		
+		// Check and validate the maze here
+		
+		
+		
 		// Get a reference to the inflated MazeViewport 
 		gameView = (MazeViewport) findViewById(R.id.main_game_view);
 
@@ -64,12 +69,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		 */
 		gameController = new GameController(loadedMaze, gameView);
 		
-		// Initialize the accelerometer
-//		if (!initAccelerometer()) {
-//			//finish(); // No accelerometer on the emulator
-//			return;
-//		}
-
+		
 		running = true;
 		tickHandler = new GameTickHandler();
 		tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);

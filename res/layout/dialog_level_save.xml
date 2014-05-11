@@ -1,21 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<EditText xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_save_levelname_edittext"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:ems="12"
+    android:hint="level name"
+    android:inputType="text"
+    android:maxLines="1"
+    android:singleLine="true"
+    android:textSize="24sp" >
 
-    <EditText
-        android:id="@+id/dialog_save_levelname_edittext"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:ems="12"
-        android:hint="level name"
-        android:inputType="text"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:textSize="24sp" >
+    <requestFocus />
 
-        <requestFocus />
-    </EditText>
-
-</LinearLayout>
+</EditText>

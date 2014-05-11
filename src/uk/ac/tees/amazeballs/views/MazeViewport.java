@@ -85,26 +85,27 @@ public class MazeViewport extends View {
 			tileImage.draw(canvas);
 		}
 		
-		int scaledBallSize = (int) (camera.getWorld().getBall().size * scale);
-		
-		// Convert the tile's world coordinates into view/camera coordinates
-		int viewPositionX = (camera.getWorld().getBall().position_x - camera.getLeft());
-		int viewPositionY = (camera.getWorld().getBall().position_y - camera.getTop());
-		
-		// Scale the positions for the display
-		int scaledViewPositionX = (int) (viewPositionX * scale);
-		int scaledViewPositionY = (int) (viewPositionY * scale);
-		
-		
-		// Draw the ball
-		Drawable tileImage = TileImageFactory.getImage(TileType.Ball);
-		tileImage.setBounds(
-				gridOffset_x + scaledViewPositionX, // left
-				gridOffset_y + scaledViewPositionY, // top
-				gridOffset_x + scaledViewPositionX + scaledBallSize, // right
-				gridOffset_y + scaledViewPositionY + scaledBallSize); // bottom
-
-		tileImage.draw(canvas);
-		
+		if (camera.getWorld().getBall() != null) {
+			int scaledBallSize = (int) (camera.getWorld().getBall().size * scale);
+			
+			// Convert the tile's world coordinates into view/camera coordinates
+			int viewPositionX = (camera.getWorld().getBall().position_x - camera.getLeft());
+			int viewPositionY = (camera.getWorld().getBall().position_y - camera.getTop());
+			
+			// Scale the positions for the display
+			int scaledViewPositionX = (int) (viewPositionX * scale);
+			int scaledViewPositionY = (int) (viewPositionY * scale);
+			
+			
+			// Draw the ball
+			Drawable tileImage = TileImageFactory.getImage(TileType.Ball);
+			tileImage.setBounds(
+					gridOffset_x + scaledViewPositionX, // left
+					gridOffset_y + scaledViewPositionY, // top
+					gridOffset_x + scaledViewPositionX + scaledBallSize, // right
+					gridOffset_y + scaledViewPositionY + scaledBallSize); // bottom
+	
+			tileImage.draw(canvas);
+		}
 	}
 }

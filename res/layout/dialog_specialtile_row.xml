@@ -26,7 +26,6 @@
         android:layout_alignBottom="@+id/special_tile_choice_image"
         android:layout_alignParentRight="true"
         android:layout_marginRight="20dp"
-        android:text="testing123"
         android:textSize="20sp" />
 
 </RelativeLayout>

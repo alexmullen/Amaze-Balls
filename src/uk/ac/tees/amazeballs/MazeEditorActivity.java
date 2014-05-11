@@ -38,9 +38,7 @@ public class MazeEditorActivity extends Activity
 			// Restore our state
 			currentMaze = (Maze) savedInstanceState.getSerializable("maze");
 			// Check there was a maze to load from the previous state
-			if (currentMaze == null) {
-				return;
-			} else {
+			if (currentMaze != null) {
 				currentLevelName = savedInstanceState.getString("level_name");
 				/*
 				 * Create a maze selection to view only a small portion of the maze so

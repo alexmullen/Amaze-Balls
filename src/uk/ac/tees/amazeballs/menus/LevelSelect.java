@@ -6,11 +6,15 @@ import uk.ac.tees.amazeballs.LevelManager;
 import uk.ac.tees.amazeballs.MainGameActivity;
 import uk.ac.tees.amazeballs.R;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
+
 
 public class LevelSelect extends Activity{
 	
@@ -49,7 +53,24 @@ public class LevelSelect extends Activity{
 	}
 	
 	public void onCustomLevelsButtonClicked(View v) {
-		
+		final String[] customLevels = LevelManager.getCustomLevels(this);
+		if (customLevels.length == 0) {
+			Toast.makeText(this, "There are no custom levels to open", Toast.LENGTH_LONG).show();
+		} else {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Choose a level to play");
+			builder.setItems(customLevels, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Bundle b = new Bundle();
+					b.putSerializable("maze", LevelManager.loadCustomLevel(LevelSelect.this, customLevels[which]));
+					Intent i = new Intent(LevelSelect.this, MainGameActivity.class);
+					i.putExtras(b);
+					startActivity(i);
+				}
+			});
+			builder.create().show();
+		}
 	}
 
 }

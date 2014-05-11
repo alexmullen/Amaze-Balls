@@ -118,7 +118,7 @@ public class MazeEditorActivity extends Activity
 	private void handleOpenMenuOption() {
 		final String[] levels = LevelManager.getCustomLevels(this);
 		if (levels.length == 0) {
-			Toast.makeText(this, "There are no custom levels to open", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "There are no custom levels to open", Toast.LENGTH_LONG).show();
 		} else {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Choose a level to edit");

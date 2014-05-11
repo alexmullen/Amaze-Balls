@@ -38,7 +38,6 @@ import java.io.Serializable;
 public class Maze implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
 	private final int width;
 	private final int height;
 	private final TileType[][] grid;
@@ -106,13 +105,13 @@ public class Maze implements Serializable {
 	 * @return true if the specified position is valid for this maze,
 	 * otherwise false is returned if it is out of range
 	 */
-	public boolean isTileAt(int x, int y) {
-		if (x < 0 || y < 0 || x >= width || y >= height) {
-			return false;
-		} else {
-			return true;
-		}
-	}
+//	public boolean isTileAt(int x, int y) {
+//		if (x < 0 || y < 0 || x >= width || y >= height) {
+//			return false;
+//		} else {
+//			return true;
+//		}
+//	}
 	
 	/**
 	 * Checks if the specified tile position is located at the border of 

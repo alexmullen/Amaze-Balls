@@ -12,9 +12,8 @@
     <string name="pic_desc">Our icon</string>
     <string name="random_level_msg">Random Level</string>
     <string name="play_level_msg">Play Level</string>
-    <string name="imported_level_msg">Imported Levels</string>
+    <string name="imported_level_msg">Custom Levels</string>
     <string name="tgl1_msg">Toggle Music</string>
 	<string name="tgl2_msg">Toggle Weather</string>
     
-
 </resources>

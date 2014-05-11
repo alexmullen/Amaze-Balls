@@ -21,19 +21,20 @@ public final class R {
         public static final int activity_vertical_margin=0x7f040001;
     }
     public static final class drawable {
-        public static final int ball=0x7f020000;
-        public static final int chest=0x7f020001;
-        public static final int door=0x7f020002;
-        public static final int floor=0x7f020003;
-        public static final int goal=0x7f020004;
-        public static final int ic_launcher=0x7f020005;
-        public static final int ice=0x7f020006;
-        public static final int key=0x7f020007;
-        public static final int penalty=0x7f020008;
-        public static final int rain=0x7f020009;
-        public static final int start=0x7f02000a;
-        public static final int wall=0x7f02000b;
-        public static final int weathertile=0x7f02000c;
+        public static final int background=0x7f020000;
+        public static final int ball=0x7f020001;
+        public static final int chest=0x7f020002;
+        public static final int door=0x7f020003;
+        public static final int floor=0x7f020004;
+        public static final int goal=0x7f020005;
+        public static final int ic_launcher=0x7f020006;
+        public static final int ice=0x7f020007;
+        public static final int key=0x7f020008;
+        public static final int penalty=0x7f020009;
+        public static final int rain=0x7f02000a;
+        public static final int start=0x7f02000b;
+        public static final int wall=0x7f02000c;
+        public static final int weathertile=0x7f02000d;
     }
     public static final class id {
         public static final int Date1=0x7f08000e;
@@ -51,10 +52,10 @@ public final class R {
         public static final int Score3=0x7f080015;
         public static final int Score4=0x7f080019;
         public static final int Score5=0x7f08001d;
-        public static final int button1=0x7f080021;
-        public static final int button2=0x7f080020;
-        public static final int button3=0x7f08001f;
         public static final int button4=0x7f080023;
+        public static final int button_custom_levels=0x7f080020;
+        public static final int button_play_level=0x7f080021;
+        public static final int button_random_level=0x7f08001f;
         public static final int dialog_save_levelname_edittext=0x7f080002;
         public static final int editor_file=0x7f080029;
         public static final int editor_file_new=0x7f08002a;
@@ -71,7 +72,7 @@ public final class R {
         public static final int seekbar_maze_width=0x7f080004;
         public static final int special_tile_choice_image=0x7f080009;
         public static final int special_tile_choice_title=0x7f08000a;
-        public static final int spinner1=0x7f080022;
+        public static final int spinner_standard_levels=0x7f080022;
         public static final int tableRow1=0x7f08000b;
         public static final int tableRow2=0x7f08000f;
         public static final int tableRow3=0x7f080013;

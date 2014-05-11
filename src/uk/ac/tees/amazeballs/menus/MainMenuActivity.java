@@ -18,7 +18,7 @@ public class MainMenuActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_menu);
 		
-		Button btnLevelSelect = (Button) findViewById(R.id.button1);
+		Button btnLevelSelect = (Button) findViewById(R.id.button_play_level);
 		btnLevelSelect.setOnClickListener(new View.OnClickListener() { 
             public void onClick(View view) {
                 Intent nextScreen = new Intent(getApplicationContext(), LevelSelect.class);
@@ -26,7 +26,7 @@ public class MainMenuActivity extends Activity {
             }
         });
 		
-		Button btnHighscores = (Button) findViewById(R.id.button2);
+		Button btnHighscores = (Button) findViewById(R.id.button_custom_levels);
 		btnHighscores.setOnClickListener(new View.OnClickListener() { 
             public void onClick(View view) {
                 Intent nextScreen = new Intent(getApplicationContext(), Highscores.class);
@@ -34,7 +34,7 @@ public class MainMenuActivity extends Activity {
             }
         });
 		
-		Button btnLevelEditor = (Button) findViewById(R.id.button3);
+		Button btnLevelEditor = (Button) findViewById(R.id.button_random_level);
 		btnLevelEditor.setOnClickListener(new View.OnClickListener() { 
             public void onClick(View view) {
                 Intent nextScreen = new Intent(getApplicationContext(), MazeEditorActivity.class);

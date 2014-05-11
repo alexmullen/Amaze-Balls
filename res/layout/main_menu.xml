@@ -6,13 +6,14 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/background"
     tools:context=".MainMenu" >
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/button_custom_levels"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button1"
+        android:layout_below="@+id/button_play_level"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:text="@string/highscores_msg" />
@@ -21,16 +22,16 @@
         android:id="@+id/button4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button3"
+        android:layout_below="@+id/button_random_level"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:text="@string/settings_msg" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/button_random_level"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button2"
+        android:layout_below="@+id/button_custom_levels"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:text="@string/level_editor_msg" />
@@ -46,7 +47,7 @@
         android:src="@drawable/ic_launcher" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/button_play_level"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageView1"

@@ -70,9 +70,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		gameController = new GameController(loadedMaze, gameView);
 		
 		
-		running = true;
 		tickHandler = new GameTickHandler();
-		tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
 	}
 	
 	@Override
@@ -92,6 +90,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		super.onResume();
 		initAccelerometer();
 		running = true;
+		tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
 	}
 	
 	@Override

@@ -22,36 +22,20 @@ public class MazeWorld {
 		}
 	}
 
-	private final Maze maze;
-	private final int tilesize;
-	private final int width;
-	private final int height;
+	public final Maze maze;
+	public final int tilesize;
+	public final int width;
+	public final int height;
 	
-	private Ball ball;
+	public Ball ball;
 	
 	public MazeWorld(Maze maze, int tilesize) {
 		this.maze = maze;
 		this.tilesize = tilesize;
-		width = maze.getWidth() * tilesize;
-		height = maze.getHeight() * tilesize;
+		width = maze.width * tilesize;
+		height = maze.height * tilesize;
 	}
-	
-	public Maze getMaze() {
-		return maze;
-	}
-	
-	public int getTilesize() {
-		return tilesize;
-	}
-	
-	public int getWidth() {
-		return width;
-	}
-	
-	public int getHeight() {
-		return height;
-	}
-	
+
 	public Point getGridCoords(int x, int y) {
 		return new Point((int)(x / tilesize), (int)(y / tilesize));
 	}
@@ -60,12 +44,8 @@ public class MazeWorld {
 		return new Point(gridX * tilesize, gridY * tilesize);
 	}
 	
-	public void setBall(Ball ball) {
-		this.ball = ball;
+	public void getWorldCoords(int gridX, int gridY, Point outPoint) {
+		outPoint.x = (gridX * tilesize);
+		outPoint.y = (gridY * tilesize);
 	}
-	
-	public Ball getBall() {
-		return ball;
-	}
-
 }

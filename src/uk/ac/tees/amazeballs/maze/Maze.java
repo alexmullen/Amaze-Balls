@@ -2,6 +2,7 @@ package uk.ac.tees.amazeballs.maze;
 
 import java.io.Serializable;
 
+
 /**
  * A class for representing a maze.
  * 
@@ -38,8 +39,10 @@ import java.io.Serializable;
 public class Maze implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private final int width;
-	private final int height;
+	
+	public final int width;
+	public final int height;
+	
 	private final TileType[][] grid;
 
 	/**

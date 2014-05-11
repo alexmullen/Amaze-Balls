@@ -17,15 +17,15 @@ public class MazeSelection extends Maze {
 	private Maze underlyingMaze;
 	
 	public MazeSelection(Maze maze, int offset_x, int offset_y, int selectionWidth, int selectionHeight) {
-		super(maze.getWidth(), maze.getHeight());
+		super(maze.width, maze.height);
 		
 		this.underlyingMaze = maze;
 		this.offset_x = offset_x;
 		this.offset_y = offset_y;
 		
 		// Set the selection size, clamping the size to the maximum size of the maze
-		this.selectionWidth = Math.min(selectionWidth, maze.getWidth());
-		this.selectionHeight = Math.min(selectionHeight, maze.getHeight());
+		this.selectionWidth = Math.min(selectionWidth, maze.width);
+		this.selectionHeight = Math.min(selectionHeight, maze.height);
 	}
 	
 	/**
@@ -94,7 +94,7 @@ public class MazeSelection extends Maze {
 	 */
 	public int shiftDown(int amount) {
 		// Shift by the amount or the remaining amount if the amount is more than the remaining space
-		int amountRemaining = (super.getHeight() - (offset_y + selectionHeight));
+		int amountRemaining = (super.height - (offset_y + selectionHeight));
 		int amountToShift = Math.min(amount, amountRemaining);
 		offset_y += amountToShift;
 		return amountToShift;
@@ -125,7 +125,7 @@ public class MazeSelection extends Maze {
 	 */
 	public int shiftRight(int amount) {
 		// Shift by the amount or the remaining amount if the amount is more than the remaining space
-		int amountRemaining = (super.getWidth() - (offset_x + selectionWidth));
+		int amountRemaining = (super.width - (offset_x + selectionWidth));
 		int amountToShift = Math.min(amount, amountRemaining);
 		offset_x += amountToShift;
 		return amountToShift;
@@ -140,14 +140,14 @@ public class MazeSelection extends Maze {
 	}
 	
 	public int expandDown(int amount) {
-		int amountRemaining = (super.getHeight() - (offset_y + selectionHeight));
+		int amountRemaining = (super.height - (offset_y + selectionHeight));
 		int amountToExpand = Math.min(amount, amountRemaining);
 		selectionHeight += amountToExpand;
 		return amountToExpand;
 	}
 	
 	public int expandRight(int amount) {
-		int amountRemaining = (super.getWidth() - (offset_x + selectionWidth));
+		int amountRemaining = (super.width - (offset_x + selectionWidth));
 		int amountToExpand = Math.min(amount, amountRemaining);
 		selectionWidth += amountToExpand;
 		return amountToExpand;

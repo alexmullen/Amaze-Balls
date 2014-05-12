@@ -9,6 +9,12 @@ import uk.ac.tees.amazeballs.maze.MazeWorldCamera;
 import uk.ac.tees.amazeballs.views.MazeViewport;
 
 
+/**
+ * A class for managing a game.
+ * 
+ * @author Alex Mullen (J9858839)
+ *
+ */
 public class GameController {
 
 	private final int NORMAL_BALL_SPEED = 3;
@@ -56,6 +62,9 @@ public class GameController {
 		mazeWorld.ball = ball;
 	}
 
+	/**
+	 * Performs one update of the game state.
+	 */
 	public void update() {
 		moveBall();
 
@@ -107,7 +116,7 @@ public class GameController {
 	/**
 	 * Gets whether the ball has collided with a wall or door.
 	 * 
-	 * @return true if the ball intersects a wall or door tile by 1 pixel or
+	 * @return true if the ball intersects a wall or door tile by 1 point or
 	 *         more.
 	 */
 	private boolean ballHasCollided() {
@@ -235,6 +244,9 @@ public class GameController {
 		}
 	}
 
+	/**
+	 * Processes each tile the ball is currently touching.
+	 */
 	private void processTouchingTiles() {
 		int gridPosTouchedX;
 		int gridPosTouchedY;
@@ -268,6 +280,12 @@ public class GameController {
 				.getTileAt(gridPosTouchedX, gridPosTouchedY));
 	}
 
+	/**
+	 * Checks and handles any doors that could be near the ball
+	 * 
+	 * @param x the grid x position to check
+	 * @param y the grid y position to check
+	 */
 	private void processDoorsNearby(int x, int y) {
 		Maze maze = mazeWorld.maze;
 		// Above
@@ -296,6 +314,12 @@ public class GameController {
 		}
 	}
 
+	/**
+	 * Checks if the player has a key and opens (removes) the door.
+	 * 
+	 * @param x the grid x position of the door
+	 * @param y the grid y position of the door
+	 */
 	private void handleDoorNearby(int x, int y) {
 		// "Use" any picked up keys to unlock any doors near
 		if (keysCarrying > 0) {
@@ -304,6 +328,14 @@ public class GameController {
 		}
 	}
 
+	/**
+	 * Searches the level for a place to spawn the ball at. . This searches row by row starting
+	 * from the top.
+	 * 
+	 * @return The first "Start" tile is chosen but if no start tile is 
+	 * found then the first empty space is. If for some reason there is 
+	 * no start tile or empty space tiles, null is returned.
+	 */
 	private Point findStartPosition() {
 		Point firstEmptySpace = null;
 		Maze maze = mazeWorld.maze;
@@ -319,6 +351,12 @@ public class GameController {
 		return firstEmptySpace;
 	}
 
+	/**
+	 * Returns whether a game is finished or not. A game is finished
+	 * when the ball has touched a "Goal" tile.
+	 * 
+	 * @return
+	 */
 	public boolean isFinished() {
 		return finished;
 	}

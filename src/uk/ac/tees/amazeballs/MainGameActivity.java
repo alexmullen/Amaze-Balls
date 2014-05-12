@@ -39,7 +39,7 @@ import android.hardware.SensorManager;
 
 
 /**
- * The main activity for displaying a game.
+ * The main activity for playing a level.
  * 
  * @author Alex Mullen (J9858839)
  *
@@ -70,6 +70,13 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	
 	private MediaPlayer mp = new MediaPlayer();
 	
+	/**
+	 * A task for downloading weather data asynchronously so as not to block
+	 * the UI thread.
+	 * 
+	 * @author Alex Mullen (J9858839)
+	 *
+	 */
 	private class RetrieveWeatherDataTask extends AsyncTask<Location, Void, CurrentWeatherData> {
 		@Override
 		protected CurrentWeatherData doInBackground(Location... args) {
@@ -79,6 +86,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		}
 		@Override
 		protected void onPostExecute(CurrentWeatherData result) {
+			// Only apply if we weren't cancelled.
 			if (!this.isCancelled()) {
 				replaceWhetherTiles(loadedMaze, determineWhetherTiles(result));
 				gameStarted = true;
@@ -89,6 +97,12 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		}
 	}
 
+	/**
+	 * A handler to use for running the game loop.
+	 * 
+	 * @author Alex Mullen (J9858839)
+	 *
+	 */
 	private class GameTickHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -336,6 +350,8 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	
 	/**
 	 * Determine what the weather tiles should be based on weather data.
+	 * Rain has priority over ice so if its both raining and cold, the
+	 * weather tiles should become rain tiles.
 	 * 
 	 * @param cwd
 	 * @return

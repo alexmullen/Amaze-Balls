@@ -13,6 +13,12 @@ import android.view.View;
 import android.widget.EditText;
 
 
+/**
+ * A dialog for prompting the user for a name to save their level as.
+ * 
+ * @author Alex Mullen (J9858839)
+ *
+ */
 public class SaveLevelDialogFragment extends DialogFragment {
 
 	public interface OnLevelSaveRequestListener {

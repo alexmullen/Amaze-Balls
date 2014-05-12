@@ -12,6 +12,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 
+
 public class NewScoreDialogFragment extends DialogFragment {
 
 	public interface OnScoreSaveRequestListener {

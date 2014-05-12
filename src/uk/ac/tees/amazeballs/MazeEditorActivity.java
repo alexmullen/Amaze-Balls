@@ -16,6 +16,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 
 
+/**
+ * The main activity for editing a maze.
+ * 
+ * @author Alex Mullen (J9858839)
+ *
+ */
 public class MazeEditorActivity extends Activity 
 		implements 	SaveLevelDialogFragment.OnLevelSaveRequestListener, 
 					NewLevelDialogFragment.OnNewLevelRequestListener {

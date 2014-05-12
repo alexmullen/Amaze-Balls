@@ -11,7 +11,12 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-
+/**
+ * A configuration dialog for creating a new level.
+ * 
+ * @author Alex Mullen (J9858839)
+ *
+ */
 public class NewLevelDialogFragment extends DialogFragment {
 
 	private static final int MINIMUM_LEVEL_WIDTH = 8;

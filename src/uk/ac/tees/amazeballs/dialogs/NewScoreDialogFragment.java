@@ -16,6 +16,7 @@ public class NewScoreDialogFragment extends DialogFragment {
 
 	public interface OnScoreSaveRequestListener {
 		public void onScoreSaveRequested(String playername);
+		public void onScoreSaveCancelled();
 	}
 	
 	private OnScoreSaveRequestListener listener;
@@ -54,6 +55,7 @@ public class NewScoreDialogFragment extends DialogFragment {
 		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				listener.onScoreSaveCancelled();
 				dialog.cancel();
 			}
 		});

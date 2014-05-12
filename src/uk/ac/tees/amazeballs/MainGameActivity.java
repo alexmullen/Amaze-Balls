@@ -18,6 +18,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -48,22 +49,44 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	private Sensor accelerometerSensor;
 	private SensorManager sensorManager;
 	
+	private Maze loadedMaze;
 	private MazeViewport gameView;
 	private GameController gameController;
 	private GameTickHandler tickHandler;
 	
+	private ProgressDialog weatherProgressDialog;
+	private RetrieveWeatherDataTask receiveWeatherDataTask;
+	
 	private long startTime;
 	private long runningTime;
 	private ScoreTableHandler sth;
-	private String playerName;
+//	private String playerName;
 	
-	private boolean started;
+	private boolean gameStarted;
 	private boolean running;
 	private long lastUpdateTime;
 	
 	private MediaPlayer mp = new MediaPlayer();
 	
-	
+	private class RetrieveWeatherDataTask extends AsyncTask<Location, Void, CurrentWeatherData> {
+		@Override
+		protected CurrentWeatherData doInBackground(Location... args) {
+			return Weather.getWeatherData(
+					(float)args[0].getLatitude(), 
+					(float)args[0].getLongitude());
+		}
+		@Override
+		protected void onPostExecute(CurrentWeatherData result) {
+			if (!this.isCancelled()) {
+				replaceWhetherTiles(loadedMaze, determineWhetherTiles(result));
+				gameStarted = true;
+				gameView.invalidate();
+				tickHandler.sendEmptyMessageDelayed(0, 1000);
+				weatherProgressDialog.dismiss();
+			}
+		}
+	}
+
 	private class GameTickHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -82,7 +105,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		setContentView(R.layout.activity_main_game);
 
 		// Load the maze to play
-		final Maze loadedMaze = (Maze) getIntent().getExtras().getSerializable("maze");
+		loadedMaze = (Maze) getIntent().getExtras().getSerializable("maze");
 		
 
 		startTime = System.currentTimeMillis();
@@ -102,90 +125,79 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		
 		mp = MediaPlayer.create(this, R.raw.maze);
 		mp.setLooping(true);
-		started = true;
 		
 
-		
-		final ProgressDialog pd = ProgressDialog.show(
+		/* 
+		 * Show an indeterminate progress dialog to signal to the user that we are
+		 * doing something.
+		 */
+		weatherProgressDialog = ProgressDialog.show(
 				this, 
-				null, 
 				"Retrieving location...", 
+				"Touch anywhere to cancel", 
 				true, 
 				true);
 		
 		// Acquire a reference to the system Location Manager
 		final LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		
+		// Using the last known location should be sufficient for our purposes if available
 		final Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		if (lastKnownLocation != null) {
-			pd.setMessage("Retrieving weather data...");
-			Runnable r = new Runnable() {
-				@Override
-				public void run() {
-					final CurrentWeatherData cwd = Weather.getWeatherData(
-							(float)lastKnownLocation.getLatitude(), 
-							(float)lastKnownLocation.getLongitude());
-					
-					gameView.post( new Runnable() {
-						@Override
-						public void run() {
-							applyWeatherToMaze(loadedMaze, cwd);
-							started = true;
-							tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
-							pd.dismiss();
-						}
-					});
-				}
-			};
-			new Thread(r).start();
+		if (lastKnownLocation == null) {
+			weatherProgressDialog.setTitle("Retrieving weather data...");
+	    	receiveWeatherDataTask = new RetrieveWeatherDataTask();
+	    	receiveWeatherDataTask.execute(lastKnownLocation);
 		} else {
 			// Define a listener that responds to location updates
 			final LocationListener locationListener = new LocationListener() {
 			    public void onLocationChanged(final Location location) {
-			    	// Called when a new location is found by the network location provider.
+			    	/*
+			    	 *  The first location update will be good enough for us so
+			    	 *  we won't ask for anymore.
+			    	 */
 			    	locationManager.removeUpdates(this);
-			    	
-			    	Log.d(getClass().getName(), location.toString());
-	
-			    	pd.setMessage("Retrieving weather data...");
-			    	
-					Runnable r = new Runnable() {
-						@Override
-						public void run() {
-							final CurrentWeatherData cwd = Weather.getWeatherData(
-									(float)location.getLatitude(), 
-									(float)location.getLongitude());
-							gameView.post( new Runnable() {
-								@Override
-								public void run() {
-									applyWeatherToMaze(loadedMaze, cwd);
-									started = true;
-									tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
-									pd.dismiss();
-								}
-							});
-						}
-					};
-					new Thread(r).start();
+
+			    	weatherProgressDialog.setTitle("Retrieving weather data...");
+			    	receiveWeatherDataTask = new RetrieveWeatherDataTask();
+			    	receiveWeatherDataTask.execute(lastKnownLocation);
 			    }
 			    public void onStatusChanged(String provider, int status, Bundle extras) {}
 			    public void onProviderEnabled(String provider) {}
 			    public void onProviderDisabled(String provider) {}
 			};
 
-			pd.setOnCancelListener(new OnCancelListener() {
+			/* 
+			 * Handle the user cancelling the retrieval of location and weather if they
+			 * wish. (It could possibly be taking too long)
+			 */
+			weatherProgressDialog.setOnCancelListener(new OnCancelListener() {
 				@Override
 				public void onCancel(DialogInterface dialog) {
+					// Cancel the weather retrieval task if it was started
+					if (receiveWeatherDataTask != null) {
+						receiveWeatherDataTask.cancel(true);
+					}
 					locationManager.removeUpdates(locationListener);
-					started = true;
-					tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
+					// Just start the game without localised weather tiles
+					replaceWhetherTiles(loadedMaze, TileType.Floor);
+					gameStarted = true;
+					gameView.invalidate();
+					tickHandler.sendEmptyMessageDelayed(0, 1000);
 				}
 			});
-			pd.setOnDismissListener(new OnDismissListener() {
+			weatherProgressDialog.setOnDismissListener(new OnDismissListener() {
 				@Override
 				public void onDismiss(DialogInterface dialog) {
+					// Cancel the weather retrieval task if it was started
+					if (receiveWeatherDataTask != null) {
+						receiveWeatherDataTask.cancel(true);
+					}
 					locationManager.removeUpdates(locationListener);
-					started = true;
-					tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
+					// Just start the game without localised weather tiles
+					replaceWhetherTiles(loadedMaze, TileType.Floor);
+					gameStarted = true;
+					gameView.invalidate();
+					tickHandler.sendEmptyMessageDelayed(0, 1000);
 				}
 			});
 			
@@ -204,7 +216,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		super.onResume();
 		initAccelerometer();
 		running = true;
-		if (started) {
+		if (gameStarted) {
 			tickHandler.sendEmptyMessageDelayed(0, 1000);
 		}
 		mp.start();
@@ -268,13 +280,9 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 			if ((now - lastUpdateTime) >= GAME_TICK_INTERVAL) {
 				//Log.d(this.getClass().getName(), "tick");
 				if (gameController.isFinished()) {
-
 					setRunningTime(((System.currentTimeMillis()- startTime) / 1000));
 					handlesSaveScore();
 					Toast.makeText(this, "Level completed", Toast.LENGTH_LONG).show();
-					
-					
-					//finish();
 					return;
 				}
 				gameController.update();
@@ -288,19 +296,24 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		}
 	}
 	
-	private void applyWeatherToMaze(Maze maze, CurrentWeatherData cwd) {
-		TileType weatherTileToUse = TileType.Floor;
-		if (cwd.getRain_Object().hasRain3Hours()) {
-			weatherTileToUse = TileType.Rain;
+	private TileType determineWhetherTiles(CurrentWeatherData cwd) {
+		if (cwd == null) {
+			return TileType.Floor;
+		} else if (cwd.getRain_Object().hasRain3Hours()) {
+			return TileType.Rain;
 		} else if (cwd.getMainData_Object().hasTemperature()) {
 			if (cwd.getMainData_Object().getMinTemperature() <= 32) {
-				weatherTileToUse = TileType.Ice;
+				return TileType.Ice;
 			}
 		}
+		return TileType.Floor;
+	}
+	
+	private void replaceWhetherTiles(Maze maze, TileType type) {
 		for (int x = 0; x < maze.width; x++) {
 			for (int y = 0; y < maze.height; y++) {
 				if (maze.getTileAt(x, y) == TileType.Weather) {
-					maze.setTileAt(x, y, weatherTileToUse);
+					maze.setTileAt(x, y, type);
 				}
 			}
 		}
@@ -318,6 +331,12 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		String df = DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date(System.currentTimeMillis()));
 		Highscores.scoreHandler = new ScoreTableHandler(this);
 		Highscores.scoreHandler.addScore(new Score(Highscores.scoreHandler.newID(), name, (int)getRunningTime(), df));
+		finish();
+	}
+	
+	@Override
+	public void onScoreSaveCancelled() {
+		finish();
 	}
 
 	// Returns the running time of this maze
@@ -333,4 +352,5 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	private void setSth(ScoreTableHandler sth) {
 		this.sth = sth;
 	}
+
 }

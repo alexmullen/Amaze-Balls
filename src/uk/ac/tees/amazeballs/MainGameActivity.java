@@ -71,9 +71,8 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
         }
         
         public void sleep(long delayMillis) {
-            //this.removeMessages(0);
+            this.removeMessages(0);
             sendEmptyMessageDelayed(0, delayMillis);
-            //sendMessageDelayed(obtainMessage(0), delayMillis);
         }
 	}
 	
@@ -125,12 +124,14 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 					final CurrentWeatherData cwd = Weather.getWeatherData(
 							(float)lastKnownLocation.getLatitude(), 
 							(float)lastKnownLocation.getLongitude());
+					
 					gameView.post( new Runnable() {
 						@Override
 						public void run() {
 							applyWeatherToMaze(loadedMaze, cwd);
 							started = true;
 							tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
+							pd.dismiss();
 						}
 					});
 				}
@@ -159,6 +160,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 									applyWeatherToMaze(loadedMaze, cwd);
 									started = true;
 									tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
+									pd.dismiss();
 								}
 							});
 						}
@@ -203,7 +205,6 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		initAccelerometer();
 		running = true;
 		if (started) {
-			//tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
 			tickHandler.sendEmptyMessageDelayed(0, 1000);
 		}
 		mp.start();
@@ -298,7 +299,9 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		}
 		for (int x = 0; x < maze.width; x++) {
 			for (int y = 0; y < maze.height; y++) {
-				maze.setTileAt(x, y, weatherTileToUse);
+				if (maze.getTileAt(x, y) == TileType.Weather) {
+					maze.setTileAt(x, y, weatherTileToUse);
+				}
 			}
 		}
 	}

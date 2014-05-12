@@ -96,8 +96,7 @@ public class MazeWorldCamera {
 	
 	public int moveRight(int amount) {
 		// Move by the amount or the remaining amount if the amount is more than the remaining space
-		int amountRemaining = (world.width - right);
-		int amountToShift = Math.min(amount, amountRemaining);
+		int amountToShift = Math.min(amount, (world.width - right));
 		right += amountToShift;
 		left += amountToShift;
 		return amountToShift;
@@ -105,18 +104,17 @@ public class MazeWorldCamera {
 	
 	public int moveDown(int amount) {
 		// Move by the amount or the remaining amount if the amount is more than the remaining space
-		int amountRemaining = (world.height - bottom);
-		int amountToShift = Math.min(amount, amountRemaining);
+		int amountToShift = Math.min(amount, (world.height - bottom));
 		bottom += amountToShift;
 		top += amountToShift;
 		return amountToShift;
 	}
 
 	public void getVisibleRange(int[] outRange) {
-		outRange[0] = Math.max(0, (left / world.tilesize) - 1);
-		outRange[1] = Math.max(0, (top / world.tilesize) - 1);
-		outRange[2] = Math.min((world.maze.width - 1), (right / world.tilesize) + 1);
-		outRange[3] = Math.min((world.maze.height - 1), (bottom / world.tilesize) + 1);
+		outRange[0] = (left / world.tilesize);
+		outRange[1] = (top / world.tilesize);
+		outRange[2] = Math.min((world.maze.width - 1), (right / world.tilesize));
+		outRange[3] = Math.min((world.maze.height - 1), (bottom / world.tilesize));
 	}
 	
 	

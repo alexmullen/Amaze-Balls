@@ -4,7 +4,6 @@ import uk.ac.tees.amazeballs.MazeEditorActivity;
 import uk.ac.tees.amazeballs.R;
 import uk.ac.tees.amazeballs.maze.TileImageFactory;
 import uk.ac.tees.amazeballs.maze.TileType;
-import uk.ac.tees.amazeballs.weather.Weather;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -53,18 +52,6 @@ public class MainMenuActivity extends Activity {
 		
 		
 		loadTiles();
-		
-		
-		new Thread() {
-			@Override
-			public void run() {
-				super.run();
-				new Weather().getWeatherData();
-			}
-		}.start();
-		
-		
-		
 	}
 	
 	/**

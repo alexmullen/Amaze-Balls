@@ -1,5 +1,6 @@
 package uk.ac.tees.amazeballs.views;
 
+import uk.ac.tees.amazeballs.maze.MazeWorld.Ball;
 import uk.ac.tees.amazeballs.maze.MazeWorldCamera;
 import uk.ac.tees.amazeballs.maze.TileImageFactory;
 import uk.ac.tees.amazeballs.maze.TileType;
@@ -31,10 +32,10 @@ public class MazeViewport extends View {
 		worldCoords = new Point();
 	}
 	
-	
-	public MazeWorldCamera getCamera() {
-		return camera;
-	}
+//	
+//	public MazeWorldCamera getCamera() {
+//		return camera;
+//	}
 	
 	public void setCamera(MazeWorldCamera camera) {
 		this.camera = camera;
@@ -93,13 +94,14 @@ public class MazeViewport extends View {
 		}
 
 		if (camera.world.ball != null) {
-			int scaledBallSize = (int) (camera.world.ball.size * scale);
+			Ball ball = camera.world.ball;
+			int scaledBallSize = (int) (ball.size * scale);
 			
 			// Convert the tile's world coordinates into view/camera coordinates
 
 			// Scale the positions for the display
-			int scaledViewPositionX = (int) ((camera.world.ball.position_x - camera.getLeft()) * scale);
-			int scaledViewPositionY = (int) ((camera.world.ball.position_y - camera.getTop()) * scale);
+			int scaledViewPositionX = (int) ((ball.position_x - camera.getLeft()) * scale);
+			int scaledViewPositionY = (int) ((ball.position_y - camera.getTop()) * scale);
 			
 			
 			int bounds_x = (gridOffset_x + scaledViewPositionX);

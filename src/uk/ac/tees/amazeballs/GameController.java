@@ -15,7 +15,7 @@ public class GameController {
 	private final int ICE_BALL_SPEED = 7;
 	private final int RAIN_BALL_SPEED = 1;
 
-	private final static double TILT_SENSITIVITY = 0.50;
+	private final static double TILT_SENSITIVITY = 0.75;
 
 	public volatile float lastAccelerometerReading_x;
 	public volatile float lastAccelerometerReading_y;

@@ -28,15 +28,6 @@ public class MazeSelection extends Maze {
 		this.selectionHeight = Math.min(selectionHeight, maze.height);
 	}
 	
-	/**
-	 * Returns the underlying maze this MazeSelection is using.
-	 * 
-	 * @return the full maze
-	 */
-	public Maze getUnderlyingMaze() {
-		return underlyingMaze;
-	}
-	
 	@Override
 	public int getWidth() {
 		// We only return the selection width.

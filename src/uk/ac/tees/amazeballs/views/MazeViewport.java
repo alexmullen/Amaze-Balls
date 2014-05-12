@@ -1,5 +1,6 @@
 package uk.ac.tees.amazeballs.views;
 
+import uk.ac.tees.amazeballs.maze.MazeWorld;
 import uk.ac.tees.amazeballs.maze.MazeWorld.Ball;
 import uk.ac.tees.amazeballs.maze.MazeWorldCamera;
 import uk.ac.tees.amazeballs.maze.TileImageFactory;
@@ -51,6 +52,9 @@ public class MazeViewport extends View {
 			return;
 		}
 
+		
+		MazeWorld world = camera.world;
+		
 		/*
 		 *  Calculate the scale required to make best use of the screen space we have
 		 *  whilst keeping the camera's aspect ratio the same.
@@ -60,7 +64,7 @@ public class MazeViewport extends View {
 		// Calculate the offsets so we can centre align the grid.
 		int gridOffset_x = (int) ((getWidth() - (camera.getWidth() * scale)) / 2);
 		int gridOffset_y = (int) ((getHeight() - (camera.getHeight() * scale)) / 2);
-		int scaledTileSize = (int) (camera.world.tilesize * scale);
+		int scaledTileSize = (int) (world.tilesize * scale);
       	
 		// Create a clipping region to remove any tiles that cannot be seen
 		canvas.clipRect(gridOffset_x, gridOffset_y, (getWidth() - gridOffset_x) , (getHeight() - gridOffset_y));
@@ -70,7 +74,7 @@ public class MazeViewport extends View {
 		camera.getVisibleRange(visibleGridRange);
 		for (int x = visibleGridRange[0]; x <= visibleGridRange[2]; x++) {
 			for (int y = visibleGridRange[1]; y <= visibleGridRange[3]; y++) {
-				camera.world.getWorldCoords(x, y, worldCoords);
+				world.getWorldCoords(x, y, worldCoords);
 			
 				// Scale the positions for the display
 				int scaledViewPositionX = (int) ((worldCoords.x - camera.getLeft()) * scale);
@@ -80,8 +84,7 @@ public class MazeViewport extends View {
 				int bounds_y = (gridOffset_y + scaledViewPositionY);
 				
 				// Draw the tile
-				Drawable tileImage = TileImageFactory.getImage(
-						camera.world.maze.getTileAt(x, y));
+				Drawable tileImage = TileImageFactory.getImage(world.maze.getTileAt(x, y));
 				
 				tileImage.setBounds(
 						bounds_x, // left
@@ -93,8 +96,8 @@ public class MazeViewport extends View {
 			}
 		}
 
-		if (camera.world.ball != null) {
-			Ball ball = camera.world.ball;
+		Ball ball = world.ball;
+		if (ball != null) {
 			int scaledBallSize = (int) (ball.size * scale);
 			
 			// Convert the tile's world coordinates into view/camera coordinates
@@ -102,7 +105,6 @@ public class MazeViewport extends View {
 			// Scale the positions for the display
 			int scaledViewPositionX = (int) ((ball.position_x - camera.getLeft()) * scale);
 			int scaledViewPositionY = (int) ((ball.position_y - camera.getTop()) * scale);
-			
 			
 			int bounds_x = (gridOffset_x + scaledViewPositionX);
 			int bounds_y = (gridOffset_y + scaledViewPositionY);

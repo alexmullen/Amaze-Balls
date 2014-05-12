@@ -102,8 +102,8 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 //		criteria.setAltitudeRequired(false);
 //		criteria.setCostAllowed(false);
 //		
-		
-		// Register the listener with the Location Manager to receive location updates
+//		
+//		// Register the listener with the Location Manager to receive location updates
 //		locationManager.requestLocationUpdates(
 //				locationManager.getBestProvider(criteria, true), 0, 0, locationListener);
 		

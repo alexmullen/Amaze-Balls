@@ -36,14 +36,38 @@ public class MazeWorld {
 		height = maze.height * tilesize;
 	}
 
+	/**
+	 * Converts world coordinates into grid coordinates.
+	 * 
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @return the grid coordinates
+	 */
 	public Point getGridCoords(int x, int y) {
 		return new Point((int)(x / tilesize), (int)(y / tilesize));
 	}
 	
+	/**
+	 * Converts grid coordinates into world coordinates.
+	 * 
+	 * @param gridX the x grid coordinate
+	 * @param gridY the y grid coordinate
+	 * @return the world coordinates
+	 */
 	public Point getWorldCoords(int gridX, int gridY) {
 		return new Point(gridX * tilesize, gridY * tilesize);
 	}
 	
+	/**
+	 * Converts grid coordinates into world coordinates but does not
+	 * create a new Point object for reducing object creation in the
+	 * performance critical game loop.
+	 * 
+	 * @param gridX the x grid coordinate
+	 * @param gridY the y grid coordinate
+	 * @param outPoint the Point instance passed in that will contain the world coordinates
+	 * when the method has finished executing.
+	 */
 	public void getWorldCoords(int gridX, int gridY, Point outPoint) {
 		outPoint.x = (gridX * tilesize);
 		outPoint.y = (gridY * tilesize);

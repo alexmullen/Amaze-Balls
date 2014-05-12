@@ -13,6 +13,13 @@ import android.util.AttributeSet;
 import android.view.View;
 
 
+/**
+ * A View implementation for displaying a MazeWorld from the view of a
+ * MazeWorldCamera.
+ * 
+ * @author Alex Mullen (J9858839)
+ *
+ */
 public class MazeViewport extends View {
 
 	private MazeWorldCamera camera;
@@ -33,11 +40,6 @@ public class MazeViewport extends View {
 		worldCoords = new Point();
 	}
 	
-//	
-//	public MazeWorldCamera getCamera() {
-//		return camera;
-//	}
-	
 	public void setCamera(MazeWorldCamera camera) {
 		this.camera = camera;
 	}
@@ -46,8 +48,13 @@ public class MazeViewport extends View {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		
-//long startTime = System.currentTimeMillis();
+		/*
+		 * This needs to be as streamlined as possible. No objection allocations
+		 * in here preferably.
+		 * 
+		 */
 		
+		// Only need to render if we have a camera
 		if (camera == null) {
 			return;
 		}
@@ -119,9 +126,6 @@ public class MazeViewport extends View {
 	
 			tileImage.draw(canvas);
 		}
-		
-//long elapsedTime = System.currentTimeMillis() - startTime;
-//Log.d(getClass().getName(), String.valueOf(elapsedTime));
 
 	}
 }

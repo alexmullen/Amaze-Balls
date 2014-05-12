@@ -16,6 +16,12 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 
+/**
+ * The activity for selecting a level to play.
+ * 
+ * @author Alex Mullen (J9858839)
+ *
+ */
 public class LevelSelect extends Activity{
 	
 	private Spinner levelSpinner;

@@ -9,24 +9,6 @@ package uk.ac.tees.amazeballs.maze;
 public class MazeFactory {
 
 	/**
-	 * Creates a maze of the specified width and height were each tile is a
-	 * floor tile.
-	 * 
-	 * @param width	 the width of the maze to generate
-	 * @param height the height of the maze to generate
-	 * @return the generated maze
-	 */
-//	public static Maze createBlankMaze(int width, int height) {
-//		Maze blankMaze = new Maze(width, height);
-//		for (int x = 0; x < width; x++) {
-//			for (int y = 0; y < height; y++) {
-//				blankMaze.setTileAt(x, y, TileType.Floor);
-//			}
-//		}
-//		return blankMaze;
-//	}
-	
-	/**
 	 * Creates a maze of the specified width and height were each tile at the
 	 * border is a wall tile and every other is a floor tile.
 	 * 

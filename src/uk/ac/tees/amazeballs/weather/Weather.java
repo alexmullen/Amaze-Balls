@@ -9,7 +9,12 @@ import org.json.JSONException;
 
 
 
-
+/**
+ * A static class with operations for receiving weather data.
+ * 
+ * @author Alex Mullen (J9858839)
+ *
+ */
 public class Weather {
 
 	public static CurrentWeatherData getWeatherData(float latitude, float longitude) {

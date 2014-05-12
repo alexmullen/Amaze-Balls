@@ -50,11 +50,6 @@ public class MazeSelection extends Maze {
 		underlyingMaze.setTileAt((x + offset_x), (y + offset_y), tile);
 	}
 
-//	@Override
-//	public boolean isTileAt(int x, int y) {
-//		return baseMaze.isTileAt((x + offset_x), (y + offset_y));
-//	}
-
 	@Override
 	public boolean isTileAtAnEdge(int x, int y) {
 		return underlyingMaze.isTileAtAnEdge((x + offset_x), (y + offset_y));

@@ -7,7 +7,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ToggleButton;
 
-
+/**
+ * The activity for displaying and allowing the changing of settings.
+ * 
+ * @author Alex Mullen (J9858839)
+ *
+ */
 public class Settings extends Activity {
 
 	public static final String SETTINGS_PREFS_NAME = "settings";

@@ -11,6 +11,12 @@ import android.view.View;
 import android.widget.Button;
 
 
+/**
+ * The main menu activity that is displayed when the app starts up.
+ * 
+ * @author Alex Mullen (J9858839)
+ *
+ */
 public class MainMenuActivity extends Activity {
 	
 	@Override

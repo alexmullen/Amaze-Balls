@@ -2,6 +2,7 @@ package uk.ac.tees.amazeballs;
 
 import net.aksingh.java.api.owm.CurrentWeatherData;
 import uk.ac.tees.amazeballs.maze.Maze;
+import uk.ac.tees.amazeballs.maze.TileType;
 import uk.ac.tees.amazeballs.views.MazeViewport;
 import uk.ac.tees.amazeballs.weather.Weather;
 import android.location.Criteria;
@@ -17,6 +18,9 @@ import android.widget.Toast;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnDismissListener;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -40,6 +44,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 	private GameController gameController;
 	private GameTickHandler tickHandler;
 	
+	private boolean started;
 	private boolean running;
 	private long lastUpdateTime;
 	
@@ -51,9 +56,11 @@ public class MainGameActivity extends Activity implements SensorEventListener {
         public void handleMessage(Message msg) {
         	update();
         }
+        
         public void sleep(long delayMillis) {
-            this.removeMessages(0);
-            sendMessageDelayed(obtainMessage(0), delayMillis);
+            //this.removeMessages(0);
+            sendEmptyMessageDelayed(0, delayMillis);
+            //sendMessageDelayed(obtainMessage(0), delayMillis);
         }
 	}
 	
@@ -61,90 +68,11 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);   
 		setContentView(R.layout.activity_main_game);
-		
-		
-//		final ProgressDialog pd = ProgressDialog.show(
-//				this, 
-//				null, 
-//				"Retrieving location...", 
-//				true, 
-//				true);
-//		
-//		// Acquire a reference to the system Location Manager
-//		final LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-//		Location l = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//		// Define a listener that responds to location updates
-//		final LocationListener locationListener = new LocationListener() {
-//		    public void onLocationChanged(Location location) {
-//		    	// Called when a new location is found by the network location provider.
-//
-//		    	Log.d(getClass().getName(), location.toString());
-//		    	
-//		    	
-//		    	locationManager.removeUpdates(this);
-//		    	pd.setMessage("Retrieving weather data...");
-//		    	
-//				float latitude = 54.60854f;
-//				float longitude = -1.096573f;
-//
-//		    	//CurrentWeatherData cwd = Weather.getWeatherData(latitude, longitude);
-//		    	
-//	
-//		    	
-//		    }
-//		    public void onStatusChanged(String provider, int status, Bundle extras) {}
-//		    public void onProviderEnabled(String provider) {}
-//		    public void onProviderDisabled(String provider) {}
-//		};
-//		
-//		
-//		Criteria criteria = new Criteria();
-//		criteria.setAltitudeRequired(false);
-//		criteria.setCostAllowed(false);
-//		
-//		
-//		// Register the listener with the Location Manager to receive location updates
-//		locationManager.requestLocationUpdates(
-//				locationManager.getBestProvider(criteria, true), 0, 0, locationListener);
-		
-		
-
-		
-		
-		
-		
-		/*
-		 * 
-		 * if weather is on
-		 * 
-		 * 		display a ProgressDialog
-		 * 		get location
-		 * 		get weather data
-		 * 		use the weather data to modify the level
-		 * 		close the ProgressDialog
-		 * 		start the game
-		 * 
-		 * 
-		 * else
-		 * 
-		 * 		just start the game
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 */
-		
 
 		// Load the maze to play
 		final Maze loadedMaze = (Maze) getIntent().getExtras().getSerializable("maze");
 		
-		
-		// Check and validate the maze here
-		
-		
-		
+
 		// Get a reference to the inflated MazeViewport 
 		gameView = (MazeViewport) findViewById(R.id.main_game_view);
 
@@ -159,6 +87,97 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		
 		mp = MediaPlayer.create(this, R.raw.maze);
 		mp.setLooping(true);
+		
+
+		
+		final ProgressDialog pd = ProgressDialog.show(
+				this, 
+				null, 
+				"Retrieving location...", 
+				true, 
+				true);
+		
+		// Acquire a reference to the system Location Manager
+		final LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		final Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		if (lastKnownLocation != null) {
+			pd.setMessage("Retrieving weather data...");
+			Runnable r = new Runnable() {
+				@Override
+				public void run() {
+					final CurrentWeatherData cwd = Weather.getWeatherData(
+							(float)lastKnownLocation.getLatitude(), 
+							(float)lastKnownLocation.getLongitude());
+					gameView.post( new Runnable() {
+						@Override
+						public void run() {
+							applyWeatherToMaze(loadedMaze, cwd);
+							started = true;
+							tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
+						}
+					});
+				}
+			};
+			new Thread(r).start();
+		} else {
+			// Define a listener that responds to location updates
+			final LocationListener locationListener = new LocationListener() {
+			    public void onLocationChanged(final Location location) {
+			    	// Called when a new location is found by the network location provider.
+			    	locationManager.removeUpdates(this);
+			    	
+			    	Log.d(getClass().getName(), location.toString());
+	
+			    	pd.setMessage("Retrieving weather data...");
+			    	
+					Runnable r = new Runnable() {
+						@Override
+						public void run() {
+							final CurrentWeatherData cwd = Weather.getWeatherData(
+									(float)location.getLatitude(), 
+									(float)location.getLongitude());
+							gameView.post( new Runnable() {
+								@Override
+								public void run() {
+									applyWeatherToMaze(loadedMaze, cwd);
+									started = true;
+									tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
+								}
+							});
+						}
+					};
+					new Thread(r).start();
+			    }
+			    public void onStatusChanged(String provider, int status, Bundle extras) {}
+			    public void onProviderEnabled(String provider) {}
+			    public void onProviderDisabled(String provider) {}
+			};
+
+			pd.setOnCancelListener(new OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					locationManager.removeUpdates(locationListener);
+					started = true;
+					tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
+				}
+			});
+			pd.setOnDismissListener(new OnDismissListener() {
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+					locationManager.removeUpdates(locationListener);
+					started = true;
+					tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
+				}
+			});
+			
+			Criteria criteria = new Criteria();
+			criteria.setAltitudeRequired(false);
+			criteria.setCostAllowed(false);
+			
+			// Register the listener with the Location Manager to receive location updates
+			locationManager.requestLocationUpdates(
+					locationManager.getBestProvider(criteria, true), 0, 0, locationListener);
+		}
 	}
 	
 	@Override
@@ -166,7 +185,10 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		super.onResume();
 		initAccelerometer();
 		running = true;
-		tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
+		if (started) {
+			//tickHandler.sendMessageDelayed(tickHandler.obtainMessage(0), 1000);
+			tickHandler.sendEmptyMessageDelayed(0, 1000);
+		}
 		mp.start();
 	}
 	
@@ -242,5 +264,20 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 			}
 		}
 	}
-
+	
+	private void applyWeatherToMaze(Maze maze, CurrentWeatherData cwd) {
+		TileType weatherTileToUse = TileType.Floor;
+		if (cwd.getRain_Object().hasRain3Hours()) {
+			weatherTileToUse = TileType.Rain;
+		} else if (cwd.getMainData_Object().hasTemperature()) {
+			if (cwd.getMainData_Object().getMinTemperature() <= 32) {
+				weatherTileToUse = TileType.Ice;
+			}
+		}
+		for (int x = 0; x < maze.width; x++) {
+			for (int y = 0; y < maze.height; y++) {
+				maze.setTileAt(x, y, weatherTileToUse);
+			}
+		}
+	}
 }

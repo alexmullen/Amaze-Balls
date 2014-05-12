@@ -5,7 +5,7 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Alex/Downloads/gps/OWM_JAPIs.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Alex/Downloads/gps/JSON.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/OWM_JAPIs.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/JSON.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

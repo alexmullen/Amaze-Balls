@@ -11,6 +11,7 @@ import uk.ac.tees.amazeballs.maze.TileType;
 import uk.ac.tees.amazeballs.menus.Highscores;
 import uk.ac.tees.amazeballs.menus.Score;
 import uk.ac.tees.amazeballs.menus.ScoreTableHandler;
+import uk.ac.tees.amazeballs.menus.Settings;
 import uk.ac.tees.amazeballs.views.MazeViewport;
 import uk.ac.tees.amazeballs.weather.Weather;
 import android.location.Criteria;
@@ -30,6 +31,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -123,108 +125,118 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		
 		tickHandler = new GameTickHandler();
 		
-		// Start playing music
-		mp = MediaPlayer.create(this, R.raw.maze);
-		mp.setLooping(true);
+		// Start playing music if enabled
+		SharedPreferences sp = getSharedPreferences(Settings.SETTINGS_PREFS_NAME, Activity.MODE_PRIVATE);
+		if (sp.getBoolean(Settings.SETTINGS_MUSIC, true) == true) {
+			mp = MediaPlayer.create(this, R.raw.maze);
+			mp.setLooping(true);
+		}
 		
 
-		/* 
-		 * Show an indeterminate progress dialog to signal to the user that we are
-		 * doing something.
-		 */
-		weatherProgressDialog = ProgressDialog.show(
-				this, 
-				"Retrieving location...", 
-				"Touch anywhere to cancel", 
-				true, 
-				true);
-		
-		
-		// Acquire a reference to the system Location Manager
-		final LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-		
-		
-		/* 
-		 * Handle the user cancelling the retrieval of location and weather if they
-		 * wish. (It could possibly be taking too long)
-		 */
-		weatherProgressDialog.setOnCancelListener(new OnCancelListener() {
-			@Override
-			public void onCancel(DialogInterface dialog) {
-				// Cancel the weather retrieval task if it was started
-				if (receiveWeatherDataTask != null) {
-					receiveWeatherDataTask.cancel(true);
-				}
-				locationManager.removeUpdates(locationListener);
-				// Just start the game without localised weather tiles
-				replaceWhetherTiles(loadedMaze, TileType.Floor);
-				gameStarted = true;
-				gameView.invalidate();
-				tickHandler.sendEmptyMessageDelayed(0, 1000);
-			}
-		});
-		weatherProgressDialog.setOnDismissListener(new OnDismissListener() {
-			@Override
-			public void onDismiss(DialogInterface dialog) {
-				// Cancel the weather retrieval task if it was started
-				if (receiveWeatherDataTask != null) {
-					receiveWeatherDataTask.cancel(true);
-				}
-				locationManager.removeUpdates(locationListener);
-				// Just start the game without localised weather tiles
-				replaceWhetherTiles(loadedMaze, TileType.Floor);
-				gameStarted = true;
-				gameView.invalidate();
-				tickHandler.sendEmptyMessageDelayed(0, 1000);
-			}
-		});
-
-		// Using the last known location should be sufficient for our purposes if available
-		final Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		if (lastKnownLocation != null) {
-			// Use last known location
-			weatherProgressDialog.setTitle("Retrieving weather data...");
-	    	receiveWeatherDataTask = new RetrieveWeatherDataTask();
-	    	receiveWeatherDataTask.execute(lastKnownLocation);
-		} else {
-			// Define a listener that responds to location updates
-			locationListener = new LocationListener() {
-			    public void onLocationChanged(final Location location) {
-			    	/*
-			    	 *  The first location update will be good enough for us so
-			    	 *  we won't ask for anymore.
-			    	 */
-			    	locationManager.removeUpdates(this);
-			    	weatherProgressDialog.setTitle("Retrieving weather data...");
-			    	receiveWeatherDataTask = new RetrieveWeatherDataTask();
-			    	receiveWeatherDataTask.execute(location);
-			    }
-			    public void onStatusChanged(String provider, int status, Bundle extras) {}
-			    public void onProviderEnabled(String provider) {}
-			    public void onProviderDisabled(String provider) {}
-			};
-			
-			/*
-			 *  Criteria for a location provider. For this we don't need super accuracy
-			 *  or altitude.
+		if (sp.getBoolean(Settings.SETTINGS_WEATHER, true) == true) {
+			/* 
+			 * Show an indeterminate progress dialog to signal to the user that we are
+			 * doing something.
 			 */
-			Criteria criteria = new Criteria();
-			criteria.setAltitudeRequired(false);
-			criteria.setCostAllowed(false);
-			criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+			weatherProgressDialog = ProgressDialog.show(
+					this, 
+					"Retrieving location...", 
+					"Touch anywhere to cancel", 
+					true, 
+					true);
 			
-			// Retrieve the best provider if any
-			String bestProvider = locationManager.getBestProvider(criteria, true);
-			//Log.d(this.getClass().getName(), bestProvider);
-			// Register the listener with the Location Manager to receive location updates
-			if (bestProvider != null) {
-				locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
+			
+			// Acquire a reference to the system Location Manager
+			final LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+			
+			
+			/* 
+			 * Handle the user cancelling the retrieval of location and weather if they
+			 * wish. (It could possibly be taking too long)
+			 */
+			weatherProgressDialog.setOnCancelListener(new OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					// Cancel the weather retrieval task if it was started
+					if (receiveWeatherDataTask != null) {
+						receiveWeatherDataTask.cancel(true);
+					}
+					locationManager.removeUpdates(locationListener);
+					// Just start the game without localised weather tiles
+					replaceWhetherTiles(loadedMaze, TileType.Floor);
+					gameStarted = true;
+					gameView.invalidate();
+					tickHandler.sendEmptyMessageDelayed(0, 1000);
+				}
+			});
+			weatherProgressDialog.setOnDismissListener(new OnDismissListener() {
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+					// Cancel the weather retrieval task if it was started
+					if (receiveWeatherDataTask != null) {
+						receiveWeatherDataTask.cancel(true);
+					}
+					locationManager.removeUpdates(locationListener);
+					// Just start the game without localised weather tiles
+					replaceWhetherTiles(loadedMaze, TileType.Floor);
+					gameStarted = true;
+					gameView.invalidate();
+					tickHandler.sendEmptyMessageDelayed(0, 1000);
+				}
+			});
+	
+			// Using the last known location should be sufficient for our purposes if available
+			final Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+			if (lastKnownLocation != null) {
+				// Use last known location
+				weatherProgressDialog.setTitle("Retrieving weather data...");
+		    	receiveWeatherDataTask = new RetrieveWeatherDataTask();
+		    	receiveWeatherDataTask.execute(lastKnownLocation);
 			} else {
-				// No location providers so just start game without local weather tiles
-				replaceWhetherTiles(loadedMaze, TileType.Floor);
-				gameStarted = true;
-				tickHandler.sendEmptyMessageDelayed(0, 1000);
+				// Define a listener that responds to location updates
+				locationListener = new LocationListener() {
+				    public void onLocationChanged(final Location location) {
+				    	/*
+				    	 *  The first location update will be good enough for us so
+				    	 *  we won't ask for anymore.
+				    	 */
+				    	locationManager.removeUpdates(this);
+				    	weatherProgressDialog.setTitle("Retrieving weather data...");
+				    	receiveWeatherDataTask = new RetrieveWeatherDataTask();
+				    	receiveWeatherDataTask.execute(location);
+				    }
+				    public void onStatusChanged(String provider, int status, Bundle extras) {}
+				    public void onProviderEnabled(String provider) {}
+				    public void onProviderDisabled(String provider) {}
+				};
+				
+				/*
+				 *  Criteria for a location provider. For this we don't need super accuracy
+				 *  or altitude.
+				 */
+				Criteria criteria = new Criteria();
+				criteria.setAltitudeRequired(false);
+				criteria.setCostAllowed(false);
+				criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+				
+				// Retrieve the best provider if any
+				String bestProvider = locationManager.getBestProvider(criteria, true);
+	
+				if (bestProvider != null) {
+					// Register the listener with the Location Manager to receive location updates
+					locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
+				} else {
+					// No location providers so just start game without local weather tiles
+					replaceWhetherTiles(loadedMaze, TileType.Floor);
+					gameStarted = true;
+					tickHandler.sendEmptyMessageDelayed(0, 1000);
+				}
 			}
+		} else {
+			// Weather is disabled so just start the game
+			replaceWhetherTiles(loadedMaze, TileType.Floor);
+			gameStarted = true;
+			tickHandler.sendEmptyMessageDelayed(0, 1000);
 		}
 	}
 
@@ -233,10 +245,14 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		super.onResume();
 		initAccelerometer();
 		running = true;
+		// Only start the game when told (might have to wait for weather data)
 		if (gameStarted) {
 			tickHandler.sendEmptyMessageDelayed(0, 1000);
 		}
-		mp.start();
+		// Start playing the music if it was enabled
+		if (mp != null) {
+			mp.start();
+		}
 	}
 	
 	@Override
@@ -244,7 +260,10 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		super.onPause();
 		running = false;
 		sensorManager.unregisterListener(this);
-		mp.pause();
+		// Pause the music if it was enabled
+		if (mp != null) {
+			mp.pause();
+		}
 	}
 
 	@Override
@@ -252,7 +271,10 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		super.onDestroy();
 		running = false;
 		sensorManager.unregisterListener(this);
-		mp.release();
+		// It's important to release the resources used by the music if it was enabled
+		if (mp != null) {
+			mp.release();
+		}
 	}
 	
 	@Override
@@ -295,7 +317,6 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 			 * since the last update.
 			 */
 			if ((now - lastUpdateTime) >= GAME_TICK_INTERVAL) {
-				//Log.d(this.getClass().getName(), "tick");
 				if (gameController.isFinished()) {
 					setRunningTime(((System.currentTimeMillis()- startTime) / 1000));
 					handlesSaveScore();
@@ -332,6 +353,12 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		return TileType.Floor;
 	}
 	
+	/**
+	 * Replaces all weather tiles with the specified tile type.
+	 * 
+	 * @param maze the maze
+	 * @param type the type of tile to replace the weather tiles with
+	 */
 	private void replaceWhetherTiles(Maze maze, TileType type) {
 		for (int x = 0; x < maze.width; x++) {
 			for (int y = 0; y < maze.height; y++) {
@@ -357,6 +384,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		finish();
 	}
 	
+	// The user clicks cancel when they don't want to save their name and score
 	@Override
 	public void onScoreSaveCancelled() {
 		finish();

@@ -79,8 +79,8 @@ public final class R {
         public static final int tableRow4=0x7f090018;
         public static final int tableRow5=0x7f09001c;
         public static final int textView1=0x7f090026;
-        public static final int toggleButton1=0x7f090025;
-        public static final int toggleButton2=0x7f090028;
+        public static final int togglebutton_music=0x7f090025;
+        public static final int togglebutton_weather=0x7f090028;
         public static final int width_textview=0x7f090003;
         public static final int width_value=0x7f090005;
         public static final int yTextView=0x7f090027;

@@ -3,10 +3,8 @@ package uk.ac.tees.amazeballs.menus;
 import java.util.List;
 
 import uk.ac.tees.amazeballs.R;
-import android.R.layout;
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
 public class Highscores extends Activity {

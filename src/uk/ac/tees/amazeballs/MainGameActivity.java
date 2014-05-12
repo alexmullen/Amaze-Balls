@@ -123,6 +123,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		
 		tickHandler = new GameTickHandler();
 		
+		// Start playing music
 		mp = MediaPlayer.create(this, R.raw.maze);
 		mp.setLooping(true);
 		
@@ -143,7 +144,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		
 		// Using the last known location should be sufficient for our purposes if available
 		final Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		if (lastKnownLocation == null) {
+		if (lastKnownLocation != null) {
 			weatherProgressDialog.setTitle("Retrieving weather data...");
 	    	receiveWeatherDataTask = new RetrieveWeatherDataTask();
 	    	receiveWeatherDataTask.execute(lastKnownLocation);
@@ -159,7 +160,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 
 			    	weatherProgressDialog.setTitle("Retrieving weather data...");
 			    	receiveWeatherDataTask = new RetrieveWeatherDataTask();
-			    	receiveWeatherDataTask.execute(lastKnownLocation);
+			    	receiveWeatherDataTask.execute(location);
 			    }
 			    public void onStatusChanged(String provider, int status, Bundle extras) {}
 			    public void onProviderEnabled(String provider) {}
@@ -210,7 +211,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 					locationManager.getBestProvider(criteria, true), 0, 0, locationListener);
 		}
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -248,6 +249,10 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		// Give the GameController the latest accelerometer readings
 		gameController.lastAccelerometerReading_x = event.values[0];
 		gameController.lastAccelerometerReading_y = event.values[1];
+	}
+	
+	private void handleCancelLocationOrWeatherRetrieval() {
+		
 	}
 	
 	private boolean initAccelerometer() {

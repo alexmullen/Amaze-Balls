@@ -1,8 +1,16 @@
 package uk.ac.tees.amazeballs;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 import net.aksingh.java.api.owm.CurrentWeatherData;
+import uk.ac.tees.amazeballs.dialogs.NewScoreDialogFragment;
+import uk.ac.tees.amazeballs.dialogs.NewScoreDialogFragment.OnScoreSaveRequestListener;
 import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.TileType;
+import uk.ac.tees.amazeballs.menus.Highscores;
+import uk.ac.tees.amazeballs.menus.Score;
+import uk.ac.tees.amazeballs.menus.ScoreTableHandler;
 import uk.ac.tees.amazeballs.views.MazeViewport;
 import uk.ac.tees.amazeballs.weather.Weather;
 import android.location.Criteria;
@@ -33,7 +41,7 @@ import android.hardware.SensorManager;
  * @author Alex Mullen (J9858839)
  *
  */
-public class MainGameActivity extends Activity implements SensorEventListener {
+public class MainGameActivity extends Activity implements SensorEventListener, OnScoreSaveRequestListener {
 	
 	private static final long GAME_TICK_INTERVAL = 16;
 	
@@ -43,6 +51,11 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 	private MazeViewport gameView;
 	private GameController gameController;
 	private GameTickHandler tickHandler;
+	
+	private long startTime;
+	private long runningTime;
+	private ScoreTableHandler sth;
+	private String playerName;
 	
 	private boolean started;
 	private boolean running;
@@ -73,6 +86,9 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		final Maze loadedMaze = (Maze) getIntent().getExtras().getSerializable("maze");
 		
 
+		startTime = System.currentTimeMillis();
+		setSth(new ScoreTableHandler(this));
+
 		// Get a reference to the inflated MazeViewport 
 		gameView = (MazeViewport) findViewById(R.id.main_game_view);
 
@@ -87,6 +103,7 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 		
 		mp = MediaPlayer.create(this, R.raw.maze);
 		mp.setLooping(true);
+		started = true;
 		
 
 		
@@ -250,8 +267,13 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 			if ((now - lastUpdateTime) >= GAME_TICK_INTERVAL) {
 				//Log.d(this.getClass().getName(), "tick");
 				if (gameController.isFinished()) {
+
+					setRunningTime(((System.currentTimeMillis()- startTime) / 1000));
+					handlesSaveScore();
 					Toast.makeText(this, "Level completed", Toast.LENGTH_LONG).show();
-					finish();
+					
+					
+					//finish();
 					return;
 				}
 				gameController.update();
@@ -279,5 +301,33 @@ public class MainGameActivity extends Activity implements SensorEventListener {
 				maze.setTileAt(x, y, weatherTileToUse);
 			}
 		}
+	}
+	
+	
+	// Shows the fragment for player name data entry
+	public void handlesSaveScore() {
+		new NewScoreDialogFragment().show(getFragmentManager(), "newscore_dialogfragment");
+	}
+	
+	// Adds the input data and completion time to a score object then writes it to the database
+	@Override
+	public void onScoreSaveRequested(String name) {
+		String df = DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date(System.currentTimeMillis()));
+		Highscores.scoreHandler = new ScoreTableHandler(this);
+		Highscores.scoreHandler.addScore(new Score(Highscores.scoreHandler.newID(), name, (int)getRunningTime(), df));
+	}
+
+	// Returns the running time of this maze
+	public long getRunningTime() {
+		return runningTime;
+	}
+
+	// Sets the running time of this maze
+	public void setRunningTime(long runningTime) {
+		this.runningTime = runningTime;
+	}
+
+	private void setSth(ScoreTableHandler sth) {
+		this.sth = sth;
 	}
 }

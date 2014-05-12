@@ -2,10 +2,12 @@ package uk.ac.tees.amazeballs.weather;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import org.json.JSONException;
 
 import net.aksingh.java.api.owm.CurrentWeatherData;
 import net.aksingh.java.api.owm.OpenWeatherMap;
+import org.json.JSONException;
+
+
 
 
 public class Weather {

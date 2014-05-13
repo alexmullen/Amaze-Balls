@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ToggleButton;
 
+
 /**
  * The activity for displaying and allowing the changing of settings.
  * 

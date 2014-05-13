@@ -60,12 +60,12 @@ public class Highscores extends Activity {
 			
 		default:
 			// The default number of data items to display is five as the Highscore form can only display five scores
-			scores = scoreHandler.getTopX(numOfVals);
-			writeToDb(1);
-			writeToDb(2);
-			writeToDb(3);
-			writeToDb(4);
-			writeToDb(5);
+//			scores = scoreHandler.getTopX(numOfVals);
+//			writeToDb(1);
+//			writeToDb(2);
+//			writeToDb(3);
+//			writeToDb(4);
+//			writeToDb(5);
 			break;
 		}
 	}

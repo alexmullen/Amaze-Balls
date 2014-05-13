@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -50,26 +49,27 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	
 	private Sensor accelerometerSensor;
 	private SensorManager sensorManager;
-	
-	private Maze loadedMaze;
-	private MazeViewport gameView;
-	private GameController gameController;
-	private GameTickHandler tickHandler;
-	
+
 	private LocationManager locationManager;
 	private LocationListener locationListener;
 	
 	private ProgressDialog weatherProgressDialog;
 	private RetrieveWeatherDataTask receiveWeatherDataTask;
 	
+	private Maze loadedMaze;
+	private MazeViewport gameView;
+	private GameController gameController;
+	private GameTickHandler tickHandler;
+	
 	private long startTime;
 	private long runningTime;
+	private long lastUpdateTime;
 	
 	private boolean gameHasStarted;
 	private boolean running;
-	private long lastUpdateTime;
 	
 	private MediaPlayer mediaPlayer;
+	
 	
 	/**
 	 * A task for downloading weather data asynchronously so as not to block
@@ -89,7 +89,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		protected void onPostExecute(CurrentWeatherData result) {
 			// Only apply if we weren't cancelled.
 			if (!this.isCancelled()) {
-				replaceWhetherTiles(loadedMaze, determineWhetherTiles(result));
+				loadedMaze.replaceAll(TileType.Weather, determineWhetherTiles(result));
 				gameView.invalidate();
 				weatherProgressDialog.dismiss();
 				startGame();
@@ -105,11 +105,9 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	 */
 	private static class GameTickHandler extends Handler {
         private final WeakReference<MainGameActivity> gameActivityReference;
-		
 		GameTickHandler(MainGameActivity gameActivity) {
 			gameActivityReference = new WeakReference<MainGameActivity>(gameActivity);
 		}
-		
 		@Override
         public void handleMessage(Message msg) {
 			MainGameActivity gameActivity = gameActivityReference.get();
@@ -117,7 +115,6 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 				gameActivity.update();
 			}
         }
-        
         public void sleep(long delayMillis) {
             this.removeMessages(0);
             sendEmptyMessageDelayed(0, delayMillis);
@@ -147,6 +144,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		
 		
 		tickHandler = new GameTickHandler(this);
+		
 		
 		// Start playing music if enabled
 		SharedPreferences sp = 
@@ -226,14 +224,14 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 					locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
 				} else {
 					// No location providers so just start game without local weather tiles
-					replaceWhetherTiles(loadedMaze, TileType.Floor);
+					loadedMaze.replaceAll(TileType.Weather, TileType.Floor);
 					gameView.invalidate();
 					startGame();
 				}
 			}
 		} else {
 			// Weather is disabled so just start the game
-			replaceWhetherTiles(loadedMaze, TileType.Floor);
+			loadedMaze.replaceAll(TileType.Weather, TileType.Floor);
 			gameView.invalidate();
 			startGame();
 		}
@@ -298,7 +296,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 			locationManager.removeUpdates(locationListener);
 		}
 		// Just start the game without localised weather tiles
-		replaceWhetherTiles(loadedMaze, TileType.Floor);
+		loadedMaze.replaceAll(TileType.Weather, TileType.Floor);
 		gameView.invalidate();
 		startGame();
 	}
@@ -342,16 +340,15 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 			 * since the last update.
 			 */
 			if ((now - lastUpdateTime) >= GAME_TICK_INTERVAL) {
-				if (gameController.isFinished()) {
-					setRunningTime(((System.currentTimeMillis()- startTime) / 1000));
-					handlesSaveScore();
-					Toast.makeText(this, "Level completed", Toast.LENGTH_LONG).show();
-					return;
+				if (!gameController.isFinished()) {
+					gameController.update();
+					lastUpdateTime = System.currentTimeMillis();
+					long updateTimeTook = lastUpdateTime - now;
+					tickHandler.sleep(GAME_TICK_INTERVAL - updateTimeTook);
+				} else {
+					runningTime = ((System.currentTimeMillis() - startTime) / 1000);
+					new NewScoreDialogFragment().show(getFragmentManager(), "newscore_dialogfragment");
 				}
-				gameController.update();
-				lastUpdateTime = System.currentTimeMillis();
-				long updateTime = lastUpdateTime - now;
-				tickHandler.sleep(GAME_TICK_INTERVAL - updateTime);
 			} else {
 				// Wait the remaining time
 				tickHandler.sleep(GAME_TICK_INTERVAL - (now - lastUpdateTime));
@@ -381,50 +378,23 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	}
 	
 	/**
-	 * Replaces all weather tiles with the specified tile type.
+	 * Adds the input data and completion time to a score object then writes it to the database.
 	 * 
-	 * @param maze the maze
-	 * @param type the type of tile to replace the weather tiles with
+	 * @param name the name the user wants to associate their score with
 	 */
-	private void replaceWhetherTiles(Maze maze, TileType type) {
-		for (int x = 0; x < maze.width; x++) {
-			for (int y = 0; y < maze.height; y++) {
-				if (maze.getTileAt(x, y) == TileType.Weather) {
-					maze.setTileAt(x, y, type);
-				}
-			}
-		}
-	}
-	
-	
-	// Shows the fragment for player name data entry
-	public void handlesSaveScore() {
-		new NewScoreDialogFragment().show(getFragmentManager(), "newscore_dialogfragment");
-	}
-	
-	// Adds the input data and completion time to a score object then writes it to the database
 	@Override
 	public void onScoreSaveRequested(String name) {
 		String df = DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date(System.currentTimeMillis()));
 		Highscores.scoreHandler = new ScoreTableHandler(this);
-		Highscores.scoreHandler.addScore(new Score(Highscores.scoreHandler.newID(), name, (int)getRunningTime(), df));
+		Highscores.scoreHandler.addScore(new Score(Highscores.scoreHandler.newID(), name, (int)runningTime, df));
 		finish();
 	}
 	
-	// The user clicks cancel when they don't want to save their name and score
+	/**
+	 * The user clicks cancel when they don't want to save their name and score.
+	 */
 	@Override
 	public void onScoreSaveCancelled() {
 		finish();
 	}
-
-	// Returns the running time of this maze
-	public long getRunningTime() {
-		return runningTime;
-	}
-
-	// Sets the running time of this maze
-	public void setRunningTime(long runningTime) {
-		this.runningTime = runningTime;
-	}
-
 }

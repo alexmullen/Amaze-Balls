@@ -62,13 +62,12 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	
 	private long startTime;
 	private long runningTime;
-	private ScoreTableHandler sth;
 	
 	private boolean gameStarted;
 	private boolean running;
 	private long lastUpdateTime;
 	
-	private MediaPlayer mp = new MediaPlayer();
+	private MediaPlayer mediaPlayer;
 	
 	/**
 	 * A task for downloading weather data asynchronously so as not to block
@@ -125,7 +124,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		
 
 		startTime = System.currentTimeMillis();
-		setSth(new ScoreTableHandler(this));
+
 
 		// Get a reference to the inflated MazeViewport 
 		gameView = (MazeViewport) findViewById(R.id.main_game_view);
@@ -142,8 +141,9 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		// Start playing music if enabled
 		SharedPreferences sp = getSharedPreferences(Settings.SETTINGS_PREFS_NAME, Activity.MODE_PRIVATE);
 		if (sp.getBoolean(Settings.SETTINGS_MUSIC, true) == true) {
-			mp = MediaPlayer.create(this, R.raw.maze);
-			mp.setLooping(true);
+			mediaPlayer = new MediaPlayer();
+			mediaPlayer = MediaPlayer.create(this, R.raw.maze);
+			mediaPlayer.setLooping(true);
 		}
 		
 
@@ -159,9 +159,9 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 					true, 
 					true);
 			
-			
 			// Acquire a reference to the system Location Manager
-			final LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+			final LocationManager locationManager = 
+					(LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 			
 			
 			/* 
@@ -235,7 +235,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 				
 				// Retrieve the best provider if any
 				String bestProvider = locationManager.getBestProvider(criteria, true);
-	
+				
 				if (bestProvider != null) {
 					// Register the listener with the Location Manager to receive location updates
 					locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
@@ -264,8 +264,8 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 			tickHandler.sendEmptyMessageDelayed(0, 1000);
 		}
 		// Start playing the music if it was enabled
-		if (mp != null) {
-			mp.start();
+		if (mediaPlayer != null) {
+			mediaPlayer.start();
 		}
 	}
 	
@@ -275,8 +275,8 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		running = false;
 		sensorManager.unregisterListener(this);
 		// Pause the music if it was enabled
-		if (mp != null) {
-			mp.pause();
+		if (mediaPlayer != null) {
+			mediaPlayer.pause();
 		}
 	}
 
@@ -286,8 +286,8 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		running = false;
 		sensorManager.unregisterListener(this);
 		// It's important to release the resources used by the music if it was enabled
-		if (mp != null) {
-			mp.release();
+		if (mediaPlayer != null) {
+			mediaPlayer.release();
 		}
 	}
 	
@@ -414,10 +414,6 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	// Sets the running time of this maze
 	public void setRunningTime(long runningTime) {
 		this.runningTime = runningTime;
-	}
-
-	private void setSth(ScoreTableHandler sth) {
-		this.sth = sth;
 	}
 
 }

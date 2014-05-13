@@ -1,7 +1,9 @@
 package uk.ac.tees.amazeballs;
 
+import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.util.Date;
+
 import net.aksingh.java.api.owm.CurrentWeatherData;
 import uk.ac.tees.amazeballs.dialogs.NewScoreDialogFragment;
 import uk.ac.tees.amazeballs.dialogs.NewScoreDialogFragment.OnScoreSaveRequestListener;
@@ -63,7 +65,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	private long startTime;
 	private long runningTime;
 	
-	private boolean gameStarted;
+	private boolean gameHasStarted;
 	private boolean running;
 	private long lastUpdateTime;
 	
@@ -101,10 +103,19 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	 * @author Alex Mullen (J9858839)
 	 *
 	 */
-	private class GameTickHandler extends Handler {
-        @Override
+	private static class GameTickHandler extends Handler {
+        private final WeakReference<MainGameActivity> gameActivityReference;
+		
+		GameTickHandler(MainGameActivity gameActivity) {
+			gameActivityReference = new WeakReference<MainGameActivity>(gameActivity);
+		}
+		
+		@Override
         public void handleMessage(Message msg) {
-        	update();
+			MainGameActivity gameActivity = gameActivityReference.get();
+			if (gameActivity != null) {
+				gameActivity.update();
+			}
         }
         
         public void sleep(long delayMillis) {
@@ -135,7 +146,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		gameController = new GameController(loadedMaze, gameView);
 		
 		
-		tickHandler = new GameTickHandler();
+		tickHandler = new GameTickHandler(this);
 		
 		// Start playing music if enabled
 		SharedPreferences sp = 
@@ -216,6 +227,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 				} else {
 					// No location providers so just start game without local weather tiles
 					replaceWhetherTiles(loadedMaze, TileType.Floor);
+					gameView.invalidate();
 					startGame();
 				}
 			}
@@ -229,16 +241,16 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 
 	@Override
 	protected void onResume() {
-		super.onResume();
-		initAccelerometer();
-		running = true;
-		// Only start the game when told (might have to wait for weather data)
-		if (gameStarted) {
-			tickHandler.sendEmptyMessageDelayed(0, 1000);
-		}
+		super.onResume();		
 		// Start playing the music if it was enabled
 		if (mediaPlayer != null) {
 			mediaPlayer.start();
+		}
+		initAccelerometer();
+		running = true;
+		// Only start the game when told (might have to wait for weather data)
+		if (gameHasStarted) {
+			tickHandler.sendEmptyMessageDelayed(0, 1000);
 		}
 	}
 	
@@ -314,7 +326,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	}
 	
 	private void startGame() {
-		gameStarted = true;
+		gameHasStarted = true;
 		tickHandler.sendEmptyMessageDelayed(0, 1000);
 	}
 	

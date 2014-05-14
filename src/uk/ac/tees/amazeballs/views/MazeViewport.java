@@ -7,7 +7,6 @@ import uk.ac.tees.amazeballs.maze.TileImageFactory;
 import uk.ac.tees.amazeballs.maze.TileType;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -26,18 +25,15 @@ public class MazeViewport extends View {
 	
 	// Re-usable objects for performance
 	private final int[] visibleGridRange;
-	private final Point worldCoords;
 	
 	public MazeViewport(Context context) {
 		super(context);
 		visibleGridRange = new int[4];
-		worldCoords = new Point();
 	}
 
 	public MazeViewport(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		visibleGridRange = new int[4];
-		worldCoords = new Point();
 	}
 	
 	public void setCamera(MazeWorldCamera camera) {
@@ -84,16 +80,15 @@ public class MazeViewport extends View {
 		
 		MazeWorld world = camera.world;
 		int tilesize = world.tilesize;
+		Ball ball = world.ball;
 		
 		// output array order = left, top, right, bottom
 		camera.getVisibleRange(visibleGridRange);
 		for (int x = visibleGridRange[0]; x <= visibleGridRange[2]; x++) {
 			for (int y = visibleGridRange[1]; y <= visibleGridRange[3]; y++) {
 				// Convert the tile's world coordinates into view/camera coordinates
-				world.getWorldCoords(x, y, worldCoords);
-
-				int bounds_x = (worldCoords.x - camera.getLeft());
-				int bounds_y = (worldCoords.y - camera.getTop());
+				int bounds_x = ((x * tilesize) - camera.getLeft());
+				int bounds_y = ((y * tilesize) - camera.getTop());
 				
 				// Draw the tile
 				Drawable tileImage = TileImageFactory.getImage(world.maze.getTileAt(x, y));
@@ -102,8 +97,7 @@ public class MazeViewport extends View {
 				tileImage.draw(canvas);
 			}
 		}
-
-		Ball ball = world.ball;
+		
 		if (ball != null) {
 			int ballsize = (int) (ball.size);
 			

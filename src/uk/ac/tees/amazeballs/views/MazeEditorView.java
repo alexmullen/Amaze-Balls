@@ -44,26 +44,23 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 		LINE_PAINT.setStyle(Style.STROKE);
 		
 		SPECIAL_TILES = new ArrayList<SpecialTileChoice>();
-		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Start, TileImageFactory.getImage(TileType.Start), "Start"));
-		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Goal, TileImageFactory.getImage(TileType.Goal), "Goal"));
-		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Key, TileImageFactory.getImage(TileType.Key), "Key"));
-		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Door, TileImageFactory.getImage(TileType.Door), "Door"));
-		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Penalty, TileImageFactory.getImage(TileType.Penalty), "Penalty"));
-		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Chest, TileImageFactory.getImage(TileType.Chest), "Chest"));
-		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Weather, TileImageFactory.getImage(TileType.Weather), "Weather"));
-		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Ice, TileImageFactory.getImage(TileType.Ice), "Ice"));
-		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Rain, TileImageFactory.getImage(TileType.Rain), "Rain"));
+		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Start, TileImageFactory.getImage(TileType.Start)));
+		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Goal, TileImageFactory.getImage(TileType.Goal)));
+		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Key, TileImageFactory.getImage(TileType.Key)));
+		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Door, TileImageFactory.getImage(TileType.Door)));
+		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Penalty, TileImageFactory.getImage(TileType.Penalty)));
+		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Chest, TileImageFactory.getImage(TileType.Chest)));
+		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Weather, TileImageFactory.getImage(TileType.Weather)));
+		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Ice, TileImageFactory.getImage(TileType.Ice)));
+		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Rain, TileImageFactory.getImage(TileType.Rain)));
 	}
 	
 	private static class SpecialTileChoice {
 		public TileType type;
 		public Drawable image;
-		public String title;
-		
-		public SpecialTileChoice(TileType type, Drawable image, String title) {
+		public SpecialTileChoice(TileType type, Drawable image) {
 			this.type = type;
 			this.image = image;
-			this.title = title;
 		}
 	}
 	
@@ -111,10 +108,8 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 		final int gridPositionTouchedY = (int) Math.floor(((event.getY() - gridOffset_y) / getTilesize()));
 		
 		// Ignore any touches that are within our view area but outside the displayed grid.
-		if (gridPositionTouchedX < 0 || 
-			gridPositionTouchedY < 0 || 
-			gridPositionTouchedX >= currentMaze.getWidth() ||
-			gridPositionTouchedY >= currentMaze.getHeight()) {
+		if (gridPositionTouchedX < 0 || gridPositionTouchedY < 0 || 
+			gridPositionTouchedX >= currentMaze.getWidth() || gridPositionTouchedY >= currentMaze.getHeight()) {
 			return;
 		}
 		
@@ -129,18 +124,15 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
         builder.setAdapter(new ArrayAdapter<SpecialTileChoice>(this.getContext(), R.layout.dialog_specialtile_row, SPECIAL_TILES) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                View view;
-                if (convertView == null) {
-                    LayoutInflater inflater = LayoutInflater.from(getContext());
-                    view = inflater.inflate(R.layout.dialog_specialtile_row, parent, false);
-                } else {
-                    view = convertView;
-                }
+ 
+                View view = (convertView != null ? convertView :
+                	LayoutInflater.from(getContext()).inflate(R.layout.dialog_specialtile_row, parent, false));
+                
                 ImageView imageView = (ImageView) view.findViewById(R.id.special_tile_choice_image);
                 TextView textView = (TextView) view.findViewById(R.id.special_tile_choice_title);
                 SpecialTileChoice specialTileChoice = getItem(position);
                 imageView.setImageDrawable(specialTileChoice.image);
-                textView.setText(specialTileChoice.title);
+                textView.setText(specialTileChoice.type.name());
                 return view;
             }
         }, new DialogInterface.OnClickListener() {
@@ -150,7 +142,7 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
         		invalidate();
             }
         });
-        builder.create().show();;
+        builder.create().show();
 	}
 
 	@Override
@@ -198,10 +190,8 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 		int gridPositionTouchedY = (int) Math.floor(((event.getY() - gridOffset_y) / getTilesize()));
 		
 		// Ignore any touches that are within our view area but outside the displayed grid.
-		if (gridPositionTouchedX < 0 || 
-			gridPositionTouchedY < 0 || 
-			gridPositionTouchedX >= currentMaze.getWidth() ||
-			gridPositionTouchedY >= currentMaze.getHeight()) {
+		if (gridPositionTouchedX < 0 || gridPositionTouchedY < 0 || 
+			gridPositionTouchedX >= currentMaze.getWidth() || gridPositionTouchedY >= currentMaze.getHeight()) {
 			return true;
 		}
 		

@@ -121,10 +121,11 @@ public class MazeWorldCamera {
 	 * @param outRange an array passed in that will contain the values on method exit.
 	 */
 	public void getVisibleRange(int[] outRange) {
-		outRange[0] = (left / world.tilesize);
-		outRange[1] = (top / world.tilesize);
-		outRange[2] = Math.min((world.maze.width - 1), (right / world.tilesize));
-		outRange[3] = Math.min((world.maze.height - 1), (bottom / world.tilesize));
+		final int tilesize = world.tilesize;
+		outRange[0] = (left / tilesize);
+		outRange[1] = (top / tilesize);
+		outRange[2] = Math.min((world.maze.width - 1), (right / tilesize));
+		outRange[3] = Math.min((world.maze.height - 1), (bottom / tilesize));
 	}
-
+	
 }

@@ -27,7 +27,7 @@ public class MazeViewport extends View {
 	// Re-usable objects for performance
 	private final int[] visibleGridRange;
 	private final Point worldCoords;
-
+	
 	public MazeViewport(Context context) {
 		super(context);
 		visibleGridRange = new int[4];
@@ -59,71 +59,62 @@ public class MazeViewport extends View {
 			return;
 		}
 
-		
-		MazeWorld world = camera.world;
-		
+
 		/*
 		 *  Calculate the scale required to make best use of the screen space we have
 		 *  whilst keeping the camera's aspect ratio the same.
 		 */
-		float scale = Math.min((getWidth() / camera.getWidth()), (getHeight() / camera.getHeight()));
-
-		// Calculate the offsets so we can centre align the grid.
-		int gridOffset_x = (int) ((getWidth() - (camera.getWidth() * scale)) / 2);
-		int gridOffset_y = (int) ((getHeight() - (camera.getHeight() * scale)) / 2);
-		int scaledTileSize = (int) (world.tilesize * scale);
+		float scale = Math.min(
+				((float)getWidth() / (float)camera.getWidth()), 
+				((float)getHeight() / (float)camera.getHeight()));
+		
+		// Calculate the scaled offsets so we can centre align the grid.
+		int scaledGridOffset_x = (int) ((getWidth() - (camera.getWidth() * scale)) / 2);
+		int scaledGridOffset_y = (int) ((getHeight() - (camera.getHeight() * scale)) / 2);
       	
 		// Create a clipping region to remove any tiles that cannot be seen
-		canvas.clipRect(gridOffset_x, gridOffset_y, (getWidth() - gridOffset_x) , (getHeight() - gridOffset_y));
-
-
+		canvas.clipRect(scaledGridOffset_x, scaledGridOffset_y, 
+				(getWidth() - scaledGridOffset_x) , (getHeight() - scaledGridOffset_y));
+		
+		// Scale the canvas, and translate it the origin to the calculated non-scaled offset
+		canvas.scale(scale, scale);
+		canvas.translate((scaledGridOffset_x /= scale), (scaledGridOffset_y /= scale));
+		
+		
+		
+		MazeWorld world = camera.world;
+		int tilesize = world.tilesize;
+		
 		// output array order = left, top, right, bottom
 		camera.getVisibleRange(visibleGridRange);
 		for (int x = visibleGridRange[0]; x <= visibleGridRange[2]; x++) {
 			for (int y = visibleGridRange[1]; y <= visibleGridRange[3]; y++) {
+				// Convert the tile's world coordinates into view/camera coordinates
 				world.getWorldCoords(x, y, worldCoords);
-			
-				// Scale the positions for the display
-				int scaledViewPositionX = (int) ((worldCoords.x - camera.getLeft()) * scale);
-				int scaledViewPositionY = (int) ((worldCoords.y - camera.getTop()) * scale);
-				
-				int bounds_x = (gridOffset_x + scaledViewPositionX);
-				int bounds_y = (gridOffset_y + scaledViewPositionY);
+
+				int bounds_x = (worldCoords.x - camera.getLeft());
+				int bounds_y = (worldCoords.y - camera.getTop());
 				
 				// Draw the tile
 				Drawable tileImage = TileImageFactory.getImage(world.maze.getTileAt(x, y));
-				
-				tileImage.setBounds(
-						bounds_x, // left
-						bounds_y, // top
-						bounds_x + scaledTileSize, // right
-						bounds_y + scaledTileSize); // bottom
-	
+				// left, top, right, bottom
+				tileImage.setBounds(bounds_x, bounds_y, (bounds_x + tilesize), (bounds_y + tilesize));
 				tileImage.draw(canvas);
 			}
 		}
 
 		Ball ball = world.ball;
 		if (ball != null) {
-			int scaledBallSize = (int) (ball.size * scale);
+			int ballsize = (int) (ball.size);
 			
-			// Convert the tile's world coordinates into view/camera coordinates
-
-			// Scale the positions for the display
-			int scaledViewPositionX = (int) ((ball.position_x - camera.getLeft()) * scale);
-			int scaledViewPositionY = (int) ((ball.position_y - camera.getTop()) * scale);
-			
-			int bounds_x = (gridOffset_x + scaledViewPositionX);
-			int bounds_y = (gridOffset_y + scaledViewPositionY);
+			// Convert the ball's world coordinates into view/camera coordinates
+			int bounds_x = (ball.position_x - camera.getLeft());
+			int bounds_y = (ball.position_y - camera.getTop());
 			
 			// Draw the ball
 			Drawable tileImage = TileImageFactory.getImage(TileType.Ball);
-			tileImage.setBounds(
-					bounds_x, // left
-					bounds_y, // top
-					bounds_x + scaledBallSize, // right
-					bounds_y + scaledBallSize); // bottom
-	
+			// left, top, right, bottom
+			tileImage.setBounds(bounds_x, bounds_y, (bounds_x + ballsize), (bounds_y + ballsize));
 			tileImage.draw(canvas);
 		}
 

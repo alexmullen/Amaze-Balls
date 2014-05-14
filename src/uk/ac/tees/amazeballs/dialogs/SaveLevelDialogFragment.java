@@ -35,15 +35,13 @@ public class SaveLevelDialogFragment extends DialogFragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		try {
-			listener = (OnLevelSaveRequestListener) activity;
-		} catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnLevelSaveRequestListener");
-        }
+		listener = (OnLevelSaveRequestListener) activity;
 	}
 	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		super.onCreateDialog(savedInstanceState);
+		
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		final View inflatedView = getActivity().getLayoutInflater().inflate(R.layout.dialog_level_save, null);
 		final EditText levelNameTextView = (EditText) inflatedView.findViewById(R.id.dialog_save_levelname_edittext);

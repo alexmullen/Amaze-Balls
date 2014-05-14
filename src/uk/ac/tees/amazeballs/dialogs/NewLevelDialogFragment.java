@@ -36,15 +36,13 @@ public class NewLevelDialogFragment extends DialogFragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		try {
-			listener = (OnNewLevelRequestListener) activity;
-		} catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnNewLevelRequestListener");
-        }
+		listener = (OnNewLevelRequestListener) activity;
 	}
 	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		super.onCreateDialog(savedInstanceState);
+		
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		final View inflatedView = getActivity().getLayoutInflater().inflate(R.layout.dialog_newmazesize, null);
 		

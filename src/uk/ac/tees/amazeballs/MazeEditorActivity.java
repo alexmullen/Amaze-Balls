@@ -27,40 +27,36 @@ public class MazeEditorActivity extends Activity
 					NewLevelDialogFragment.OnNewLevelRequestListener {
 
 	private Maze currentMaze;
+	private String currentLevelName;
+	
 	private MazeSelection currentMazeSelection;
 	private MazeEditorView mazeEditorView;
 	
-	private String currentLevelName;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_maze_editor);
-
+		
 		mazeEditorView = (MazeEditorView) findViewById(R.id.maze_grid_view);
 	
 		// Check whether we need to restore our state
 		if (savedInstanceState != null) {
 			// Restore our state
 			currentMaze = (Maze) savedInstanceState.getSerializable("maze");
-			// Check there was a maze to load from the previous state
-			if (currentMaze != null) {
-				currentLevelName = savedInstanceState.getString("level_name");
-				/*
-				 * Create a maze selection to view only a small portion of the maze so
-				 * that we can have mazes that are much larger than most devices'
-				 * displays. The size specified here represents the grid size displayed
-				 * in the MazeEditorView.
-				 */
-				currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
-			} else {
-				currentMaze = MazeFactory.createBorderedMaze(25, 30);
-				currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
-			}
+			currentLevelName = savedInstanceState.getString("level_name");
 		} else {
+			// Create a new blank maze ready to be edited
 			currentMaze = MazeFactory.createBorderedMaze(25, 30);
-			currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
 		}
+		
+		/*
+		 * Create a maze selection to view only a small portion of the maze so
+		 * that we can have mazes that are much larger than most devices'
+		 * displays. The size specified here represents the grid size displayed
+		 * in the MazeEditorView.
+		 */
+		currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
 		
 		// Set the maze for the MazeEditorView to display
 		mazeEditorView.setMaze(currentMazeSelection);

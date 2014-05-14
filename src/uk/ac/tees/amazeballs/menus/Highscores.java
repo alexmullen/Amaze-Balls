@@ -70,11 +70,11 @@ public class Highscores extends Activity {
 		}
 	}
 	
-	// Closes the database connection twhen the activity is destroyed.
+	// Closes the database connection when the activity is destroyed.
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		if(scoreHandler != null) {
+		if (scoreHandler != null) {
 			scoreHandler.close();
 		}
 	}

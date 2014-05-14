@@ -29,16 +29,14 @@ public class NewScoreDialogFragment extends DialogFragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		try {
-			listener = (OnScoreSaveRequestListener) activity;
-		} catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnScoreSaveRequestListener");
-        }
+		listener = (OnScoreSaveRequestListener) activity;
 	}
 	
 	// This method is executed when the fragment is ifrst created
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		super.onCreateDialog(savedInstanceState);
+		
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		final View inflatedView = getActivity().getLayoutInflater().inflate(R.layout.dialog_score_save, null);
 		final EditText playerNameTextView = (EditText) inflatedView.findViewById(R.id.dialog_save_playername_edittext);

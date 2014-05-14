@@ -141,7 +141,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		 * for the game.
 		 */
 		gameController = new GameController(loadedMaze, gameView);
-		
+
 		
 		tickHandler = new GameTickHandler(this);
 		
@@ -334,24 +334,15 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	private void update() {
 		// Only perform updates if the game is running
 		if (running) {
-			long now = System.currentTimeMillis();
-			/*
-			 * Only perform an update if the specified delay time has elapsed
-			 * since the last update.
-			 */
-			if ((now - lastUpdateTime) >= GAME_TICK_INTERVAL) {
-				if (!gameController.isFinished()) {
-					gameController.update();
-					lastUpdateTime = System.currentTimeMillis();
-					long updateTimeTook = lastUpdateTime - now;
-					tickHandler.sleep(GAME_TICK_INTERVAL - updateTimeTook);
-				} else {
-					runningTime = ((System.currentTimeMillis() - startTime) / 1000);
-					new NewScoreDialogFragment().show(getFragmentManager(), "newscore_dialogfragment");
-				}
+			if (gameController.isFinished()) {
+				runningTime = ((System.currentTimeMillis() - startTime) / 1000);
+				new NewScoreDialogFragment().show(getFragmentManager(), "newscore_dialogfragment");
 			} else {
-				// Wait the remaining time
-				tickHandler.sleep(GAME_TICK_INTERVAL - (now - lastUpdateTime));
+				long now = System.currentTimeMillis();
+				gameController.update();
+				lastUpdateTime = System.currentTimeMillis();
+				long updateTimeTook = lastUpdateTime - now;
+				tickHandler.sleep(GAME_TICK_INTERVAL - updateTimeTook);
 			}
 		}
 	}

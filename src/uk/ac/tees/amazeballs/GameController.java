@@ -23,8 +23,8 @@ public class GameController {
 
 	private final static double TILT_SENSITIVITY = 0.75;
 
-	public volatile float lastAccelerometerReading_x;
-	public volatile float lastAccelerometerReading_y;
+	public float lastAccelerometerReading_x;
+	public float lastAccelerometerReading_y;
 
 	private final MazeWorld mazeWorld;
 	private final MazeWorldCamera mazeWorldCamera;
@@ -35,6 +35,9 @@ public class GameController {
 	boolean touchingRain;
 	boolean touchingIce;
 	
+//	private int previous_ball_position_x;
+//	private int previous_ball_position_y;
+	
 	private boolean finished;
 
 	public GameController(Maze maze, MazeViewport mazeVewport) {
@@ -42,7 +45,7 @@ public class GameController {
 		mazeWorld = new MazeWorld(maze, 20);
 		mazeWorldCamera = new MazeWorldCamera(mazeWorld, 0, 0,
 				10 * mazeWorld.tilesize, 
-				15 * mazeWorld.tilesize);
+				17 * mazeWorld.tilesize);
 		mazeViewport.setCamera(mazeWorldCamera);
 
 		// Search for the (or a) start position to place the ball
@@ -66,12 +69,18 @@ public class GameController {
 	 * Performs one update of the game state.
 	 */
 	public void update() {
+		
+//		Ball ball = mazeWorld.ball;
+//		previous_ball_position_x = ball.position_x;
+//		previous_ball_position_y = ball.position_y;
+//		
 		moveBall();
 
 		scrollScreen();
 
 		processTouchingTiles();
 
+		
 		// Render the next frame
 		mazeViewport.invalidate();
 	}

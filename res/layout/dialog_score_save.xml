@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:ems="12"
-    android:hint="Player name"
+    android:hint="Name"
     android:inputType="text"
     android:maxLines="1"
     android:singleLine="true"

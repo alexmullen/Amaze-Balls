@@ -2,6 +2,7 @@ package uk.ac.tees.amazeballs;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 
 import net.aksingh.java.api.owm.CurrentWeatherData;
 import uk.ac.tees.amazeballs.dialogs.NewScoreDialogFragment;
@@ -22,7 +23,6 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -45,9 +45,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	
 	private static final long GAME_TICK_INTERVAL = 16;
 	
-	private Sensor accelerometerSensor;
 	private SensorManager sensorManager;
-
 	private LocationManager locationManager;
 	private LocationListener locationListener;
 	
@@ -61,10 +59,10 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	private Thread gameThread;
 	
 	private long startTime;
-	private long runningTime;
+	private long timeTaken;
 	
 	private boolean gameHasStarted;
-	private volatile boolean running;
+	private volatile boolean gameIsRunning;
 	
 	private MediaPlayer mediaPlayer;
 	
@@ -100,13 +98,12 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);   
 		setContentView(R.layout.activity_main_game);
-
+		
 		// Load the maze to play
 		loadedMaze = (Maze) getIntent().getExtras().getSerializable("maze");
 		
-
+		// Record the time at which the game started playing
 		startTime = System.currentTimeMillis();
-
 
 		// Get a reference to the inflated MazeViewport 
 		gameView = (MazeViewport) findViewById(R.id.main_game_view);
@@ -117,26 +114,20 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		 */
 		gameController = new GameController(loadedMaze, gameView);
 
-
-		
-		// Start playing music if enabled
-		SharedPreferences sp = 
-				getSharedPreferences(Settings.SETTINGS_PREFS_NAME, Activity.MODE_PRIVATE);
-		
+		// Load and prepare the music if enabled
+		SharedPreferences sp = getSharedPreferences(Settings.SETTINGS_PREFS_NAME, Activity.MODE_PRIVATE);
 		if (sp.getBoolean(Settings.SETTINGS_MUSIC, true) == true) {
-			mediaPlayer = new MediaPlayer();
 			mediaPlayer = MediaPlayer.create(this, R.raw.maze);
 			mediaPlayer.setLooping(true);
 		}
 		
+		// Retrieve and apply local weather data to the level if enabled.
 		if (sp.getBoolean(Settings.SETTINGS_WEATHER, true) == true) {
 			/* 
 			 * Show an indeterminate progress dialog to signal to the user that we are
 			 * doing something.
 			 */
-			weatherProgressDialog = ProgressDialog.show(
-					this, 
-					"Retrieving location...", 
+			weatherProgressDialog = ProgressDialog.show(this, "Retrieving location...", 
 					"Touch anywhere to cancel", 
 					true, 
 					true);
@@ -167,7 +158,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 			} else {
 				// Define a listener that responds to location updates
 				locationListener = new LocationListener() {
-				    public void onLocationChanged(final Location location) {
+				    public void onLocationChanged(Location location) {
 				    	/*
 				    	 *  The first location update will be good enough for us so
 				    	 *  we won't ask for anymore.
@@ -195,20 +186,26 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 					// Register the listener with the Location Manager to receive location updates
 					locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
 				} else {
-					// No location providers so just start game without local weather tiles
+					/*
+					 * No location providers so just replace any weather tiles with floor tiles
+					 * and allow the game to be started.
+					 */					
 					loadedMaze.replaceAll(TileType.Weather, TileType.Floor);
 					gameView.invalidate();
 					gameHasStarted = true;
 				}
 			}
 		} else {
-			// Weather is disabled so just start the game
+			/*
+			 *  Weather is disabled so just replace any weather tiles with floor tiles
+			 *  and allow the game to started.
+			 */
 			loadedMaze.replaceAll(TileType.Weather, TileType.Floor);
 			gameView.invalidate();
 			gameHasStarted = true;
 		}
 	}
-
+	
 	@Override
 	protected void onResume() {
 		super.onResume();		
@@ -216,7 +213,10 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		if (mediaPlayer != null) {
 			mediaPlayer.start();
 		}
-		initAccelerometer();
+		if (!initAccelerometer()) {
+			// Failed to register with accelerometer sensor, device probably doesn't have one
+			// Finish();
+		}
 		// Only start the game when told (might have to wait for weather data)
 		if (gameHasStarted) {
 			startGame();
@@ -226,7 +226,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	@Override
 	protected void onPause() {
 		super.onPause();
-		running = false;
+		gameIsRunning = false;
 		sensorManager.unregisterListener(this);
 		// Pause the music if it was enabled
 		if (mediaPlayer != null) {
@@ -237,7 +237,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		running = false;
+		gameIsRunning = false;
 		sensorManager.unregisterListener(this);
 		// It's important to release the resources used by the music if it was enabled
 		if (mediaPlayer != null) {
@@ -282,27 +282,28 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	private boolean initAccelerometer() {
 		// Check the device has an accelerometer
 		sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
-		if (sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).size() > 0) {
+		List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
+		if (sensorList.size() > 0) {
 			// Register ourselves as a listener so that we can receive accelerometer updates
-			accelerometerSensor = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
+			Sensor accelerometerSensor = sensorList.get(0);
 			sensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
 			return true;
 		} else {
 			// Failure! No accelerometer
-			Log.e(this.getClass().getName(), "no accelerometer on device, unable to play game");
+			Log.e(getClass().getName(), "no accelerometer on device, unable to play game");
 			//finish(); // No accelerometer on the emulator
 			return false;
 		}
 	}
 	
 	private void startGame() {
-		running = true;
+		gameIsRunning = true;
 		Runnable r = new Runnable() {
 			@Override
 			public void run() {
-				while (running) {
+				while (gameIsRunning) {
 					if (gameController.isFinished()) {
-						runningTime = ((System.currentTimeMillis() - startTime) / 1000);
+						timeTaken = ((System.currentTimeMillis() - startTime) / 1000);
 						MainGameActivity.this.runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
@@ -360,7 +361,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	public void onScoreSaveRequested(String name) {
 		String df = DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date(System.currentTimeMillis()));
 		Highscores.scoreHandler = new ScoreTableHandler(this);
-		Highscores.scoreHandler.addScore(new Score(Highscores.scoreHandler.newID(), name, (int)runningTime, df));
+		Highscores.scoreHandler.addScore(new Score(Highscores.scoreHandler.newID(), name, (int)timeTaken, df));
 		finish();
 	}
 	

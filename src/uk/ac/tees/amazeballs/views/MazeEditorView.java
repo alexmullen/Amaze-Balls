@@ -104,8 +104,8 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 		}
 
 		// Normalize the coordinates touched into grid coordinates.
-		final int gridPositionTouchedX = (int) Math.floor(((event.getX() - gridOffset_x) / getTilesize()));
-		final int gridPositionTouchedY = (int) Math.floor(((event.getY() - gridOffset_y) / getTilesize()));
+		final int gridPositionTouchedX = (int) Math.floor(((event.getX() - gridOffset_x) / tileSize));
+		final int gridPositionTouchedY = (int) Math.floor(((event.getY() - gridOffset_y) / tileSize));
 		
 		// Ignore any touches that are within our view area but outside the displayed grid.
 		if (gridPositionTouchedX < 0 || gridPositionTouchedY < 0 || 
@@ -186,8 +186,8 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 		}
 		
 		// Normalize the coordinates touched into grid coordinates.
-		int gridPositionTouchedX = (int) Math.floor(((event.getX() - gridOffset_x) / getTilesize()));
-		int gridPositionTouchedY = (int) Math.floor(((event.getY() - gridOffset_y) / getTilesize()));
+		int gridPositionTouchedX = (int) Math.floor(((event.getX() - gridOffset_x) / tileSize));
+		int gridPositionTouchedY = (int) Math.floor(((event.getY() - gridOffset_y) / tileSize));
 		
 		// Ignore any touches that are within our view area but outside the displayed grid.
 		if (gridPositionTouchedX < 0 || gridPositionTouchedY < 0 || 

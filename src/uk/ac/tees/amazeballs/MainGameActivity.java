@@ -121,80 +121,18 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 			mediaPlayer.setLooping(true);
 		}
 		
-		// Retrieve and apply local weather data to the level if enabled.
+		/*
+		 *  Retrieve and apply local weather data to the level if enabled and the map
+		 *  contains weather tiles.
+		 */
 		if (sp.getBoolean(Settings.SETTINGS_WEATHER, true) == true) {
-			/* 
-			 * Show an indeterminate progress dialog to signal to the user that we are
-			 * doing something.
-			 */
-			weatherProgressDialog = ProgressDialog.show(this, "Retrieving location...", 
-					"Touch anywhere to cancel", 
-					true, 
-					true);
 			
-			/* 
-			 * Handle the user cancelling the retrieval of location and weather if they
-			 * wish. (It could possibly be taking too long)
-			 */
-			weatherProgressDialog.setOnCancelListener(new OnCancelListener() {
-				@Override
-				public void onCancel(DialogInterface dialog) {
-					handleCancelLocationAndWeatherRetrieval();
-				}
-			});
-	
-			// Acquire a reference to the system Location Manager
-			locationManager = 
-					(LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 			
-			// Using the last known location should be sufficient for our purposes if available
-			final Location lastKnownLocation = 
-					locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 			
-			// Check if there was a cached last known location available
-			if (lastKnownLocation != null) {
-				// Use last known location
-		    	handleLocationRetrieved(lastKnownLocation);
-			} else {
-				// Define a listener that responds to location updates
-				locationListener = new LocationListener() {
-				    public void onLocationChanged(Location location) {
-				    	/*
-				    	 *  The first location update will be good enough for us so
-				    	 *  we won't ask for anymore.
-				    	 */
-				    	locationManager.removeUpdates(this);
-				    	handleLocationRetrieved(location);
-				    }
-				    public void onStatusChanged(String provider, int status, Bundle extras) {}
-				    public void onProviderEnabled(String provider) {}
-				    public void onProviderDisabled(String provider) {}
-				};
-				
-				/*
-				 *  Criteria for a location provider. For this we don't need super accuracy
-				 *  or altitude.
-				 */
-				Criteria criteria = new Criteria();
-				criteria.setAltitudeRequired(false);
-				criteria.setCostAllowed(false);
-				criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-				
-				// Retrieve the best provider if any
-				String bestProvider = locationManager.getBestProvider(criteria, true);
-				if (bestProvider != null) {
-					// Register the listener with the Location Manager to receive location updates
-					locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
-				} else {
-					/*
-					 * No location providers so just replace any weather tiles with floor tiles
-					 * and allow the game to be started.
-					 */					
-					loadedMaze.replaceAll(TileType.Weather, TileType.Floor);
-					gameView.invalidate();
-					gameHasStarted = true;
-				}
-			}
+			doLocationAndWeatherRetrieval();
+			
+			
+			
 		} else {
 			/*
 			 *  Weather is disabled so just replace any weather tiles with floor tiles
@@ -257,6 +195,87 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		gameController.lastAccelerometerReading_y = event.values[1];
 	}
 	
+	private void doLocationAndWeatherRetrieval() {
+		/* 
+		 * Show an indeterminate progress dialog to signal to the user that we are
+		 * doing something.
+		 */
+		weatherProgressDialog = ProgressDialog.show(this, "Retrieving location...", 
+				"Touch anywhere to cancel", 
+				true, 
+				true);
+		
+		/* 
+		 * Handle the user cancelling the retrieval of location and weather if they
+		 * wish. (It could possibly be taking too long)
+		 */
+		weatherProgressDialog.setOnCancelListener(new OnCancelListener() {
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				handleCancelLocationAndWeatherRetrieval();
+			}
+		});
+
+		// Acquire a reference to the system Location Manager
+		locationManager = 
+				(LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		
+		// Using the last known location should be sufficient for our purposes if available
+		final Location lastKnownLocation = 
+				locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		
+		// Check if there was a cached last known location available
+		if (lastKnownLocation != null) {
+			// Use last known location
+	    	handleLocationRetrieved(lastKnownLocation);
+		} else {
+			// Define a listener that responds to location updates
+			locationListener = new LocationListener() {
+			    public void onLocationChanged(Location location) {
+			    	/*
+			    	 *  The first location update will be good enough for us so
+			    	 *  we won't ask for anymore.
+			    	 */
+			    	locationManager.removeUpdates(this);
+			    	handleLocationRetrieved(location);
+			    }
+			    public void onStatusChanged(String provider, int status, Bundle extras) {}
+			    public void onProviderEnabled(String provider) {}
+			    public void onProviderDisabled(String provider) {}
+			};
+			
+			/*
+			 *  Criteria for a location provider. For this we don't need super accuracy
+			 *  or altitude.
+			 */
+			Criteria criteria = new Criteria();
+			criteria.setAltitudeRequired(false);
+			criteria.setCostAllowed(false);
+			criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+			
+			// Retrieve the best provider if any
+			String bestProvider = locationManager.getBestProvider(criteria, true);
+			if (bestProvider != null) {
+				// Register the listener with the Location Manager to receive location updates
+				locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
+			} else {
+				/*
+				 * No location providers so just replace any weather tiles with floor tiles
+				 * and allow the game to be started.
+				 */					
+				loadedMaze.replaceAll(TileType.Weather, TileType.Floor);
+				gameView.invalidate();
+				gameHasStarted = true;
+			}
+		}
+	}
+	
+	private void handleLocationRetrieved(Location location) {
+    	weatherProgressDialog.setTitle("Retrieving weather data...");
+    	receiveWeatherDataTask = new RetrieveWeatherDataTask();
+    	receiveWeatherDataTask.execute(location);
+	}
+	
 	private void handleCancelLocationAndWeatherRetrieval() {
 		// Cancel the weather retrieval task if it was started
 		if (receiveWeatherDataTask != null) {
@@ -271,12 +290,6 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		gameView.invalidate();
 		gameHasStarted = true;
 		startGame();
-	}
-	
-	private void handleLocationRetrieved(Location location) {
-    	weatherProgressDialog.setTitle("Retrieving weather data...");
-    	receiveWeatherDataTask = new RetrieveWeatherDataTask();
-    	receiveWeatherDataTask.execute(location);
 	}
 
 	private boolean initAccelerometer() {
@@ -316,11 +329,14 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 						gameController.update();
 						gameView.postInvalidate();
 						long updateTimeTook = System.currentTimeMillis() - startUpdateTime;
-						try {
-							Thread.sleep(GAME_TICK_INTERVAL - updateTimeTook);
-						} catch (InterruptedException e) {
-							Log.d("Game loop", "interupted");
-							return;
+						long sleepTime = (GAME_TICK_INTERVAL - updateTimeTook);
+						if (sleepTime > 0) {
+							try {
+								Thread.sleep(sleepTime);
+							} catch (InterruptedException e) {
+								Log.d("Game loop", "interupted");
+								return;
+							}							
 						}
 					}
 				}
@@ -372,4 +388,5 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	public void onScoreSaveCancelled() {
 		finish();
 	}
+	
 }

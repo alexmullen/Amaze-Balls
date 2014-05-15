@@ -41,24 +41,6 @@ public class MazeView extends View {
 		currentMaze = maze;
 	}
 	
-	/**
-	 * Gets the maze model that this MazeView is currently displaying.
-	 * 
-	 * @return the maze that is being displayed by this MazeView
-	 */
-	public Maze getMaze() {
-		return currentMaze;
-	}
-
-	/**
-	 * Gets the current pixel size of each tile currently being displayed.
-	 * 
-	 * @return
-	 */
-	public int getTilesize() {
-		return tileSize;
-	}
-	
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);

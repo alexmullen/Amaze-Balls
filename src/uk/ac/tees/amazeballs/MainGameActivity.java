@@ -22,6 +22,7 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -128,7 +129,6 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 			mediaPlayer.setLooping(true);
 		}
 		
-
 		if (sp.getBoolean(Settings.SETTINGS_WEATHER, true) == true) {
 			/* 
 			 * Show an indeterminate progress dialog to signal to the user that we are

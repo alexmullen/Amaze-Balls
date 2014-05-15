@@ -1,7 +1,11 @@
 package uk.ac.tees.amazeballs;
 
+import uk.ac.tees.amazeballs.dialogs.LevelChooseDialogFragment;
+import uk.ac.tees.amazeballs.dialogs.LevelChooseDialogFragment.OnLevelChooseListener;
 import uk.ac.tees.amazeballs.dialogs.NewLevelDialogFragment;
+import uk.ac.tees.amazeballs.dialogs.NewLevelDialogFragment.OnNewLevelRequestListener;
 import uk.ac.tees.amazeballs.dialogs.SaveLevelDialogFragment;
+import uk.ac.tees.amazeballs.dialogs.SaveLevelDialogFragment.OnLevelSaveRequestListener;
 import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.MazeFactory;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
@@ -11,8 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 
 
@@ -23,8 +25,9 @@ import android.content.Intent;
  *
  */
 public class MazeEditorActivity extends Activity 
-		implements 	SaveLevelDialogFragment.OnLevelSaveRequestListener, 
-					NewLevelDialogFragment.OnNewLevelRequestListener {
+		implements 	OnLevelSaveRequestListener, 
+					OnNewLevelRequestListener,
+					OnLevelChooseListener {
 
 	private Maze currentMaze;
 	private String currentLevelName;
@@ -124,25 +127,27 @@ public class MazeEditorActivity extends Activity
 	}
 	
 	private void handleOpenMenuOption() {
-		final String[] levels = LevelManager.getCustomLevels(this);
+		String[] levels = LevelManager.getCustomLevels(this);
 		if (levels.length == 0) {
 			Toast.makeText(this, "There are no custom levels to open", Toast.LENGTH_LONG).show();
 		} else {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Choose a level to edit");
-			builder.setItems(levels, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					currentLevelName = levels[which];
-					currentMaze = LevelManager.loadCustomLevel(MazeEditorActivity.this, levels[which]);
-					currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
-					mazeEditorView.setMaze(currentMazeSelection);
-					mazeEditorView.invalidate();
-					Toast.makeText(MazeEditorActivity.this, "Level opened", Toast.LENGTH_SHORT).show();
-				}
-			});
-			builder.create().show();
+			Bundle b = new Bundle();
+			b.putStringArray("levels", levels);
+			b.putString("title", "Choose a level to edit");
+			LevelChooseDialogFragment chooseDialog = new LevelChooseDialogFragment();
+			chooseDialog.setArguments(b);
+			chooseDialog.show(getFragmentManager(), "chooseleveltoedit_dialogfragment");
 		}
+	}
+	
+	@Override
+	public void onLevelChosen(String levelname) {
+		currentLevelName = levelname;
+		currentMaze = LevelManager.loadCustomLevel(this, levelname);
+		currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
+		mazeEditorView.setMaze(currentMazeSelection);
+		mazeEditorView.invalidate();
+		Toast.makeText(this, "Level opened", Toast.LENGTH_SHORT).show();
 	}
 
 	private void handleSaveAsMenuOption() {
@@ -171,4 +176,5 @@ public class MazeEditorActivity extends Activity
 			startActivity(i);
 		}
 	}
+
 }

@@ -5,10 +5,11 @@ import java.util.Random;
 import uk.ac.tees.amazeballs.LevelManager;
 import uk.ac.tees.amazeballs.MainGameActivity;
 import uk.ac.tees.amazeballs.R;
+import uk.ac.tees.amazeballs.dialogs.LevelChooseDialogFragment;
+import uk.ac.tees.amazeballs.dialogs.LevelChooseDialogFragment.OnLevelChooseListener;
 import uk.ac.tees.amazeballs.maze.Maze;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -23,7 +24,7 @@ import android.widget.Toast;
  * @author Alex Mullen (J9858839)
  *
  */
-public class LevelSelect extends Activity{
+public class LevelSelect extends Activity implements OnLevelChooseListener{
 	
 	private Spinner levelChoiceSpinner;
 	
@@ -57,21 +58,23 @@ public class LevelSelect extends Activity{
 		if (customLevels.length == 0) {
 			Toast.makeText(this, "There are no custom levels.", Toast.LENGTH_LONG).show();
 		} else {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Choose a custom level to play");
-			builder.setItems(customLevels, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					Maze customLoadedMaze = LevelManager.loadCustomLevel(LevelSelect.this, customLevels[which]);
-					if (customLoadedMaze != null) {
-						playLevel(customLoadedMaze);
-					} else {
-						// For some reason we couldn't load the level so display a dialog telling the user
-						displayLevelLoadErrorDialog(customLevels[which]);
-					}
-				}
-			});
-			builder.create().show();
+			Bundle b = new Bundle();
+			b.putStringArray("levels", customLevels);
+			b.putString("title", "Choose a custom level to play");
+			LevelChooseDialogFragment chooseDialog = new LevelChooseDialogFragment();
+			chooseDialog.setArguments(b);
+			chooseDialog.show(getFragmentManager(), "chooseleveltoplay_dialogfragment");
+		}
+	}
+	
+	@Override
+	public void onLevelChosen(String levelname) {
+		Maze customLoadedMaze = LevelManager.loadCustomLevel(this, levelname);
+		if (customLoadedMaze != null) {
+			playLevel(customLoadedMaze);
+		} else {
+			// For some reason we couldn't load the level so display a dialog telling the user
+			displayLevelLoadErrorDialog(levelname);
 		}
 	}
 	

@@ -42,12 +42,12 @@ public class MazeSelection extends Maze {
 
 	@Override
 	public TileType getTileAt(int x, int y) {
-		return underlyingMaze.getTileAt((x + offset_x), (y + offset_y));
+		return underlyingMaze.grid[(x + offset_x)][(y + offset_y)];
 	}
 
 	@Override
 	public void setTileAt(int x, int y, TileType tile) {
-		underlyingMaze.setTileAt((x + offset_x), (y + offset_y), tile);
+		underlyingMaze.grid[(x + offset_x)][(y + offset_y)] = tile;
 	}
 
 	@Override

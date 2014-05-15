@@ -17,11 +17,11 @@ import uk.ac.tees.amazeballs.views.MazeViewport;
  */
 public class GameController {
 
-	private final int NORMAL_BALL_SPEED = 3;
-	private final int ICE_BALL_SPEED = 7;
-	private final int RAIN_BALL_SPEED = 1;
+	private static final int NORMAL_BALL_SPEED = 3;
+	private static final int ICE_BALL_SPEED = 7;
+	private static final int RAIN_BALL_SPEED = 1;
 
-	private final static double TILT_SENSITIVITY = 0.75;
+	private static final double TILT_SENSITIVITY = 0.75;
 
 	public volatile float lastAccelerometerReading_x;
 	public volatile float lastAccelerometerReading_y;
@@ -35,26 +35,15 @@ public class GameController {
 	boolean touchingRain;
 	boolean touchingIce;
 	
-//	private int previous_ball_position_x;
-//	private int previous_ball_position_y;
-	
 	private boolean finished;
 
-	public GameController(Maze maze, MazeViewport mazeVewport) {
+	public GameController(Maze maze, MazeViewport mazeVewport, Point startPosition) {
 		this.mazeViewport = mazeVewport;
 		mazeWorld = new MazeWorld(maze, 20);
 		mazeWorldCamera = new MazeWorldCamera(mazeWorld, 0, 0,
 				10 * mazeWorld.tilesize, 
 				17 * mazeWorld.tilesize);
 		mazeViewport.setCamera(mazeWorldCamera);
-
-		// Search for the (or a) start position to place the ball
-		Point startPosition = findStartPosition();
-		if (startPosition == null) {
-			// No start position available!
-			finished = true;
-			return;
-		}
 
 		// Create and initialize the ball
 		int ballSize = (int) (mazeWorld.tilesize * 0.8);
@@ -69,11 +58,7 @@ public class GameController {
 	 * Performs one update of the game state.
 	 */
 	public void update() {
-		
-//		Ball ball = mazeWorld.ball;
-//		previous_ball_position_x = ball.position_x;
-//		previous_ball_position_y = ball.position_y;
-//		
+
 		moveBall();
 
 		scrollScreen();
@@ -331,29 +316,6 @@ public class GameController {
 			keysCarrying--;
 			mazeWorld.maze.setTileAt(x, y, TileType.Floor);
 		}
-	}
-
-	/**
-	 * Searches the level for a place to spawn the ball at. . This searches row by row starting
-	 * from the top.
-	 * 
-	 * @return The first "Start" tile is chosen but if no start tile is 
-	 * found then the first empty space is. If for some reason there is 
-	 * no start tile or empty space tiles, null is returned.
-	 */
-	private Point findStartPosition() {
-		Point firstEmptySpace = null;
-		Maze maze = mazeWorld.maze;
-		for (int y = 0; y < maze.height; y++) {
-			for (int x = 0; x < maze.width; x++) {
-				if (maze.getTileAt(x, y) == TileType.Start) {
-					return new Point(x, y);
-				} else if (firstEmptySpace == null && maze.getTileAt(x, y) == TileType.Floor) {
-					firstEmptySpace = new Point(x, y);
-				}
-			}
-		}
-		return firstEmptySpace;
 	}
 
 	/**

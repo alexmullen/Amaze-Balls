@@ -1,6 +1,9 @@
 package uk.ac.tees.amazeballs.maze;
 
 import java.io.Serializable;
+import java.util.List;
+
+import android.graphics.Point;
 
 
 /**
@@ -43,7 +46,7 @@ public class Maze implements Serializable {
 	public final int width;
 	public final int height;
 	
-	private final TileType[][] grid;
+	protected final TileType[][] grid;
 
 	/**
 	 * Instantiates a new empty maze of the specified dimensions.
@@ -115,20 +118,32 @@ public class Maze implements Serializable {
 	}
 	
 	
+//	/**
+//	 * Replaces all occurrences of tiles of type oldTile with tiles of
+//	 * type newTile.
+//	 * 
+//	 * @param oldTile the tiles to replace
+//	 * @param newTile the tiles to replace with
+//	 */
+//	public void replaceAll(TileType oldTile, TileType newTile) {
+//		for (int x = 0; x < width; x++) {
+//			for (int y = 0; y < height; y++) {
+//				if (grid[x][y] == oldTile) {
+//					grid[x][y] = newTile;
+//				}
+//			}
+//		}
+//	}
+	
 	/**
-	 * Replaces all occurrences of tiles of type oldTile with tiles of
-	 * type newTile.
+	 * Replaces each tile from a list of positions with the specified tile.
 	 * 
-	 * @param oldTile the tiles to replace
-	 * @param newTile the tiles to replace with
+	 * @param positions the list of positions to replace
+	 * @param newTile the tile type to replace each position with
 	 */
-	public void replaceAll(TileType oldTile, TileType newTile) {
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				if (grid[x][y] == oldTile) {
-					grid[x][y] = newTile;
-				}
-			}
+	public void replaceAllAt(List<Point> positions, TileType newTile) {
+		for (Point p : positions) {
+			grid[p.x][p.y] = newTile;
 		}
 	}
 	

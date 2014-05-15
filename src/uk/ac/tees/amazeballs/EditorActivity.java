@@ -24,7 +24,7 @@ import android.content.Intent;
  * @author Alex Mullen (J9858839)
  *
  */
-public class MazeEditorActivity extends Activity 
+public class EditorActivity extends Activity 
 		implements 	OnLevelSaveRequestListener, 
 					OnNewLevelRequestListener,
 					OnLevelChooseListener {
@@ -161,8 +161,8 @@ public class MazeEditorActivity extends Activity
 	}
 
 	private void saveCurrentLevel(String levelname) {
-		LevelManager.saveCustomLevel(MazeEditorActivity.this, levelname, currentMaze);
-		Toast.makeText(MazeEditorActivity.this, "Level saved", Toast.LENGTH_SHORT).show();
+		LevelManager.saveCustomLevel(EditorActivity.this, levelname, currentMaze);
+		Toast.makeText(EditorActivity.this, "Level saved", Toast.LENGTH_SHORT).show();
 	}
 	
 	private void handlePlayMenuOption() {
@@ -171,7 +171,7 @@ public class MazeEditorActivity extends Activity
 		} else {
 			Bundle b = new Bundle();
 			b.putSerializable("maze", currentMaze);
-			Intent i = new Intent(this, MainGameActivity.class);
+			Intent i = new Intent(this, GameActivity.class);
 			i.putExtras(b);
 			startActivity(i);
 		}

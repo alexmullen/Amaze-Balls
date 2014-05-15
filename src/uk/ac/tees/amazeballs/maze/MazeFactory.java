@@ -23,10 +23,10 @@ public class MazeFactory {
 				// Check if the current position is at an edge
 				if (borderedMaze.isTileAtAnEdge(x, y)) {
 					// Position is at an edge so set it to be a wall tile
-					borderedMaze.setTileAt(x, y, TileType.Wall);
+					borderedMaze.grid[x][y] = TileType.Wall;
 				} else {
 					// Position is not an edge so fill it with a floor tile
-					borderedMaze.setTileAt(x, y, TileType.Floor);
+					borderedMaze.grid[x][y] = TileType.Floor;
 				}
 			}
 		}

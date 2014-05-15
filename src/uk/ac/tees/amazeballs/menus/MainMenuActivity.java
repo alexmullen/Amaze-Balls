@@ -1,6 +1,6 @@
 package uk.ac.tees.amazeballs.menus;
 
-import uk.ac.tees.amazeballs.MazeEditorActivity;
+import uk.ac.tees.amazeballs.EditorActivity;
 import uk.ac.tees.amazeballs.R;
 import uk.ac.tees.amazeballs.maze.TileImageFactory;
 import uk.ac.tees.amazeballs.maze.TileType;
@@ -43,7 +43,7 @@ public class MainMenuActivity extends Activity {
 		Button btnLevelEditor = (Button) findViewById(R.id.button_random_level);
 		btnLevelEditor.setOnClickListener(new View.OnClickListener() { 
             public void onClick(View view) {
-                Intent nextScreen = new Intent(getApplicationContext(), MazeEditorActivity.class);
+                Intent nextScreen = new Intent(getApplicationContext(), EditorActivity.class);
                 startActivity(nextScreen);
             }
         });

@@ -3,7 +3,7 @@ package uk.ac.tees.amazeballs.menus;
 import java.util.Random;
 
 import uk.ac.tees.amazeballs.LevelManager;
-import uk.ac.tees.amazeballs.MainGameActivity;
+import uk.ac.tees.amazeballs.GameActivity;
 import uk.ac.tees.amazeballs.R;
 import uk.ac.tees.amazeballs.dialogs.LevelChooseDialogFragment;
 import uk.ac.tees.amazeballs.dialogs.LevelChooseDialogFragment.OnLevelChooseListener;
@@ -99,7 +99,7 @@ public class LevelSelect extends Activity implements OnLevelChooseListener{
 		// Send an intent containing the maze to play
 		Bundle b = new Bundle();
 		b.putSerializable("maze", loadedMaze);
-		Intent i = new Intent(this, MainGameActivity.class);
+		Intent i = new Intent(this, GameActivity.class);
 		i.putExtras(b);
 		startActivity(i);
 	}

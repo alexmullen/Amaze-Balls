@@ -23,8 +23,8 @@ public class GameController {
 
 	private final static double TILT_SENSITIVITY = 0.75;
 
-	public float lastAccelerometerReading_x;
-	public float lastAccelerometerReading_y;
+	public volatile float lastAccelerometerReading_x;
+	public volatile float lastAccelerometerReading_y;
 
 	private final MazeWorld mazeWorld;
 	private final MazeWorldCamera mazeWorldCamera;
@@ -79,10 +79,6 @@ public class GameController {
 		scrollScreen();
 
 		processTouchingTiles();
-
-		
-		// Render the next frame
-		mazeViewport.invalidate();
 	}
 
 	/**

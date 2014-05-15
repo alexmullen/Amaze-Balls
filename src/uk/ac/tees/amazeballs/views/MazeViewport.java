@@ -23,6 +23,14 @@ public class MazeViewport extends View {
 
 	private MazeWorldCamera camera;
 	
+	private float scale;
+	private int scaledGridOffset_left;
+	private int scaledGridOffset_top;
+	private int scaledGridOffset_right;
+	private int scaledGridOffset_bottom;
+	private float unscaledGridOffset_left;
+	private float unscaledGridOffset_top;
+	
 	// Re-usable objects for performance
 	private final int[] visibleGridRange;
 	
@@ -38,8 +46,36 @@ public class MazeViewport extends View {
 	
 	public void setCamera(MazeWorldCamera camera) {
 		this.camera = camera;
+		recalculate();
 	}
 	
+	
+	private void recalculate() {
+		/*
+		 *  Calculate the scale required to make best use of the screen space we have
+		 *  whilst keeping the camera's aspect ratio the same.
+		 */
+		scale = Math.min(
+				((float)getWidth() / (float)camera.getWidth()), 
+				((float)getHeight() / (float)camera.getHeight()));
+		
+		// Calculate the scaled offsets so we can centre align the grid.
+		scaledGridOffset_left = (int) ((getWidth() - (camera.getWidth() * scale)) / 2);
+		scaledGridOffset_top = (int) ((getHeight() - (camera.getHeight() * scale)) / 2);
+		scaledGridOffset_right = (getWidth() - scaledGridOffset_left);
+		scaledGridOffset_bottom = (getHeight() - scaledGridOffset_top);
+		
+		// Calculate the non-scaled top and left offset
+		unscaledGridOffset_left = scaledGridOffset_left / scale;
+		unscaledGridOffset_top = scaledGridOffset_top / scale;
+	}
+	
+	@Override
+	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+		super.onSizeChanged(w, h, oldw, oldh);
+		recalculate();
+	}
+
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
@@ -51,44 +87,33 @@ public class MazeViewport extends View {
 		 */
 		
 		// Only need to render if we have a camera
-		if (camera == null) {
-			return;
-		}
-
-
-		/*
-		 *  Calculate the scale required to make best use of the screen space we have
-		 *  whilst keeping the camera's aspect ratio the same.
-		 */
-		float scale = Math.min(
-				((float)getWidth() / (float)camera.getWidth()), 
-				((float)getHeight() / (float)camera.getHeight()));
+//		if (camera == null) {
+//			return;
+//		}
 		
-		// Calculate the scaled offsets so we can centre align the grid.
-		int scaledGridOffset_x = (int) ((getWidth() - (camera.getWidth() * scale)) / 2);
-		int scaledGridOffset_y = (int) ((getHeight() - (camera.getHeight() * scale)) / 2);
-      	
 		// Create a clipping region to remove any tiles that cannot be seen
-		canvas.clipRect(scaledGridOffset_x, scaledGridOffset_y, 
-				(getWidth() - scaledGridOffset_x) , (getHeight() - scaledGridOffset_y));
+		canvas.clipRect(scaledGridOffset_left, scaledGridOffset_top, scaledGridOffset_right , 
+				scaledGridOffset_bottom);
 		
 		// Scale the canvas, and translate it the origin to the calculated non-scaled offset
 		canvas.scale(scale, scale);
-		canvas.translate((scaledGridOffset_x /= scale), (scaledGridOffset_y /= scale));
+		canvas.translate(unscaledGridOffset_left, unscaledGridOffset_top);
 		
 		
 		
 		MazeWorld world = camera.world;
-		int tilesize = world.tilesize;
 		Ball ball = world.ball;
+		int tilesize = world.tilesize;
+		int cameraLeft = camera.getLeft();
+		int cameraTop = camera.getTop();
 		
 		// output array order = left, top, right, bottom
 		camera.getVisibleRange(visibleGridRange);
 		for (int x = visibleGridRange[0]; x <= visibleGridRange[2]; x++) {
 			for (int y = visibleGridRange[1]; y <= visibleGridRange[3]; y++) {
 				// Convert the tile's world coordinates into view/camera coordinates
-				int bounds_x = ((x * tilesize) - camera.getLeft());
-				int bounds_y = ((y * tilesize) - camera.getTop());
+				int bounds_x = ((x * tilesize) - cameraLeft);
+				int bounds_y = ((y * tilesize) - cameraTop);
 				
 				// Draw the tile
 				Drawable tileImage = TileImageFactory.getImage(world.maze.getTileAt(x, y));
@@ -102,8 +127,8 @@ public class MazeViewport extends View {
 			int ballsize = (int) (ball.size);
 			
 			// Convert the ball's world coordinates into view/camera coordinates
-			int bounds_x = (ball.position_x - camera.getLeft());
-			int bounds_y = (ball.position_y - camera.getTop());
+			int bounds_x = (ball.position_x - cameraLeft);
+			int bounds_y = (ball.position_y - cameraTop);
 			
 			// Draw the ball
 			Drawable tileImage = TileImageFactory.getImage(TileType.Ball);

@@ -1,6 +1,5 @@
 package uk.ac.tees.amazeballs;
 
-import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -22,8 +21,6 @@ import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -59,14 +56,14 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	private Maze loadedMaze;
 	private MazeViewport gameView;
 	private GameController gameController;
-	private GameTickHandler tickHandler;
+	
+	private Thread gameThread;
 	
 	private long startTime;
 	private long runningTime;
-	private long lastUpdateTime;
 	
 	private boolean gameHasStarted;
-	private boolean running;
+	private volatile boolean running;
 	
 	private MediaPlayer mediaPlayer;
 	
@@ -89,36 +86,13 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		protected void onPostExecute(CurrentWeatherData result) {
 			// Only apply if we weren't cancelled.
 			if (!this.isCancelled()) {
-				loadedMaze.replaceAll(TileType.Weather, determineWhetherTiles(result));
+				loadedMaze.replaceAll(TileType.Weather, determineWeatherTiles(result));
 				gameView.invalidate();
 				weatherProgressDialog.dismiss();
+				gameHasStarted = true;
 				startGame();
 			}
 		}
-	}
-
-	/**
-	 * A handler to use for running the game loop.
-	 * 
-	 * @author Alex Mullen (J9858839)
-	 *
-	 */
-	private static class GameTickHandler extends Handler {
-        private final WeakReference<MainGameActivity> gameActivityReference;
-		GameTickHandler(MainGameActivity gameActivity) {
-			gameActivityReference = new WeakReference<MainGameActivity>(gameActivity);
-		}
-		@Override
-        public void handleMessage(Message msg) {
-			MainGameActivity gameActivity = gameActivityReference.get();
-			if (gameActivity != null) {
-				gameActivity.update();
-			}
-        }
-        public void sleep(long delayMillis) {
-            this.removeMessages(0);
-            sendEmptyMessageDelayed(0, delayMillis);
-        }
 	}
 	
 	@Override
@@ -142,9 +116,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		 */
 		gameController = new GameController(loadedMaze, gameView);
 
-		
-		tickHandler = new GameTickHandler(this);
-		
+
 		
 		// Start playing music if enabled
 		SharedPreferences sp = 
@@ -226,14 +198,14 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 					// No location providers so just start game without local weather tiles
 					loadedMaze.replaceAll(TileType.Weather, TileType.Floor);
 					gameView.invalidate();
-					startGame();
+					gameHasStarted = true;
 				}
 			}
 		} else {
 			// Weather is disabled so just start the game
 			loadedMaze.replaceAll(TileType.Weather, TileType.Floor);
 			gameView.invalidate();
-			startGame();
+			gameHasStarted = true;
 		}
 	}
 
@@ -245,10 +217,9 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 			mediaPlayer.start();
 		}
 		initAccelerometer();
-		running = true;
 		// Only start the game when told (might have to wait for weather data)
 		if (gameHasStarted) {
-			tickHandler.sendEmptyMessageDelayed(0, 1000);
+			startGame();
 		}
 	}
 	
@@ -298,6 +269,7 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 		// Just start the game without localised weather tiles
 		loadedMaze.replaceAll(TileType.Weather, TileType.Floor);
 		gameView.invalidate();
+		gameHasStarted = true;
 		startGame();
 	}
 	
@@ -324,38 +296,49 @@ public class MainGameActivity extends Activity implements SensorEventListener, O
 	}
 	
 	private void startGame() {
-		gameHasStarted = true;
-		tickHandler.sendEmptyMessageDelayed(0, 1000);
+		running = true;
+		Runnable r = new Runnable() {
+			@Override
+			public void run() {
+				while (running) {
+					if (gameController.isFinished()) {
+						runningTime = ((System.currentTimeMillis() - startTime) / 1000);
+						MainGameActivity.this.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								new NewScoreDialogFragment().show(getFragmentManager(), "newscore_dialogfragment");
+							}
+						});
+						return;
+					} else {
+						long startUpdateTime = System.currentTimeMillis();
+						gameController.update();
+						gameView.postInvalidate();
+						long updateTimeTook = System.currentTimeMillis() - startUpdateTime;
+						try {
+							Thread.sleep(GAME_TICK_INTERVAL - updateTimeTook);
+						} catch (InterruptedException e) {
+							Log.d("Game loop", "interupted");
+							return;
+						}
+					}
+				}
+			}
+		};
+		gameThread = new Thread(r);
+		gameThread.start();
 	}
 	
-	/**
-	 * Performs an update in the game simulation.
-	 */
-	private void update() {
-		// Only perform updates if the game is running
-		if (running) {
-			if (gameController.isFinished()) {
-				runningTime = ((System.currentTimeMillis() - startTime) / 1000);
-				new NewScoreDialogFragment().show(getFragmentManager(), "newscore_dialogfragment");
-			} else {
-				long now = System.currentTimeMillis();
-				gameController.update();
-				lastUpdateTime = System.currentTimeMillis();
-				long updateTimeTook = lastUpdateTime - now;
-				tickHandler.sleep(GAME_TICK_INTERVAL - updateTimeTook);
-			}
-		}
-	}
 	
 	/**
 	 * Determine what the weather tiles should be based on weather data.
 	 * Rain has priority over ice so if its both raining and cold, the
 	 * weather tiles should become rain tiles.
 	 * 
-	 * @param cwd
-	 * @return
+	 * @param cwd the current weather data
+	 * @return the type of tile that best represents the current local weather
 	 */
-	private TileType determineWhetherTiles(CurrentWeatherData cwd) {
+	private TileType determineWeatherTiles(CurrentWeatherData cwd) {
 		if (cwd == null) {
 			return TileType.Floor;
 		} else if (cwd.getRain_Object().hasRain3Hours()) {

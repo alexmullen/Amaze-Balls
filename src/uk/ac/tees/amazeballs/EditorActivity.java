@@ -66,6 +66,24 @@ public class EditorActivity extends Activity
 		mazeEditorView.invalidate();
 	}
 	
+	
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// TODO Persist the edited maze
+	}
+
+
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		// TODO Restore the edited maze state
+	}
+
+
+
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);

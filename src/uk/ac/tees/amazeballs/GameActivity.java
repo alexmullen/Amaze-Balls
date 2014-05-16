@@ -23,6 +23,7 @@ import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 import android.app.Activity;
@@ -65,7 +66,7 @@ public class GameActivity extends Activity implements SensorEventListener, OnSco
 	private long timeTaken;
 	
 	private boolean gameHasStarted;
-	private volatile boolean gameIsRunning;
+	private volatile boolean gameLoopThreadIsRunning;
 	
 	private MediaPlayer mediaPlayer;
 	
@@ -99,7 +100,7 @@ public class GameActivity extends Activity implements SensorEventListener, OnSco
 				gameView.invalidate();
 				weatherProgressDialog.dismiss();
 				gameHasStarted = true;
-				startGame();
+				startGameLoopThread();
 			}
 		}
 	}
@@ -117,7 +118,7 @@ public class GameActivity extends Activity implements SensorEventListener, OnSco
 		 * re-scanning the whole thing each time we want to check something.
 		 */
 		MazeScanner.ScanData mazeScanData = MazeScanner.scan(loadedMaze);
-		
+
 		// Make sure there is somewhere to place the ball
 		if (mazeScanData.tileposition_firststart == null && 
 				mazeScanData.tileposition_firstfloor == null) {
@@ -180,20 +181,33 @@ startTime = System.currentTimeMillis();		// !!! The game doesn't start playing a
 			// TODO: Display an error dialog
 			// Finish();
 		}
-		// Only start the game when told (might have to wait for weather data)
+		// Only start the game when indicated (might have to wait for weather data first)
 		if (gameHasStarted) {
-			startGame();
+			startGameLoopThread();
 		}
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
-		gameIsRunning = false;
+		// Notify the game loop thread to stop running
+		gameLoopThreadIsRunning = false;
 		sensorManager.unregisterListener(this);
 		// Pause the music if it was enabled
 		if (mediaPlayer != null) {
 			mediaPlayer.pause();
+		}
+		/*
+		 *  To keep things in sync, wait for the game loop thread to finish if it was
+		 *  started. (The user could switch activity whilst the weather is downloading
+		 *  which would mean gameThread wasn't initialized yet)
+		 */
+		if (gameThread != null) {
+			try {
+				gameThread.join();
+			} catch (InterruptedException e) {
+	
+			}
 		}
 	}
 
@@ -284,7 +298,7 @@ startTime = System.currentTimeMillis();		// !!! The game doesn't start playing a
 			} else {
 				/*
 				 * No location providers so just replace any weather tiles with floor tiles
-				 * and allow the game to be started.
+				 * and allow the game to be started by onResume.
 				 */					
 				loadedMaze.replaceAllAt(weatherTilePositions, TileType.Floor);
 				gameView.invalidate();
@@ -312,7 +326,7 @@ startTime = System.currentTimeMillis();		// !!! The game doesn't start playing a
 		loadedMaze.replaceAllAt(weatherTilePositions, TileType.Floor);
 		gameView.invalidate();
 		gameHasStarted = true;
-		startGame();
+		startGameLoopThread();
 	}
 
 	private boolean initAccelerometer() {
@@ -321,8 +335,7 @@ startTime = System.currentTimeMillis();		// !!! The game doesn't start playing a
 		List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
 		if (sensorList.size() > 0) {
 			// Register ourselves as a listener so that we can receive accelerometer updates
-			Sensor accelerometerSensor = sensorList.get(0);
-			sensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
+			sensorManager.registerListener(this, sensorList.get(0), SensorManager.SENSOR_DELAY_GAME);
 			return true;
 		} else {
 			// Failure! No accelerometer
@@ -332,12 +345,18 @@ startTime = System.currentTimeMillis();		// !!! The game doesn't start playing a
 		}
 	}
 	
-	private void startGame() {
-		gameIsRunning = true;
+	private void startGameLoopThread() {
+		if (gameLoopThreadIsRunning) {
+			// Don't start again if it's already running
+			return;
+		}
+		gameLoopThreadIsRunning = true;
 		Runnable r = new Runnable() {
 			@Override
 			public void run() {
-				while (gameIsRunning) {
+				// Give the game a slight delay before stuff happens
+				SystemClock.sleep(1000);
+				while (gameLoopThreadIsRunning) {
 					if (gameController.isFinished()) {
 						timeTaken = ((System.currentTimeMillis() - startTime) / 1000);
 						GameActivity.this.runOnUiThread(new Runnable() {
@@ -357,6 +376,7 @@ startTime = System.currentTimeMillis();		// !!! The game doesn't start playing a
 							try {
 								Thread.sleep(sleepTime);
 							} catch (InterruptedException e) {
+								gameLoopThreadIsRunning = false;
 								Log.d("Game loop", "interupted");
 								return;
 							}							

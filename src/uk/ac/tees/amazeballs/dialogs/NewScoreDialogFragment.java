@@ -32,7 +32,7 @@ public class NewScoreDialogFragment extends DialogFragment {
 		listener = (OnScoreSaveRequestListener) activity;
 	}
 	
-	// This method is executed when the fragment is ifrst created
+	// This method is executed when the fragment is first created
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		super.onCreateDialog(savedInstanceState);
@@ -45,7 +45,6 @@ public class NewScoreDialogFragment extends DialogFragment {
 		// Details the "save" buttons behaviour
 		builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
 			@Override
-			// 
 			public void onClick(DialogInterface dialog, int which) {
 				listener.onScoreSaveRequested(playerNameTextView.getText().toString());
 			}

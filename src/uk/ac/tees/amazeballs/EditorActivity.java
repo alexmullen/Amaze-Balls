@@ -6,10 +6,14 @@ import uk.ac.tees.amazeballs.dialogs.NewLevelDialogFragment;
 import uk.ac.tees.amazeballs.dialogs.NewLevelDialogFragment.OnNewLevelRequestListener;
 import uk.ac.tees.amazeballs.dialogs.SaveLevelDialogFragment;
 import uk.ac.tees.amazeballs.dialogs.SaveLevelDialogFragment.OnLevelSaveRequestListener;
+import uk.ac.tees.amazeballs.dialogs.TileChooseDialogFragment;
+import uk.ac.tees.amazeballs.dialogs.TileChooseDialogFragment.OnTileChooseListener;
 import uk.ac.tees.amazeballs.maze.Maze;
 import uk.ac.tees.amazeballs.maze.MazeFactory;
 import uk.ac.tees.amazeballs.maze.MazeSelection;
+import uk.ac.tees.amazeballs.maze.TileType;
 import uk.ac.tees.amazeballs.views.MazeEditorView;
+import uk.ac.tees.amazeballs.views.MazeEditorView.OnTileTouchedListener;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,9 +29,11 @@ import android.content.Intent;
  *
  */
 public class EditorActivity extends Activity 
-		implements 	OnLevelSaveRequestListener, 
+		implements 	OnTileTouchedListener,
+					OnLevelSaveRequestListener, 
 					OnNewLevelRequestListener,
-					OnLevelChooseListener {
+					OnLevelChooseListener,
+					OnTileChooseListener {
 
 	private Maze currentMaze;
 	private String currentLevelName;
@@ -42,6 +48,7 @@ public class EditorActivity extends Activity
 		setContentView(R.layout.activity_maze_editor);
 		
 		mazeEditorView = (MazeEditorView) findViewById(R.id.maze_grid_view);
+		mazeEditorView.setOnTileTouchedListener(this);
 	
 		// Check whether we need to restore our state
 		if (savedInstanceState != null) {
@@ -193,6 +200,40 @@ public class EditorActivity extends Activity
 			i.putExtras(b);
 			startActivity(i);
 		}
+	}
+	
+	@Override
+	public void onTileTouched(int x, int y, boolean wasLongPress) {
+		// Prevent the edges of the maze being modified
+		if (currentMazeSelection.isTileAtAnEdge(x, y)) {
+			return;
+		}
+		
+		if (wasLongPress) {
+			Bundle b = new Bundle();
+			b.putInt("x", x);
+			b.putInt("y", y);
+			b.putString("title", "Choose a block");
+			TileChooseDialogFragment chooseDialog = new TileChooseDialogFragment();
+			chooseDialog.setArguments(b);
+			chooseDialog.show(getFragmentManager(), "choosetiletoplace_dialogfragment");
+		} else {
+			// Toggle the tile.
+			if (currentMazeSelection.getTileAt(x, y) == TileType.Floor) {
+				currentMazeSelection.setTileAt(x, y, TileType.Wall);
+			} else {
+				currentMazeSelection.setTileAt(x, y, TileType.Floor);
+			}
+			
+			// Repaint the view
+			mazeEditorView.invalidate();
+		}
+	}
+
+	@Override
+	public void onTileChosen(TileChooseDialogFragment dialog, TileType type) {
+		currentMazeSelection.setTileAt(dialog.getArguments().getInt("x"), dialog.getArguments().getInt("y"), type);
+		mazeEditorView.invalidate();
 	}
 
 }

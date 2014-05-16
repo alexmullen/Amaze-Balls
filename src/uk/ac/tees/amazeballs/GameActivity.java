@@ -137,7 +137,7 @@ startTime = System.currentTimeMillis();		// !!! The game doesn't start playing a
 		
 		// Get a reference to the inflated MazeViewport 
 		gameView = (MazeViewport) findViewById(R.id.main_game_view);
-		
+
 		/* 
 		 * Create a GameController for handling the moving, collisions and physics 
 		 * for the game.

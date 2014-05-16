@@ -36,9 +36,9 @@ public class LevelChooseDialogFragment extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		super.onCreateDialog(savedInstanceState);
-		final String[] levels = this.getArguments().getStringArray("levels");
+		final String[] levels = getArguments().getStringArray("levels");
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setTitle(this.getArguments().getString("title"));
+		builder.setTitle(getArguments().getString("title"));
 		builder.setItems(levels, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {

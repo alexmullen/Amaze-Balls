@@ -196,6 +196,7 @@ public class EditorActivity extends Activity
 		} else {
 			Bundle b = new Bundle();
 			b.putSerializable("maze", currentMaze);
+			b.putBoolean("test-mode", true);
 			Intent i = new Intent(this, GameActivity.class);
 			i.putExtras(b);
 			startActivity(i);

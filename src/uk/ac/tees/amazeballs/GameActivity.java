@@ -65,6 +65,7 @@ public class GameActivity extends Activity implements SensorEventListener, OnSco
 	private long startTime;
 	private long timeTaken;
 	
+	private boolean inTestMode;
 	private boolean gameHasStarted;
 	private volatile boolean gameLoopThreadIsRunning;
 	
@@ -114,6 +115,12 @@ public class GameActivity extends Activity implements SensorEventListener, OnSco
 		loadedMaze = (Maze) getIntent().getExtras().getSerializable("maze");
 		
 		/*
+		 * Determine whether the specified level is getting tested. This means we don't have to waste
+		 * time recording the time or do any other things intended only for normal gameplay.
+		 */
+		inTestMode = this.getIntent().getExtras().getBoolean("test-mode", false);
+		
+		/*
 		 * Scan the maze and collect all the statistics about it in one go. This is more efficient than
 		 * re-scanning the whole thing each time we want to check something.
 		 */
@@ -127,9 +134,11 @@ public class GameActivity extends Activity implements SensorEventListener, OnSco
 			finish();
 			return;
 		}
-
-// Record the time at which the game started playing
+		
+// Record the time at which the game started playing (if we aren't in test mode)
+if (!inTestMode) {
 startTime = System.currentTimeMillis();		// !!! The game doesn't start playing at this point
+}
 
 		// Work out where the starting position of the ball will be.
 		Point startPosition = (mazeScanData.tileposition_firststart != null ? 
@@ -358,15 +367,27 @@ startTime = System.currentTimeMillis();		// !!! The game doesn't start playing a
 				SystemClock.sleep(1000);
 				while (gameLoopThreadIsRunning) {
 					if (gameController.isFinished()) {
-						timeTaken = ((System.currentTimeMillis() - startTime) / 1000);
-						GameActivity.this.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								new NewScoreDialogFragment().show(getFragmentManager(), "newscore_dialogfragment");
-							}
-						});
+						/*
+						 *  The game has finished so if not in test mode, prompt the user on 
+						 *  whether they want to save their time.
+						 */
+						if (!inTestMode) {
+							timeTaken = ((System.currentTimeMillis() - startTime) / 1000);
+							GameActivity.this.runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									new NewScoreDialogFragment().show(getFragmentManager(), "newscore_dialogfragment");
+								}
+							});
+						} else {
+							// We're in test mode so just finish now
+							finish();
+						}
+						// Need to exit the game loop
+						gameLoopThreadIsRunning = false;
 						return;
 					} else {
+						// The game isn't finished so perform another update
 						long startUpdateTime = System.currentTimeMillis();
 						gameController.update();
 						gameView.postInvalidate();

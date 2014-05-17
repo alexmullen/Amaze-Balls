@@ -23,7 +23,6 @@ import android.view.ScaleGestureDetector.OnScaleGestureListener;
 public class MazeEditorView extends MazeView implements OnGestureListener, OnScaleGestureListener {
 
 	private static final Paint LINE_PAINT;
-	
 	static {
 		LINE_PAINT = new Paint();
 		LINE_PAINT.setStyle(Style.STROKE);
@@ -73,8 +72,9 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 	public boolean onSingleTapUp(MotionEvent event) {
 		if (currentMaze != null) {
 			return handleTouch(event, false);
+		} else {
+			return true;
 		}
-		return true;
 	}
 
 	@Override
@@ -85,17 +85,18 @@ public class MazeEditorView extends MazeView implements OnGestureListener, OnSca
 	}
 	
 	private boolean handleTouch(MotionEvent event, boolean wasLongPress) {
-		// Normalize the coordinates touched into grid coordinates.
-		int gridPositionTouchedX = (int) Math.floor(((event.getX() - gridOffset_x) / tileSize));
-		int gridPositionTouchedY = (int) Math.floor(((event.getY() - gridOffset_y) / tileSize));
-		
-		// Ignore any touches that are within our view area but outside the displayed grid.
-		if (gridPositionTouchedX < 0 || gridPositionTouchedY < 0 || 
-			gridPositionTouchedX >= currentMaze.getWidth() || gridPositionTouchedY >= currentMaze.getHeight()) {
-			return true;
-		}
-		
 		if (onTileTouchedListener != null) {
+			// Normalize the coordinates touched into grid coordinates.
+			int gridPositionTouchedX = (int) Math.floor(((event.getX() - gridOffset_x) / tileSize));
+			int gridPositionTouchedY = (int) Math.floor(((event.getY() - gridOffset_y) / tileSize));
+			
+			// Ignore any touches that are within our view area but outside the displayed grid.
+			if (gridPositionTouchedX < 0 || gridPositionTouchedY < 0 || 
+				gridPositionTouchedX >= currentMaze.getWidth() || gridPositionTouchedY >= currentMaze.getHeight()) {
+				return true;
+			}
+			
+			// Notify the listener
 			onTileTouchedListener.onTileTouched(gridPositionTouchedX, gridPositionTouchedY, wasLongPress);
 		}
 		return true;

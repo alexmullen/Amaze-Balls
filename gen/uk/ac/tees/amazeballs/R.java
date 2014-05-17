@@ -27,99 +27,94 @@ public final class R {
         public static final int door=0x7f020003;
         public static final int floor=0x7f020004;
         public static final int goal=0x7f020005;
-        public static final int ic_launcher=0x7f020006;
-        public static final int ice=0x7f020007;
-        public static final int key=0x7f020008;
-        public static final int penalty=0x7f020009;
-        public static final int rain=0x7f02000a;
-        public static final int start=0x7f02000b;
-        public static final int wall=0x7f02000c;
-        public static final int weathertile=0x7f02000d;
+        public static final int ice=0x7f020006;
+        public static final int key=0x7f020007;
+        public static final int penalty=0x7f020008;
+        public static final int rain=0x7f020009;
+        public static final int start=0x7f02000a;
+        public static final int wall=0x7f02000b;
+        public static final int weathertile=0x7f02000c;
     }
     public static final class id {
-        public static final int Date1=0x7f09000f;
-        public static final int Date2=0x7f090013;
-        public static final int Date3=0x7f090017;
-        public static final int Date4=0x7f09001b;
-        public static final int Date5=0x7f09001f;
-        public static final int Name1=0x7f09000d;
-        public static final int Name2=0x7f090011;
-        public static final int Name3=0x7f090015;
-        public static final int Name4=0x7f090019;
-        public static final int Name5=0x7f09001d;
-        public static final int Score1=0x7f09000e;
-        public static final int Score2=0x7f090012;
-        public static final int Score3=0x7f090016;
-        public static final int Score4=0x7f09001a;
-        public static final int Score5=0x7f09001e;
-        public static final int button4=0x7f090024;
-        public static final int button_custom_levels=0x7f090021;
-        public static final int button_play_level=0x7f090022;
-        public static final int button_random_level=0x7f090020;
-        public static final int dialog_save_levelname_edittext=0x7f090002;
-        public static final int dialog_save_playername_edittext=0x7f090009;
+        public static final int Date1=0x7f090003;
+        public static final int Date2=0x7f090007;
+        public static final int Date3=0x7f09000b;
+        public static final int Date4=0x7f09000f;
+        public static final int Date5=0x7f090013;
+        public static final int Name1=0x7f090001;
+        public static final int Name2=0x7f090005;
+        public static final int Name3=0x7f090009;
+        public static final int Name4=0x7f09000d;
+        public static final int Name5=0x7f090011;
+        public static final int Score1=0x7f090002;
+        public static final int Score2=0x7f090006;
+        public static final int Score3=0x7f09000a;
+        public static final int Score4=0x7f09000e;
+        public static final int Score5=0x7f090012;
+        public static final int button4=0x7f090019;
+        public static final int button_custom_levels=0x7f090015;
+        public static final int button_play_level=0x7f090016;
+        public static final int button_random_level=0x7f090014;
+        public static final int dialog_save_levelname_edittext=0x7f09001f;
+        public static final int dialog_save_playername_edittext=0x7f090026;
         public static final int editor_file=0x7f090029;
         public static final int editor_file_new=0x7f09002a;
         public static final int editor_file_open=0x7f09002b;
         public static final int editor_file_save=0x7f09002c;
         public static final int editor_file_saveas=0x7f09002d;
         public static final int editor_play=0x7f09002e;
-        public static final int height_textview=0x7f090006;
-        public static final int height_value=0x7f090008;
-        public static final int main_game_view=0x7f090000;
-        public static final int maze_grid_view=0x7f090001;
-        public static final int seekbar_maze_height=0x7f090007;
-        public static final int seekbar_maze_width=0x7f090004;
-        public static final int special_tile_choice_image=0x7f09000a;
-        public static final int special_tile_choice_title=0x7f09000b;
-        public static final int spinner_standard_levels=0x7f090023;
-        public static final int tableRow1=0x7f09000c;
-        public static final int tableRow2=0x7f090010;
-        public static final int tableRow3=0x7f090014;
-        public static final int tableRow4=0x7f090018;
-        public static final int tableRow5=0x7f09001c;
-        public static final int textView1=0x7f090026;
-        public static final int togglebutton_music=0x7f090025;
-        public static final int togglebutton_weather=0x7f090028;
-        public static final int width_textview=0x7f090003;
-        public static final int width_value=0x7f090005;
-        public static final int yTextView=0x7f090027;
+        public static final int height_textview=0x7f090023;
+        public static final int height_value=0x7f090025;
+        public static final int main_game_view=0x7f090018;
+        public static final int maze_grid_view=0x7f09001a;
+        public static final int seekbar_maze_height=0x7f090024;
+        public static final int seekbar_maze_width=0x7f090021;
+        public static final int special_tile_choice_image=0x7f090027;
+        public static final int special_tile_choice_title=0x7f090028;
+        public static final int spinner_standard_levels=0x7f090017;
+        public static final int tableRow1=0x7f090000;
+        public static final int tableRow2=0x7f090004;
+        public static final int tableRow3=0x7f090008;
+        public static final int tableRow4=0x7f09000c;
+        public static final int tableRow5=0x7f090010;
+        public static final int textView1=0x7f09001c;
+        public static final int togglebutton_music=0x7f09001b;
+        public static final int togglebutton_weather=0x7f09001e;
+        public static final int width_textview=0x7f090020;
+        public static final int width_value=0x7f090022;
+        public static final int yTextView=0x7f09001d;
     }
     public static final class layout {
-        public static final int activity_main_game=0x7f030000;
-        public static final int activity_maze_editor=0x7f030001;
-        public static final int dialog_level_save=0x7f030002;
-        public static final int dialog_newmazesize=0x7f030003;
-        public static final int dialog_score_save=0x7f030004;
-        public static final int dialog_specialtile_row=0x7f030005;
-        public static final int highscores=0x7f030006;
-        public static final int level_select=0x7f030007;
-        public static final int main_menu=0x7f030008;
-        public static final int settings=0x7f030009;
+        public static final int activity_highscores=0x7f030000;
+        public static final int activity_level_select=0x7f030001;
+        public static final int activity_main_game=0x7f030002;
+        public static final int activity_main_menu=0x7f030003;
+        public static final int activity_maze_editor=0x7f030004;
+        public static final int activity_settings=0x7f030005;
+        public static final int dialog_levelsave=0x7f030006;
+        public static final int dialog_newmazesize=0x7f030007;
+        public static final int dialog_scoresave=0x7f030008;
+        public static final int dialog_specialtile_row=0x7f030009;
         public static final int simplerow=0x7f03000a;
     }
     public static final class menu {
-        public static final int main_game=0x7f080000;
-        public static final int maze_editor=0x7f080001;
+        public static final int maze_editor=0x7f080000;
     }
     public static final class raw {
         public static final int maze=0x7f040000;
     }
     public static final class string {
-        public static final int action_settings=0x7f060001;
         public static final int app_name=0x7f060000;
-        public static final int hello_world=0x7f060003;
-        public static final int highscores_msg=0x7f060004;
-        public static final int imported_level_msg=0x7f06000b;
-        public static final int level_editor_msg=0x7f060006;
-        public static final int level_select_msg=0x7f060007;
-        public static final int pic_desc=0x7f060008;
-        public static final int play_level_msg=0x7f06000a;
-        public static final int random_level_msg=0x7f060009;
-        public static final int settings_msg=0x7f060005;
-        public static final int tgl1_msg=0x7f06000c;
-        public static final int tgl2_msg=0x7f06000d;
-        public static final int title_activity_maze_editor=0x7f060002;
+        public static final int highscores_msg=0x7f060002;
+        public static final int imported_level_msg=0x7f060008;
+        public static final int level_editor_msg=0x7f060004;
+        public static final int level_select_msg=0x7f060005;
+        public static final int play_level_msg=0x7f060007;
+        public static final int random_level_msg=0x7f060006;
+        public static final int settings_msg=0x7f060003;
+        public static final int tgl1_msg=0x7f060009;
+        public static final int tgl2_msg=0x7f06000a;
+        public static final int title_activity_maze_editor=0x7f060001;
     }
     public static final class style {
         /** 
@@ -148,5 +143,6 @@ public final class R {
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f070001;
+        public static final int FullscreenNoBackgroundTheme=0x7f070002;
     }
 }

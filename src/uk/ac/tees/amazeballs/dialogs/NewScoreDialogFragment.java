@@ -38,7 +38,7 @@ public class NewScoreDialogFragment extends DialogFragment {
 		super.onCreateDialog(savedInstanceState);
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		final View inflatedView = getActivity().getLayoutInflater().inflate(R.layout.dialog_score_save, null);
+		final View inflatedView = getActivity().getLayoutInflater().inflate(R.layout.dialog_scoresave, null);
 		final EditText playerNameTextView = (EditText) inflatedView.findViewById(R.id.dialog_save_playername_edittext);
 		builder.setTitle("Insert Player Name");
 		builder.setView(inflatedView);

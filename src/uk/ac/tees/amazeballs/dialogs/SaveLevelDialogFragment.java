@@ -43,7 +43,7 @@ public class SaveLevelDialogFragment extends DialogFragment {
 		super.onCreateDialog(savedInstanceState);
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		final View inflatedView = getActivity().getLayoutInflater().inflate(R.layout.dialog_level_save, null);
+		final View inflatedView = getActivity().getLayoutInflater().inflate(R.layout.dialog_levelsave, null);
 		final EditText levelNameTextView = (EditText) inflatedView.findViewById(R.id.dialog_save_levelname_edittext);
 		builder.setTitle("Name the level");
 		builder.setView(inflatedView);

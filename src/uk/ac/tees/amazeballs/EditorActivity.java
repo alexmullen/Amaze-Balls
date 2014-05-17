@@ -233,7 +233,8 @@ public class EditorActivity extends Activity
 
 	@Override
 	public void onTileChosen(TileChooseDialogFragment dialog, TileType type) {
-		currentMazeSelection.setTileAt(dialog.getArguments().getInt("x"), dialog.getArguments().getInt("y"), type);
+		Bundle args = dialog.getArguments();
+		currentMazeSelection.setTileAt(args.getInt("x"), args.getInt("y"), type);
 		mazeEditorView.invalidate();
 	}
 

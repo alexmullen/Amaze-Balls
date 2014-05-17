@@ -22,7 +22,7 @@ public class MainMenuActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main_menu);
+		setContentView(R.layout.activity_main_menu);
 		
 		Button btnLevelSelect = (Button) findViewById(R.id.button_play_level);
 		btnLevelSelect.setOnClickListener(new View.OnClickListener() { 

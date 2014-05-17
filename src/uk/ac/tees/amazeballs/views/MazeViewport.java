@@ -32,25 +32,24 @@ public class MazeViewport extends View {
 	private float unscaledGridOffset_top;
 	
 	// Re-usable objects for performance
-	private final int[] visibleGridRange;
+	private final int[] visibleGridRange = new int[4];
 	
 	public MazeViewport(Context context) {
 		super(context);
-		visibleGridRange = new int[4];
 	}
 
 	public MazeViewport(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		visibleGridRange = new int[4];
 	}
+	
 	
 	public void setCamera(MazeWorldCamera camera) {
 		this.camera = camera;
-		recalculate();
+		precalculatePositions();
 	}
 	
 	
-	private void recalculate() {
+	private void precalculatePositions() {
 		/*
 		 *  Calculate the scale required to make best use of the screen space we have
 		 *  whilst keeping the camera's aspect ratio the same.
@@ -73,7 +72,7 @@ public class MazeViewport extends View {
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
-		recalculate();
+		precalculatePositions();
 	}
 
 	@Override

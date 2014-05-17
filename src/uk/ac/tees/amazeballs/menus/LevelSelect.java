@@ -31,7 +31,7 @@ public class LevelSelect extends Activity implements OnLevelChooseListener{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.level_select);
+		setContentView(R.layout.activity_level_select);
 		
 		levelChoiceSpinner = (Spinner) findViewById(R.id.spinner_standard_levels);
 		levelChoiceSpinner.setAdapter(

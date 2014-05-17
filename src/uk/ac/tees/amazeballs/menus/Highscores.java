@@ -15,7 +15,7 @@ public class Highscores extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.highscores);
+		setContentView(R.layout.activity_highscores);
 
 		// In order to add highscores, you must make a call to the addScore method of a ScoreTableHandler
 		scoreHandler = new ScoreTableHandler(this);

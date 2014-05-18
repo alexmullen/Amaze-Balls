@@ -1,5 +1,6 @@
 package uk.ac.tees.amazeballs.maze;
 
+
 /**
  * A factory class for creating pre-generated maze templates.
  * 

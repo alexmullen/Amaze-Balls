@@ -116,25 +116,7 @@ public class Maze implements Serializable {
 	public boolean isTileAtAnEdge(int x, int y) {
 		return (x == 0 || x == (width - 1) || y == 0 || y == (height - 1));
 	}
-	
-	
-//	/**
-//	 * Replaces all occurrences of tiles of type oldTile with tiles of
-//	 * type newTile.
-//	 * 
-//	 * @param oldTile the tiles to replace
-//	 * @param newTile the tiles to replace with
-//	 */
-//	public void replaceAll(TileType oldTile, TileType newTile) {
-//		for (int x = 0; x < width; x++) {
-//			for (int y = 0; y < height; y++) {
-//				if (grid[x][y] == oldTile) {
-//					grid[x][y] = newTile;
-//				}
-//			}
-//		}
-//	}
-	
+
 	/**
 	 * Replaces each tile from a list of positions with the specified tile.
 	 * 

@@ -21,6 +21,9 @@ import android.view.View;
  */
 public class MazeViewport extends View {
 
+	private static final Drawable cachedBallDrawable = TileImageFactory.getImage(TileType.Ball);
+	
+	
 	private MazeWorldCamera camera;
 	
 	private float scale;
@@ -113,7 +116,6 @@ public class MazeViewport extends View {
 				// Convert the tile's world coordinates into view/camera coordinates
 				int bounds_x = ((x * tilesize) - cameraLeft);
 				int bounds_y = ((y * tilesize) - cameraTop);
-				
 				// Draw the tile
 				Drawable tileImage = TileImageFactory.getImage(world.maze.getTileAt(x, y));
 				// left, top, right, bottom
@@ -124,16 +126,13 @@ public class MazeViewport extends View {
 		
 		if (ball != null) {
 			int ballsize = (int) (ball.size);
-			
 			// Convert the ball's world coordinates into view/camera coordinates
 			int bounds_x = (ball.position_x - cameraLeft);
 			int bounds_y = (ball.position_y - cameraTop);
-			
 			// Draw the ball
-			Drawable tileImage = TileImageFactory.getImage(TileType.Ball);
 			// left, top, right, bottom
-			tileImage.setBounds(bounds_x, bounds_y, (bounds_x + ballsize), (bounds_y + ballsize));
-			tileImage.draw(canvas);
+			cachedBallDrawable.setBounds(bounds_x, bounds_y, (bounds_x + ballsize), (bounds_y + ballsize));
+			cachedBallDrawable.draw(canvas);
 		}
 
 	}

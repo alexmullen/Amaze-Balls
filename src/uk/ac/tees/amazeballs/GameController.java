@@ -58,7 +58,6 @@ public class GameController {
 	 * Performs one update of the game state.
 	 */
 	public void update() {
-
 		moveBall();
 
 		scrollScreen();

@@ -54,17 +54,13 @@ public class MazeWorldCamera {
 	 * @param amount the amount to move
 	 * @return the amount moved
 	 */
-	public int moveLeft(int amount) {
+	public void moveLeft(int amount) {
 		// Move by the amount or the remaining amount if the amount is more than the remaining space
-		if (amount >= left) {
+		if (amount > left) {
 			amount = left;
-			left = 0;
-			right -= amount;
-		} else {
-			left -= amount;
-			right -= amount;
 		}
-		return amount;
+		left -= amount;
+		right -= amount;
 	}
 	
 	/**
@@ -73,17 +69,13 @@ public class MazeWorldCamera {
 	 * @param amount the amount to move
 	 * @return the amount moved
 	 */
-	public int moveUp(int amount) {
+	public void moveUp(int amount) {
 		// Move by the amount or the remaining amount if the amount is more than the remaining space
-		if (amount >= top) {
+		if (amount > top) {
 			amount = top;
-			top = 0;
-			bottom -= amount;
-		} else {
-			top -= amount;
-			bottom -= amount;
 		}
-		return amount;
+		top -= amount;
+		bottom -= amount;
 	}
 	
 	/**
@@ -92,12 +84,11 @@ public class MazeWorldCamera {
 	 * @param amount the amount to move
 	 * @return the amount moved
 	 */
-	public int moveRight(int amount) {
+	public void moveRight(int amount) {
 		// Move by the amount or the remaining amount if the amount is more than the remaining space
 		int amountToShift = Math.min(amount, (world.width - right));
 		right += amountToShift;
 		left += amountToShift;
-		return amountToShift;
 	}
 	
 	/**
@@ -106,12 +97,11 @@ public class MazeWorldCamera {
 	 * @param amount the amount to move
 	 * @return the amount moved
 	 */
-	public int moveDown(int amount) {
+	public void moveDown(int amount) {
 		// Move by the amount or the remaining amount if the amount is more than the remaining space
 		int amountToShift = Math.min(amount, (world.height - bottom));
 		bottom += amountToShift;
 		top += amountToShift;
-		return amountToShift;
 	}
 
 	/**

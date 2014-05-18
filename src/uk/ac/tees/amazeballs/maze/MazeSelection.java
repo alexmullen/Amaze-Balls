@@ -63,12 +63,10 @@ public class MazeSelection extends Maze {
 	 */
 	public int shiftUp(int amount) {
 		// Shift by the amount or the remaining amount if the amount is more than the remaining space
-		if (amount >= offset_y) {
+		if (amount > offset_y) {
 			amount = offset_y;
-			offset_y = 0;
-		} else {
-			offset_y -= amount;
 		}
+		offset_y -= amount;
 		return amount;
 	}
 	
@@ -94,12 +92,10 @@ public class MazeSelection extends Maze {
 	 */
 	public int shiftLeft(int amount) {
 		// Shift by the amount or the remaining amount if the amount is more than the remaining space
-		if (amount >= offset_x) {
+		if (amount > offset_x) {
 			amount = offset_x;
-			offset_x = 0;
-		} else {
-			offset_x -= amount;
 		}
+		offset_x -= amount;
 		return amount;
 	}
 	

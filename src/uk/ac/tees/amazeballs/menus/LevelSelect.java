@@ -1,13 +1,14 @@
 package uk.ac.tees.amazeballs.menus;
 
-import java.util.Random;
-
 import uk.ac.tees.amazeballs.LevelManager;
 import uk.ac.tees.amazeballs.GameActivity;
 import uk.ac.tees.amazeballs.R;
 import uk.ac.tees.amazeballs.dialogs.LevelChooseDialogFragment;
+import uk.ac.tees.amazeballs.dialogs.NewLevelDialogFragment;
 import uk.ac.tees.amazeballs.dialogs.LevelChooseDialogFragment.OnLevelChooseListener;
-import uk.ac.tees.amazeballs.maze.Maze;
+import uk.ac.tees.amazeballs.dialogs.NewLevelDialogFragment.OnNewLevelRequestListener;
+import uk.ac.tees.amazeballs.maze.MazeFactory;
+import uk.ac.tees.amazeballs.maze.MazeNew;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -24,7 +25,9 @@ import android.widget.Toast;
  * @author Alex Mullen (J9858839)
  *
  */
-public class LevelSelect extends Activity implements OnLevelChooseListener{
+public class LevelSelect extends Activity 
+		implements 	OnLevelChooseListener, 
+					OnNewLevelRequestListener {
 	
 	private Spinner levelChoiceSpinner;
 	
@@ -47,10 +50,7 @@ public class LevelSelect extends Activity implements OnLevelChooseListener{
 	}
 	
 	public void onRandomLevelButtonClicked(View v) {
-		// Choose a random array index value then choose the level name at that location
-		String[] standardLevels = LevelManager.getLevels(this);
-		int randomIndex = new Random().nextInt((standardLevels.length));
-		loadAndPlayLevel(standardLevels[randomIndex]);
+		new NewLevelDialogFragment().show(getFragmentManager(), "newlevel_dialogfragment");
 	}
 	
 	public void onCustomLevelsButtonClicked(View v) {
@@ -69,13 +69,18 @@ public class LevelSelect extends Activity implements OnLevelChooseListener{
 	
 	@Override
 	public void onLevelChosen(String levelname) {
-		Maze customLoadedMaze = LevelManager.loadCustomLevel(this, levelname);
+		MazeNew customLoadedMaze = LevelManager.loadCustomLevel(this, levelname);
 		if (customLoadedMaze != null) {
 			playLevel(customLoadedMaze);
 		} else {
 			// For some reason we couldn't load the level so display a dialog telling the user
 			displayLevelLoadErrorDialog(levelname);
 		}
+	}
+	
+	@Override
+	public void onNewLevelRequested(int width, int height) {
+		playLevel(MazeFactory.createGeneratedMaze(width, height));
 	}
 	
 	/**
@@ -86,7 +91,7 @@ public class LevelSelect extends Activity implements OnLevelChooseListener{
 	 */
 	private void loadAndPlayLevel(String levelname) {
 		// Load the maze then check it was loaded
-		Maze loadedMaze = LevelManager.loadLevel(this, levelname);
+		MazeNew loadedMaze = LevelManager.loadLevel(this, levelname);
 		if (loadedMaze != null) {
 			playLevel(loadedMaze);
 		} else {
@@ -95,10 +100,10 @@ public class LevelSelect extends Activity implements OnLevelChooseListener{
 		}
 	}
 	
-	private void playLevel(Maze loadedMaze) {
+	private void playLevel(MazeNew loadedMaze) {
 		// Send an intent containing the maze to play
 		Bundle b = new Bundle();
-		b.putSerializable("maze", loadedMaze);
+		b.putParcelable("maze", loadedMaze);
 		Intent i = new Intent(this, GameActivity.class);
 		i.putExtras(b);
 		startActivity(i);
@@ -108,7 +113,7 @@ public class LevelSelect extends Activity implements OnLevelChooseListener{
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setIcon(android.R.drawable.ic_dialog_alert);
 		builder.setTitle("Level load error");
-		builder.setMessage("Couldn't load the level " + levelname + ".");
+		builder.setMessage("Couldn't load the level '" + levelname + "'.");
 		builder.setNeutralButton("OK", null);
 		builder.create().show();
 	}

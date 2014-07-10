@@ -1,9 +1,8 @@
 package uk.ac.tees.amazeballs;
 
 import android.graphics.Point;
-import uk.ac.tees.amazeballs.maze.Maze;
+import uk.ac.tees.amazeballs.maze.MazeNew;
 import uk.ac.tees.amazeballs.maze.MazeWorld;
-import uk.ac.tees.amazeballs.maze.TileType;
 import uk.ac.tees.amazeballs.maze.MazeWorld.Ball;
 import uk.ac.tees.amazeballs.maze.MazeWorldCamera;
 import uk.ac.tees.amazeballs.views.MazeViewport;
@@ -37,7 +36,7 @@ public class GameController {
 	
 	private boolean finished;
 
-	public GameController(Maze maze, MazeViewport mazeVewport, Point startPosition) {
+	public GameController(MazeNew maze, MazeViewport mazeVewport, Point startPosition) {
 		this.mazeViewport = mazeVewport;
 		mazeWorld = new MazeWorld(maze, 20);
 		mazeWorldCamera = new MazeWorldCamera(mazeWorld, 0, 0,
@@ -111,17 +110,17 @@ public class GameController {
 	private boolean ballHasCollided() {
 		int gridPosTouchedX;
 		int gridPosTouchedY;
-		Maze maze = mazeWorld.maze;
+		MazeNew maze = mazeWorld.maze;
 		Ball ball = mazeWorld.ball;
 		int ballSize = ball.size;
 		int tileSize = mazeWorld.tilesize;
-		TileType tileTouched;
+		int tileTouched;
 
 		// Check top left corner of ball
 		gridPosTouchedX = (int) (ball.position_x) / tileSize;
 		gridPosTouchedY = (int) (ball.position_y) / tileSize;
 		tileTouched = maze.getTileAt(gridPosTouchedX, gridPosTouchedY);
-		if (tileTouched == TileType.Wall || tileTouched == TileType.Door) {
+		if (tileTouched == MazeNew.WALL_TILE || tileTouched == MazeNew.DOOR_TILE) {
 			return true;
 		}
 
@@ -129,7 +128,7 @@ public class GameController {
 		gridPosTouchedX = (int) (ball.position_x + (ballSize - 1)) / tileSize;
 		gridPosTouchedY = (int) (ball.position_y) / tileSize;
 		tileTouched = maze.getTileAt(gridPosTouchedX, gridPosTouchedY);
-		if (tileTouched == TileType.Wall || tileTouched == TileType.Door) {
+		if (tileTouched == MazeNew.WALL_TILE || tileTouched == MazeNew.DOOR_TILE) {
 			return true;
 		}
 
@@ -137,7 +136,7 @@ public class GameController {
 		gridPosTouchedX = (int) (ball.position_x + (ballSize - 1)) / tileSize;
 		gridPosTouchedY = (int) (ball.position_y + (ballSize - 1)) / tileSize;
 		tileTouched = maze.getTileAt(gridPosTouchedX, gridPosTouchedY);
-		if (tileTouched == TileType.Wall || tileTouched == TileType.Door) {
+		if (tileTouched == MazeNew.WALL_TILE || tileTouched == MazeNew.DOOR_TILE) {
 			return true;
 		}
 
@@ -145,7 +144,7 @@ public class GameController {
 		gridPosTouchedX = (int) (ball.position_x) / tileSize;
 		gridPosTouchedY = (int) (ball.position_y + (ballSize - 1)) / tileSize;
 		tileTouched = maze.getTileAt(gridPosTouchedX, gridPosTouchedY);
-		if (tileTouched == TileType.Wall || tileTouched == TileType.Door) {
+		if (tileTouched == MazeNew.WALL_TILE || tileTouched == MazeNew.DOOR_TILE) {
 			return true;
 		}
 
@@ -189,7 +188,7 @@ public class GameController {
 	/**
 	 * Handles what happens when certain tiles are touched.
 	 */
-	private void handleTouchedTile(int touchedGrid_x, int touchedGrid_y, TileType type) {
+	private void handleTouchedTile(int touchedGrid_x, int touchedGrid_y, int type) {
 		// Reset these
 		touchingRain = false;
 		touchingIce = false;
@@ -198,31 +197,31 @@ public class GameController {
 		processDoorsNearby(touchedGrid_x, touchedGrid_y);
 
 		switch (type) {
-			case Chest:
-				mazeWorld.maze.setTileAt(touchedGrid_x, touchedGrid_y, TileType.Floor);
+			case MazeNew.CHEST_TILE:
+				mazeWorld.maze.setTileAt(touchedGrid_x, touchedGrid_y, MazeNew.FLOOR_TILE);
 				break;
-			case Key:
+			case MazeNew.KEY_TILE:
 				// Increment the number of keys we have then replace the key tile
 				// with a floor tile
 				keysCarrying++;
-				mazeWorld.maze.setTileAt(touchedGrid_x, touchedGrid_y, TileType.Floor);
+				mazeWorld.maze.setTileAt(touchedGrid_x, touchedGrid_y, MazeNew.FLOOR_TILE);
 				break;
-			case Goal:
+			case MazeNew.GOAL_TILE:
 				// End the game
 				finished = true;
 				return;
-			case Ice:
+			case MazeNew.ICE_TILE:
 				if (!touchingRain) {
 					touchingIce = true;
 					ballSpeed = ICE_BALL_SPEED;
 				}
 				break;
-			case Penalty:
+			case MazeNew.PENALTY_TILE:
 				// Apply the penalty
 	
-				mazeWorld.maze.setTileAt(touchedGrid_x, touchedGrid_y, TileType.Floor);
+				mazeWorld.maze.setTileAt(touchedGrid_x, touchedGrid_y, MazeNew.FLOOR_TILE);
 				break;
-			case Rain:
+			case MazeNew.RAIN_TILE:
 				touchingIce = false;
 				touchingRain = true;
 				ballSpeed = RAIN_BALL_SPEED;
@@ -239,7 +238,7 @@ public class GameController {
 	private void processTouchingTiles() {
 		int gridPosTouchedX;
 		int gridPosTouchedY;
-		Maze maze = mazeWorld.maze;
+		MazeNew maze = mazeWorld.maze;
 		Ball ball = mazeWorld.ball;
 		int ballSize = ball.size;
 		int tileSize = mazeWorld.tilesize;
@@ -276,28 +275,28 @@ public class GameController {
 	 * @param y the grid y position to check
 	 */
 	private void processDoorsNearby(int x, int y) {
-		Maze maze = mazeWorld.maze;
+		MazeNew maze = mazeWorld.maze;
 		// Above
 		if (y - 1 >= 0) {
-			if (maze.getTileAt(x, (y - 1)) == TileType.Door) {
+			if (maze.getTileAt(x, (y - 1)) == MazeNew.DOOR_TILE) {
 				handleDoorNearby(x, (y - 1));
 			}
 		}
 		// Below
 		if (y + 1 < maze.height) {
-			if (maze.getTileAt(x, (y + 1)) == TileType.Door) {
+			if (maze.getTileAt(x, (y + 1)) == MazeNew.DOOR_TILE) {
 				handleDoorNearby(x, (y + 1));
 			}
 		}
 		// Left
 		if (x - 1 >= 0) {
-			if (maze.getTileAt((x - 1), y) == TileType.Door) {
+			if (maze.getTileAt((x - 1), y) == MazeNew.DOOR_TILE) {
 				handleDoorNearby((x - 1), y);
 			}
 		}
 		// Right
 		if (x + 1 < maze.width) {
-			if (maze.getTileAt((x + 1), y) == TileType.Door) {
+			if (maze.getTileAt((x + 1), y) == MazeNew.DOOR_TILE) {
 				handleDoorNearby((x + 1), y);
 			}
 		}
@@ -313,7 +312,7 @@ public class GameController {
 		// "Use" any picked up keys to unlock any doors near
 		if (keysCarrying > 0) {
 			keysCarrying--;
-			mazeWorld.maze.setTileAt(x, y, TileType.Floor);
+			mazeWorld.maze.setTileAt(x, y, MazeNew.FLOOR_TILE);
 		}
 	}
 

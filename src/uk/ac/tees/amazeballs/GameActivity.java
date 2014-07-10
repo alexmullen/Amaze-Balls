@@ -4,33 +4,22 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
-import net.aksingh.java.api.owm.CurrentWeatherData;
 import uk.ac.tees.amazeballs.dialogs.NewScoreDialogFragment;
 import uk.ac.tees.amazeballs.dialogs.NewScoreDialogFragment.OnScoreSaveRequestListener;
-import uk.ac.tees.amazeballs.maze.Maze;
+import uk.ac.tees.amazeballs.maze.MazeNew;
 import uk.ac.tees.amazeballs.maze.MazeScanner;
-import uk.ac.tees.amazeballs.maze.TileType;
 import uk.ac.tees.amazeballs.menus.Highscores;
 import uk.ac.tees.amazeballs.menus.Score;
 import uk.ac.tees.amazeballs.menus.ScoreTableHandler;
 import uk.ac.tees.amazeballs.menus.Settings;
 import uk.ac.tees.amazeballs.views.MazeViewport;
-import uk.ac.tees.amazeballs.weather.Weather;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.media.MediaPlayer;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.hardware.Sensor;
@@ -50,13 +39,8 @@ public class GameActivity extends Activity implements SensorEventListener, OnSco
 	private static final long GAME_TICK_INTERVAL = 16;
 	
 	private SensorManager sensorManager;
-	private LocationManager locationManager;
-	private LocationListener locationListener;
 	
-	private ProgressDialog weatherProgressDialog;
-	private RetrieveWeatherDataTask receiveWeatherDataTask;
-	
-	private Maze loadedMaze;
+	private MazeNew loadedMaze;
 	private MazeViewport gameView;
 	private GameController gameController;
 	
@@ -66,45 +50,10 @@ public class GameActivity extends Activity implements SensorEventListener, OnSco
 	private long timeTaken;
 	
 	private boolean inTestMode;
-	private boolean gameHasStarted;
 	private volatile boolean gameLoopThreadIsRunning;
 	
 	private MediaPlayer mediaPlayer;
 	
-	
-	/**
-	 * A task for downloading weather data asynchronously so as not to block
-	 * the UI thread.
-	 * 
-	 * @author Alex Mullen (J9858839)
-	 *
-	 */
-	private class RetrieveWeatherDataTask extends AsyncTask<Location, Void, CurrentWeatherData> {
-		
-		private final List<Point> weatherTilePositions;
-		
-		public RetrieveWeatherDataTask(List<Point> weatherTilePositions) {
-			this.weatherTilePositions = weatherTilePositions;
-		}
-		
-		@Override
-		protected CurrentWeatherData doInBackground(Location... args) {
-			return Weather.getWeatherData(
-					(float)args[0].getLatitude(), 
-					(float)args[0].getLongitude());
-		}
-		@Override
-		protected void onPostExecute(CurrentWeatherData result) {
-			// Only apply if we weren't cancelled.
-			if (!this.isCancelled()) {
-				loadedMaze.replaceAllAt(weatherTilePositions, determineWeatherTiles(result));
-				gameView.invalidate();
-				weatherProgressDialog.dismiss();
-				gameHasStarted = true;
-				startGameLoopThread();
-			}
-		}
-	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -112,13 +61,13 @@ public class GameActivity extends Activity implements SensorEventListener, OnSco
 		setContentView(R.layout.activity_main_game);
 		
 		// Load the maze to play
-		loadedMaze = (Maze) getIntent().getExtras().getSerializable("maze");
+		loadedMaze = (MazeNew) getIntent().getExtras().getParcelable("maze");
 		
 		/*
 		 * Determine whether the specified level is getting tested. This means we don't have to waste
 		 * time recording the time or do any other things intended only for normal gameplay.
 		 */
-		inTestMode = this.getIntent().getExtras().getBoolean("test-mode", false);
+		inTestMode = getIntent().getExtras().getBoolean("test-mode", false);
 		
 		/*
 		 * Scan the maze and collect all the statistics about it in one go. This is more efficient than
@@ -159,23 +108,10 @@ startTime = System.currentTimeMillis();		// !!! The game doesn't start playing a
 			mediaPlayer = MediaPlayer.create(this, R.raw.maze);
 			mediaPlayer.setLooping(true);
 		}
-		
-		/*
-		 *  Retrieve and apply local weather data to the level if enabled and if the map
-		 *  contains weather tiles.
-		 */
-		if (sp.getBoolean(Settings.SETTINGS_WEATHER, true) == true && 
-				mazeScanData.tilepositions_weather.size() > 0) {
-			doLocationAndWeatherRetrieval(mazeScanData.tilepositions_weather);
-		} else {
-			/*
-			 *  Weather is disabled so just replace any weather tiles with floor tiles
-			 *  and allow the game to be started.
-			 */
-			loadedMaze.replaceAllAt(mazeScanData.tilepositions_weather, TileType.Floor);
-			gameView.invalidate();
-			gameHasStarted = true;
-		}
+
+// Needed as some previously built levels will contain weather tiles in them
+loadedMaze.replaceAllAt(mazeScanData.tilepositions_weather, MazeNew.FLOOR_TILE);
+		gameView.invalidate();
 	}
 	
 	@Override
@@ -190,10 +126,7 @@ startTime = System.currentTimeMillis();		// !!! The game doesn't start playing a
 			// TODO: Display an error dialog
 			// Finish();
 		}
-		// Only start the game when indicated (might have to wait for weather data first)
-		if (gameHasStarted) {
-			startGameLoopThread();
-		}
+		startGameLoopThread();
 	}
 	
 	@Override
@@ -240,107 +173,10 @@ startTime = System.currentTimeMillis();		// !!! The game doesn't start playing a
 		gameController.lastAccelerometerReading_x = event.values[0];
 		gameController.lastAccelerometerReading_y = event.values[1];
 	}
-	
-	private void doLocationAndWeatherRetrieval(final List<Point> weatherTilePositions) {
-		/* 
-		 * Show an indeterminate progress dialog to signal to the user that we are
-		 * doing something.
-		 */
-		weatherProgressDialog = ProgressDialog.show(this, "Retrieving location...", 
-				"Touch anywhere to cancel", 
-				true, 
-				true);
-		
-		/* 
-		 * Handle the user cancelling the retrieval of location and weather if they
-		 * wish. (It could possibly be taking too long)
-		 */
-		weatherProgressDialog.setOnCancelListener(new OnCancelListener() {
-			@Override
-			public void onCancel(DialogInterface dialog) {
-				handleCancelLocationAndWeatherRetrieval(weatherTilePositions);
-			}
-		});
-
-		// Acquire a reference to the system Location Manager
-		locationManager = 
-				(LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-		
-		// Using the last known location should be sufficient for our purposes if available
-		final Location lastKnownLocation = 
-				locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		
-		// Check if there was a cached last known location available
-		if (lastKnownLocation != null) {
-			// Use last known location
-	    	handleLocationRetrieved(lastKnownLocation, weatherTilePositions);
-		} else {
-			// Define a listener that responds to location updates
-			locationListener = new LocationListener() {
-			    public void onLocationChanged(Location location) {
-			    	/*
-			    	 *  The first location update will be good enough for us so
-			    	 *  we won't ask for anymore.
-			    	 */
-			    	locationManager.removeUpdates(this);
-			    	handleLocationRetrieved(location, weatherTilePositions);
-			    }
-			    public void onStatusChanged(String provider, int status, Bundle extras) {}
-			    public void onProviderEnabled(String provider) {}
-			    public void onProviderDisabled(String provider) {}
-			};
-			
-			/*
-			 *  Criteria for a location provider. For this we don't need super accuracy
-			 *  or altitude.
-			 */
-			Criteria criteria = new Criteria();
-			criteria.setAltitudeRequired(false);
-			criteria.setCostAllowed(false);
-			criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-			
-			// Retrieve the best provider if any
-			String bestProvider = locationManager.getBestProvider(criteria, true);
-			if (bestProvider != null) {
-				// Register the listener with the Location Manager to receive location updates
-				locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
-			} else {
-				/*
-				 * No location providers so just replace any weather tiles with floor tiles
-				 * and allow the game to be started by onResume.
-				 */					
-				loadedMaze.replaceAllAt(weatherTilePositions, TileType.Floor);
-				gameView.invalidate();
-				gameHasStarted = true;
-			}
-		}
-	}
-	
-	private void handleLocationRetrieved(Location location, List<Point> weatherTilePositions) {
-    	weatherProgressDialog.setTitle("Retrieving weather data...");
-    	receiveWeatherDataTask = new RetrieveWeatherDataTask(weatherTilePositions);
-    	receiveWeatherDataTask.execute(location);
-	}
-	
-	private void handleCancelLocationAndWeatherRetrieval(List<Point> weatherTilePositions) {
-		// Cancel the weather retrieval task if it was started
-		if (receiveWeatherDataTask != null) {
-			receiveWeatherDataTask.cancel(true);
-		}
-		// Prevent anymore location updates being received if we were receiving them.
-		if (locationListener != null) {
-			locationManager.removeUpdates(locationListener);
-		}
-		// Just start the game without localised weather tiles
-		loadedMaze.replaceAllAt(weatherTilePositions, TileType.Floor);
-		gameView.invalidate();
-		gameHasStarted = true;
-		startGameLoopThread();
-	}
 
 	private boolean initAccelerometer() {
 		// Check the device has an accelerometer
-		sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
+		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
 		if (sensorList.size() > 0) {
 			// Register ourselves as a listener so that we can receive accelerometer updates
@@ -408,28 +244,6 @@ startTime = System.currentTimeMillis();		// !!! The game doesn't start playing a
 		};
 		gameThread = new Thread(r);
 		gameThread.start();
-	}
-	
-	
-	/**
-	 * Determine what the weather tiles should be based on weather data.
-	 * Rain has priority over ice so if its both raining and cold, the
-	 * weather tiles should become rain tiles.
-	 * 
-	 * @param cwd the current weather data
-	 * @return the type of tile that best represents the current local weather
-	 */
-	private TileType determineWeatherTiles(CurrentWeatherData cwd) {
-		if (cwd == null) {
-			return TileType.Floor;
-		} else if (cwd.getRain_Object().hasRain3Hours()) {
-			return TileType.Rain;
-		} else if (cwd.getMainData_Object().hasTemperature()) {
-			if (cwd.getMainData_Object().getMinTemperature() <= 32) {
-				return TileType.Ice;
-			}
-		}
-		return TileType.Floor;
 	}
 	
 	/**

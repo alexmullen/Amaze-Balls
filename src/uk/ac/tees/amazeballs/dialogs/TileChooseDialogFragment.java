@@ -3,8 +3,8 @@ package uk.ac.tees.amazeballs.dialogs;
 import java.util.ArrayList;
 
 import uk.ac.tees.amazeballs.R;
+import uk.ac.tees.amazeballs.maze.MazeNew;
 import uk.ac.tees.amazeballs.maze.TileImageFactory;
-import uk.ac.tees.amazeballs.maze.TileType;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -32,29 +32,31 @@ public class TileChooseDialogFragment extends DialogFragment {
 	
 	static {
 		SPECIAL_TILES = new ArrayList<SpecialTileChoice>();
-		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Start, TileImageFactory.getImage(TileType.Start)));
-		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Goal, TileImageFactory.getImage(TileType.Goal)));
-		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Key, TileImageFactory.getImage(TileType.Key)));
-		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Door, TileImageFactory.getImage(TileType.Door)));
-		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Penalty, TileImageFactory.getImage(TileType.Penalty)));
-		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Chest, TileImageFactory.getImage(TileType.Chest)));
-		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Weather, TileImageFactory.getImage(TileType.Weather)));
-		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Ice, TileImageFactory.getImage(TileType.Ice)));
-		SPECIAL_TILES.add(new SpecialTileChoice(TileType.Rain, TileImageFactory.getImage(TileType.Rain)));
+		SPECIAL_TILES.add(new SpecialTileChoice(MazeNew.START_TILE, TileImageFactory.getDrawable(MazeNew.START_TILE), "Start"));
+		SPECIAL_TILES.add(new SpecialTileChoice(MazeNew.GOAL_TILE, TileImageFactory.getDrawable(MazeNew.GOAL_TILE), "Goal"));
+		SPECIAL_TILES.add(new SpecialTileChoice(MazeNew.KEY_TILE, TileImageFactory.getDrawable(MazeNew.KEY_TILE), "Key"));
+		SPECIAL_TILES.add(new SpecialTileChoice(MazeNew.DOOR_TILE, TileImageFactory.getDrawable(MazeNew.DOOR_TILE), "Door"));
+		SPECIAL_TILES.add(new SpecialTileChoice(MazeNew.PENALTY_TILE, TileImageFactory.getDrawable(MazeNew.PENALTY_TILE), "Penalty"));
+		SPECIAL_TILES.add(new SpecialTileChoice(MazeNew.CHEST_TILE, TileImageFactory.getDrawable(MazeNew.CHEST_TILE), "Chest"));
+		SPECIAL_TILES.add(new SpecialTileChoice(MazeNew.WEATHER_TILE, TileImageFactory.getDrawable(MazeNew.WEATHER_TILE), "Weather"));
+		SPECIAL_TILES.add(new SpecialTileChoice(MazeNew.ICE_TILE, TileImageFactory.getDrawable(MazeNew.ICE_TILE), "Ice"));
+		SPECIAL_TILES.add(new SpecialTileChoice(MazeNew.RAIN_TILE, TileImageFactory.getDrawable(MazeNew.RAIN_TILE), "Rain"));
 		SPECIAL_TILES.trimToSize();
 	}
 	
 	private static class SpecialTileChoice {
-		public final TileType type;
+		public final int type;
 		public final Drawable image;
-		public SpecialTileChoice(TileType type, Drawable image) {
+		public final String description;
+		public SpecialTileChoice(int type, Drawable image, String description) {
 			this.type = type;
 			this.image = image;
+			this.description = description;
 		}
 	}
 
 	public interface OnTileChooseListener {
-		public void onTileChosen(TileChooseDialogFragment dialog, TileType type);
+		public void onTileChosen(TileChooseDialogFragment dialog, int type);
 	}
 	
 	private OnTileChooseListener listener;
@@ -89,7 +91,7 @@ public class TileChooseDialogFragment extends DialogFragment {
                 TextView textView = (TextView) view.findViewById(R.id.special_tile_choice_title);
                 SpecialTileChoice specialTileChoice = getItem(position);
                 imageView.setImageDrawable(specialTileChoice.image);
-                textView.setText(specialTileChoice.type.name());
+                textView.setText(specialTileChoice.description);
                 return view;
             }
         }, new DialogInterface.OnClickListener() {

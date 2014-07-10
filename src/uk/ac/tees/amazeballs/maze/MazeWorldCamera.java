@@ -104,6 +104,25 @@ public class MazeWorldCamera {
 		top += amountToShift;
 	}
 
+
+	
+	
+	public void zoomIn(int amount) {	// !!!!!!
+		left += Math.min(amount, (right - left) - 25);
+		top += Math.min(amount, (bottom - top) - 25);
+		right -= Math.min(amount, (right - left) - 25);
+		bottom -= Math.min(amount, (bottom - top) - 25);
+	}
+	
+	public void zoomOut(int amount) {
+		left -= Math.min(amount, left);
+		top -= Math.min(amount, top);
+		right += Math.min(amount, (world.width - right));
+		bottom += Math.min(amount, (world.height - bottom));
+	}
+	
+	
+	
 	/**
 	 * Gets the visible grid coordinate range that is within the borders of 
 	 * the viewed section. For performance, no new object is created.

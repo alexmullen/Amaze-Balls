@@ -1,14 +1,15 @@
 package uk.ac.tees.amazeballs.views;
 
+import uk.ac.tees.amazeballs.maze.MazeNew;
 import uk.ac.tees.amazeballs.maze.MazeWorld;
 import uk.ac.tees.amazeballs.maze.MazeWorld.Ball;
 import uk.ac.tees.amazeballs.maze.MazeWorldCamera;
 import uk.ac.tees.amazeballs.maze.TileImageFactory;
-import uk.ac.tees.amazeballs.maze.TileType;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 
@@ -21,16 +22,14 @@ import android.view.View;
  */
 public class MazeViewport extends View {
 
-	private static final Drawable cachedBallDrawable = TileImageFactory.getImage(TileType.Ball);
+	private static final Drawable cachedBallDrawable = TileImageFactory.getDrawable(MazeNew.BALL_TILE);
+	protected MazeWorldCamera camera;
 	
-	
-	private MazeWorldCamera camera;
-	
-	private float scale;
-	private int scaledGridOffset_left;
-	private int scaledGridOffset_top;
-	private int scaledGridOffset_right;
-	private int scaledGridOffset_bottom;
+	protected float scale;
+	protected int scaledGridOffset_left;
+	protected int scaledGridOffset_top;
+	protected int scaledGridOffset_right;
+	protected int scaledGridOffset_bottom;
 	private float unscaledGridOffset_left;
 	private float unscaledGridOffset_top;
 	
@@ -52,7 +51,7 @@ public class MazeViewport extends View {
 	}
 	
 	
-	private void precalculatePositions() {
+	protected void precalculatePositions() {
 		/*
 		 *  Calculate the scale required to make best use of the screen space we have
 		 *  whilst keeping the camera's aspect ratio the same.
@@ -109,6 +108,14 @@ public class MazeViewport extends View {
 		int cameraLeft = camera.getLeft();
 		int cameraTop = camera.getTop();
 		
+		
+		int left = visibleGridRange[0];
+		int top = visibleGridRange[1];
+		int right = visibleGridRange[2];
+		int bottom = visibleGridRange[3];
+		//Log.d("vis range l,t,r,b", "" + left + "," + top + "," + right + right + "," + bottom);
+		Log.d("w/h", "" + (right - left) + "," + (bottom - top));
+		
 		// output array order = left, top, right, bottom
 		camera.getVisibleRange(visibleGridRange);
 		for (int x = visibleGridRange[0]; x <= visibleGridRange[2]; x++) {
@@ -117,7 +124,7 @@ public class MazeViewport extends View {
 				int bounds_x = ((x * tilesize) - cameraLeft);
 				int bounds_y = ((y * tilesize) - cameraTop);
 				// Draw the tile
-				Drawable tileImage = TileImageFactory.getImage(world.maze.getTileAt(x, y));
+				Drawable tileImage = TileImageFactory.getDrawable(world.maze.getTileAt(x, y));
 				// left, top, right, bottom
 				tileImage.setBounds(bounds_x, bounds_y, (bounds_x + tilesize), (bounds_y + tilesize));
 				tileImage.draw(canvas);

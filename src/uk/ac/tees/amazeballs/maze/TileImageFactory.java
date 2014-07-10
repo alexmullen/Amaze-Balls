@@ -1,8 +1,7 @@
 package uk.ac.tees.amazeballs.maze;
 
-import java.util.EnumMap;
-
 import android.graphics.drawable.Drawable;
+
 
 /**
  * A factory class for holding tiles images.
@@ -12,10 +11,10 @@ import android.graphics.drawable.Drawable;
  */
 public class TileImageFactory {
 	
-	private static final EnumMap<TileType, Drawable> registeredTiles;
+	private static final Drawable[] registeredTileDrawables;
 	
 	static {
-		registeredTiles = new EnumMap<TileType, Drawable>(TileType.class);
+		registeredTileDrawables = new Drawable[16];
 	}
 	
 	/**
@@ -28,17 +27,17 @@ public class TileImageFactory {
 	 * 
 	 * @see registerImage
 	 */
-	public static Drawable getImage(TileType type) {
-		return registeredTiles.get(type);
+	public static Drawable getDrawable(int type) {
+		return registeredTileDrawables[type];
 	}
-	
+
 	/**
 	 * Associates the specified Drawable with the specified TileType.
 	 * 
 	 * @param type  the type of tile
 	 * @param image the image to associate with the specified tile type
 	 */
-	public static void registerImage(TileType type, Drawable image) {
-		registeredTiles.put(type, image);
+	public static void registerImage(int type, Drawable image) {
+		registeredTileDrawables[type] = image;
 	}
 }

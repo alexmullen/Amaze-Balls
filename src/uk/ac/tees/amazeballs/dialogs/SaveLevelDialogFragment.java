@@ -64,18 +64,16 @@ public class SaveLevelDialogFragment extends DialogFragment {
 		levelNameTextView.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				boolean saveButtonEnabled = false;
 				if (levelNameTextView.getText().length() > 0) {
-					createdDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-				} else {
-					createdDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+					saveButtonEnabled = true;
 				}
+				createdDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(saveButtonEnabled);
 			}
 			@Override
-			public void afterTextChanged(Editable s) {
-			}
+			public void afterTextChanged(Editable s) {}
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			}
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 		});
 		return createdDialog;
 	}

@@ -8,17 +8,17 @@ import uk.ac.tees.amazeballs.dialogs.SaveLevelDialogFragment;
 import uk.ac.tees.amazeballs.dialogs.SaveLevelDialogFragment.OnLevelSaveRequestListener;
 import uk.ac.tees.amazeballs.dialogs.TileChooseDialogFragment;
 import uk.ac.tees.amazeballs.dialogs.TileChooseDialogFragment.OnTileChooseListener;
-import uk.ac.tees.amazeballs.maze.Maze;
+import uk.ac.tees.amazeballs.maze.MazeNew;
 import uk.ac.tees.amazeballs.maze.MazeFactory;
-import uk.ac.tees.amazeballs.maze.MazeSelection;
-import uk.ac.tees.amazeballs.maze.TileType;
+import uk.ac.tees.amazeballs.maze.MazeWorld;
+import uk.ac.tees.amazeballs.maze.MazeWorldCamera;
 import uk.ac.tees.amazeballs.views.MazeEditorView;
-import uk.ac.tees.amazeballs.views.MazeEditorView.OnTileTouchedListener;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 
 
@@ -29,16 +29,14 @@ import android.content.Intent;
  *
  */
 public class EditorActivity extends Activity 
-		implements 	OnTileTouchedListener,
+		implements 	MazeEditorView.OnTileTouchedListener,
 					OnLevelSaveRequestListener, 
 					OnNewLevelRequestListener,
 					OnLevelChooseListener,
 					OnTileChooseListener {
 
-	private Maze currentMaze;
+	private MazeNew currentMaze;
 	private String currentLevelName;
-	
-	private MazeSelection currentMazeSelection;
 	private MazeEditorView mazeEditorView;
 	
 	
@@ -47,29 +45,25 @@ public class EditorActivity extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_maze_editor);
 		
-		mazeEditorView = (MazeEditorView) findViewById(R.id.maze_grid_view);
-		mazeEditorView.setOnTileTouchedListener(this);
-	
 		// Check whether we need to restore our state
 		if (savedInstanceState != null) {
 			// Restore our state
-			currentMaze = (Maze) savedInstanceState.getSerializable("maze");
+			currentMaze = (MazeNew) savedInstanceState.getSerializable("maze");
 			currentLevelName = savedInstanceState.getString("level_name");
 		} else {
 			// Create a new blank maze ready to be edited
 			currentMaze = MazeFactory.createBorderedMaze(25, 30);
 		}
+
+		// Create a world and camera
+		MazeWorld mazeWorld = new MazeWorld(currentMaze, 20);
+		MazeWorldCamera mazeWorldCamera = new MazeWorldCamera(mazeWorld, 0, 0,
+				10 * mazeWorld.tilesize, 
+				17 * mazeWorld.tilesize);
 		
-		/*
-		 * Create a maze selection to view only a small portion of the maze so
-		 * that we can have mazes that are much larger than most devices'
-		 * displays. The size specified here represents the grid size displayed
-		 * in the MazeEditorView.
-		 */
-		currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
-		
-		// Set the maze for the MazeEditorView to display
-		mazeEditorView.setMaze(currentMazeSelection);
+		mazeEditorView = (MazeEditorView) findViewById(R.id.maze_grid_view);
+		mazeEditorView.setOnTileTouchedListener(this);
+		mazeEditorView.setCamera(mazeWorldCamera);
 		mazeEditorView.invalidate();
 	}
 	
@@ -95,7 +89,7 @@ public class EditorActivity extends Activity
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putString("level_name", currentLevelName);
-		outState.putSerializable("maze", currentMaze);
+		outState.putParcelable("maze", currentMaze);
 	}
 
 	@Override
@@ -139,15 +133,20 @@ public class EditorActivity extends Activity
 	}
 	
 	private void handleNewMenuOption() {
-		new NewLevelDialogFragment().show(getFragmentManager(), "savelevel_dialogfragment");
+		new NewLevelDialogFragment().show(getFragmentManager(), "newlevel_dialogfragment");
 	}
 	
 	@Override
 	public void onNewLevelRequested(int width, int height) {
 		currentLevelName = null;
 		currentMaze = MazeFactory.createBorderedMaze(width, height);
-		currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
-		mazeEditorView.setMaze(currentMazeSelection);
+		
+		MazeWorld mazeWorld = new MazeWorld(currentMaze, 20);
+		MazeWorldCamera mazeWorldCamera = new MazeWorldCamera(mazeWorld, 0, 0,
+				10 * mazeWorld.tilesize, 
+				17 * mazeWorld.tilesize);
+		mazeEditorView.setCamera(mazeWorldCamera);
+
 		mazeEditorView.invalidate();
 	}
 	
@@ -167,12 +166,22 @@ public class EditorActivity extends Activity
 	
 	@Override
 	public void onLevelChosen(String levelname) {
-		currentLevelName = levelname;
-		currentMaze = LevelManager.loadCustomLevel(this, levelname);
-		currentMazeSelection = new MazeSelection(currentMaze, 0, 0, 10, 15);
-		mazeEditorView.setMaze(currentMazeSelection);
-		mazeEditorView.invalidate();
-		Toast.makeText(this, "Level opened", Toast.LENGTH_SHORT).show();
+		MazeNew loadedCustomMaze = LevelManager.loadCustomLevel(this, levelname);
+		if (loadedCustomMaze == null) {
+			displayLevelOpenErrorDialog(levelname);
+		} else {
+			currentLevelName = levelname;
+			currentMaze = loadedCustomMaze;
+
+			MazeWorld mazeWorld = new MazeWorld(currentMaze, 20);
+			MazeWorldCamera mazeWorldCamera = new MazeWorldCamera(mazeWorld, 0, 0,
+					10 * mazeWorld.tilesize, 
+					17 * mazeWorld.tilesize);
+			mazeEditorView.setCamera(mazeWorldCamera);
+			
+			mazeEditorView.invalidate();
+			Toast.makeText(this, "Level opened", Toast.LENGTH_SHORT).show();			
+		}
 	}
 
 	private void handleSaveAsMenuOption() {
@@ -195,7 +204,7 @@ public class EditorActivity extends Activity
 			Toast.makeText(this, "No level to play", Toast.LENGTH_SHORT).show();
 		} else {
 			Bundle b = new Bundle();
-			b.putSerializable("maze", currentMaze);
+			b.putParcelable("maze", currentMaze);
 			b.putBoolean("test-mode", true);
 			Intent i = new Intent(this, GameActivity.class);
 			i.putExtras(b);
@@ -206,7 +215,7 @@ public class EditorActivity extends Activity
 	@Override
 	public void onTileTouched(int x, int y, boolean wasLongPress) {
 		// Prevent the edges of the maze being modified
-		if (currentMazeSelection.isTileAtAnEdge(x, y)) {
+		if (currentMaze.isTileAtAnEdge(x, y)) {
 			return;
 		}
 		
@@ -220,11 +229,11 @@ public class EditorActivity extends Activity
 			chooseDialog.show(getFragmentManager(), "choosetiletoplace_dialogfragment");
 		} else {
 			// Toggle the tile.
-			if (currentMazeSelection.getTileAt(x, y) == TileType.Floor) {
-				currentMazeSelection.setTileAt(x, y, TileType.Wall);
-			} else {
-				currentMazeSelection.setTileAt(x, y, TileType.Floor);
+			int tileToPlace = MazeNew.FLOOR_TILE;
+			if (currentMaze.getTileAt(x, y) == MazeNew.FLOOR_TILE) {
+				tileToPlace = MazeNew.WALL_TILE;
 			}
+			currentMaze.setTileAt(x, y, tileToPlace);
 			
 			// Repaint the view
 			mazeEditorView.invalidate();
@@ -232,10 +241,19 @@ public class EditorActivity extends Activity
 	}
 
 	@Override
-	public void onTileChosen(TileChooseDialogFragment dialog, TileType type) {
+	public void onTileChosen(TileChooseDialogFragment dialog, int type) {
 		Bundle args = dialog.getArguments();
-		currentMazeSelection.setTileAt(args.getInt("x"), args.getInt("y"), type);
+		currentMaze.setTileAt(args.getInt("x"), args.getInt("y"), type);
 		mazeEditorView.invalidate();
+	}
+	
+	private void displayLevelOpenErrorDialog(String levelname) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setIcon(android.R.drawable.ic_dialog_alert);
+		builder.setTitle("Level open error");
+		builder.setMessage("Couldn't open the level '" + levelname + "'.");
+		builder.setNeutralButton("OK", null);
+		builder.create().show();
 	}
 
 }

@@ -22,14 +22,14 @@ public class MazeWorld {
 		}
 	}
 
-	public final Maze maze;
+	public final MazeNew maze;
 	public final int tilesize;
 	public final int width;
 	public final int height;
 	
 	public Ball ball;
 	
-	public MazeWorld(Maze maze, int tilesize) {
+	public MazeWorld(MazeNew maze, int tilesize) {
 		this.maze = maze;
 		this.tilesize = tilesize;
 		width = maze.width * tilesize;

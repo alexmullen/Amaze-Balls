@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AmazeBalls</string>
+    <string name="title_activity_maze_editor">Maze Editor</string>
+    <string name="highscores_msg">Highscores</string>
+    <string name="settings_msg">Settings</string>
+    <string name="level_editor_msg">Level Editor</string>
+    <string name="level_select_msg">Level Select</string>
+    <string name="random_level_msg">Random Level</string>
+    <string name="play_level_msg">Play Level</string>
+    <string name="imported_level_msg">Custom Levels</string>
+    <string name="tgl1_msg">Toggle Music</string>
+	<string name="tgl2_msg">Toggle Weather</string>
+    
+</resources>

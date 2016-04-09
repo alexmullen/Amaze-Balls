@@ -1,0 +1,30 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/editor_file"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="File">
+        <menu>
+            <item
+                android:id="@+id/editor_file_new"
+                android:title="New"/>
+            <item
+                android:id="@+id/editor_file_open"
+                android:title="Open"/>
+            <item
+                android:id="@+id/editor_file_save"
+                android:title="Save"/>
+            <item
+                android:id="@+id/editor_file_saveas"
+                android:title="Save As"/>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/editor_play"
+        android:orderInCategory="200"
+        android:showAsAction="ifRoom"
+        android:title="Play">
+    </item>
+
+</menu>

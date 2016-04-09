@@ -1,0 +1,46 @@
+[
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\layout\\activity_highscores.xml",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\layout\\activity_highscores.xml"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\layout\\activity_main_menu.xml",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\layout\\activity_main_menu.xml"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\layout\\dialog_levelsave.xml",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\layout\\dialog_levelsave.xml"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\layout\\activity_maze_editor.xml",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\layout\\activity_maze_editor.xml"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\layout\\dialog_newmazesize.xml",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\layout\\dialog_newmazesize.xml"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\layout\\activity_settings.xml",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\layout\\activity_settings.xml"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\layout\\dialog_specialtile_row.xml",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\layout\\dialog_specialtile_row.xml"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\layout\\simplerow.xml",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\layout\\simplerow.xml"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\layout\\activity_level_select.xml",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\layout\\activity_level_select.xml"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\layout\\dialog_scoresave.xml",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\layout\\dialog_scoresave.xml"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\layout\\activity_main_game.xml",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\layout\\activity_main_game.xml"
+    }
+]

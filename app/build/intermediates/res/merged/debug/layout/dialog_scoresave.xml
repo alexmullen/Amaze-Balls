@@ -1,0 +1,14 @@
+<EditText xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_save_playername_edittext"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:ems="12"
+    android:hint="Name"
+    android:inputType="text"
+    android:maxLines="1"
+    android:singleLine="true"
+    android:textSize="24sp" >
+
+    <requestFocus />
+
+</EditText>

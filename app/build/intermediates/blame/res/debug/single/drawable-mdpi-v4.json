@@ -1,0 +1,54 @@
+[
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\ball.png",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\drawable-mdpi\\ball.png"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\wall.png",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\drawable-mdpi\\wall.png"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\door.png",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\drawable-mdpi\\door.png"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\floor.png",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\drawable-mdpi\\floor.png"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\chest.png",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\drawable-mdpi\\chest.png"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\start.png",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\drawable-mdpi\\start.png"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\key.png",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\drawable-mdpi\\key.png"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\background.png",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\drawable-mdpi\\background.png"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\penalty.png",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\drawable-mdpi\\penalty.png"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\ice.png",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\drawable-mdpi\\ice.png"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\weathertile.png",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\drawable-mdpi\\weathertile.png"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\goal.png",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\drawable-mdpi\\goal.png"
+    },
+    {
+        "merged": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\rain.png",
+        "source": "C:\\Users\\mutan\\AndroidStudioProjects\\Amaze-Balls\\app\\src\\main\\res\\drawable-mdpi\\rain.png"
+    }
+]
